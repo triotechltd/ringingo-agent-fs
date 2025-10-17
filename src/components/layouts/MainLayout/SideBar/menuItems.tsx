@@ -141,4 +141,11 @@ export const CallCenterMenuList: NavItemsTypes[] = [
     url: "/call-center/settings",
     roleId: "settings",
   },
+    {
+    id: "phone test",
+    icon: Phone,
+    activeIcon: Active_Phone,
+    title: "Whatsapp",
+    url: "/call-center/whatsapp",
+  },
 ];
