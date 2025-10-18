@@ -1,2 +1,2 @@
 @Library('jenkins-library') _
-ttbsReactNew(true,0," ",1,false)
+ttbsfreeswitch(true,0," ",1,false)
