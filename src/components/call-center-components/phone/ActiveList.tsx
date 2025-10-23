@@ -85,11 +85,34 @@ const ActiveList = ({
   const isCallHangUp = useIsCallHangUp();
   const campaignType = useCampaignType();
   const callQueueList = useActiveCallQueueList();
-  const activeChatList = useActiveChats();
+  const activeChatListData = useActiveChats();
   const chatModeType = useChatMode();
   const isActiveChat = useIsActiveChat();
 
   const [data, setData] = useState<any>([]);
+  function processMessages(data: any[]) {
+    const uniqueMap = new Map();
+
+    data.forEach((item) => {
+      const existing = uniqueMap.get(item.user_uuid);
+      if (!existing) {
+        uniqueMap.set(item.user_uuid, item);
+      } else {
+        // Prefer the record that has a 'name' field (if existing doesn't have it)
+        if (item.name && !existing.name) {
+          uniqueMap.set(item.user_uuid, item);
+        }
+      }
+    });
+
+    // Convert map back to array and keep only those with 'name'
+    const filteredMessages = Array.from(uniqueMap.values()).filter(
+      (item) => item.name
+    );
+
+    return filteredMessages;
+  }
+  const activeChatList = processMessages(activeChatListData);
 
   useEffect(() => {
     if (Object.keys(singleLeadDetails).length) {
@@ -273,7 +296,7 @@ const ActiveList = ({
               }`}
               onClick={() => {
                 dispatch(setActiveConversation(activeItem));
-                // onGetSingleChatLeadInfo(activeItem.lead_management_uuid);
+                onGetSingleChatLeadInfo(activeItem.lead_management_uuid);
                 setActiveId("2");
               }}
             >

@@ -14,6 +14,10 @@ import {
 } from "@/redux/slice/chatSlice";
 import { io } from "socket.io-client";
 import { useAuth } from "@/contexts/hooks/useAuth";
+import {
+  clearSingleChatLeadDetails,
+  clearSingleLeadDetails,
+} from "@/redux/slice/callCenter/callCenterPhoneSlice";
 
 // TYPES
 interface WhatsAppMessage {
@@ -41,7 +45,7 @@ const WhatsAppServiceStandalone = (props: WhatsAppServiceStandaloneProps) => {
     onAccept = () => console.log("Accept clicked"),
     onDecline = () => console.log("Decline clicked"),
   } = props;
-  const baseUrl: any = process.env.CHAT_SOCKET_URL;
+  const baseUrl: any = process.env.BASE_URL;
   const socketConnection = io(baseUrl);
   const dispatch = useAppDispatch();
   const whatsAppMessage = useWhatsAppPopupMessage();
@@ -64,6 +68,8 @@ const WhatsAppServiceStandalone = (props: WhatsAppServiceStandaloneProps) => {
   const visible = showPopup;
 
   const handleAccept = async () => {
+    dispatch(clearSingleChatLeadDetails());
+    dispatch(clearSingleLeadDetails());
     onAccept(displayMessage.messageId);
 
     // Create the initial message object for the messages array

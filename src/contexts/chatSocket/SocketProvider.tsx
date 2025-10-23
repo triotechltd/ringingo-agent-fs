@@ -16,7 +16,7 @@ interface ISocketProvider {
 export const SocketProvider = (props: ISocketProvider) => {
   const dispatch = useAppDispatch();
   const { user } = useAuth();
-  const baseUrl: any = process.env.CHAT_SOCKET_URL;
+  const baseUrl: any = process.env.BASE_URL;
   console.log("user", user);
   // Configure socket with authentication and query parameters
   const socketConnection = io(baseUrl, {
