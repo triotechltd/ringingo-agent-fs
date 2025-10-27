@@ -81,15 +81,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </Helmet>
       )}
       <Layouts variant={LAYOUT.minimal}>
-        <div
-          className="flex justify-center items-center h-screen w-screen overflow-hidden bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: 'url("/assets/images/LoginBg.png")',
-            //   backgroundRepeat: "no-repeat",
-            //   backgroundSize: "100% 100%",
-            //   backgroundColor: "rgba(255, 255, 255, 10)",
-          }}
-        >
+        <div className="flex justify-center items-center h-screen w-screen overflow-hidden bg-teal-50">
           <div className="p-5 rounded-md">{children}</div>
           {/* Sidepanle login page*/}
           {/* <div className="select-none max-w-[65%] xl:max-w-[55%] 2lg:max-w-[55%] lg:max-w-[50%] smd:max-w-full p-8 sm:px-4 2md:py-20 w-full bg-secondary-v10">

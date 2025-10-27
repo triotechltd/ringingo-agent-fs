@@ -2,16 +2,17 @@
 const nextConfig = {
   /* config options here */
   env: {
-	  NEXT_PUBLIC_SITE_URL: "https://agentapp.ringingo.com",
-    TENANT_PORTAL_DOMAIN: "10.180.67.151", // do not change
+    NEXT_PUBLIC_SITE_URL: "https://localhost",
+    TENANT_PORTAL_DOMAIN: "46.62.223.118", // do not change
     SIDEPANEL_1: "Your Unified",
     SIDEPANEL_2: "Communications Platform.",
     SIDEPANEL_3: "Smart Contact Center platform for High performance teams.",
     FOOTER: "ItsMyCallcenter, All rights reserved.",
+
     TITLE: "CALL CENTER",
     DESCRIPTION: "Smart Contact Center platform for High performance teams.",
     LOGIN: "Login to Agent",
-    BASE_URL: "https://apiapp.ringingo.com:5000",
+    BASE_URL: "https://ccapi.dialiqo.com",
     //BASE_URL: "https://10.180.67.151:8444",
     //WSS_URL: "wss://10.180.67.151:7443",
     WSS_URL: "wss://apiapp.ringingo.com:7443",
