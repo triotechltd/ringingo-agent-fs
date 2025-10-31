@@ -2,7 +2,7 @@
 const nextConfig = {
   /* config options here */
   env: {
-    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL_APP,
     TENANT_PORTAL_DOMAIN: process.env.TENANT_PORTAL_DOMAIN,
     SIDEPANEL_1: process.env.SIDEPANEL_1,
     SIDEPANEL_2: process.env.SIDEPANEL_2,
