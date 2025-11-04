@@ -43,6 +43,8 @@ import CallHistoryHeader from "@/components/pbx-components/phone/CallHistoryHead
 import ActiveList from "@/components/call-center-components/phone/ActiveList";
 import CrmInformation from "@/components/call-center-components/phone/CrmInformation";
 import WhatsAppServiceStandalone from "@/components/popups/WhatsAppServiceStandalone";
+import { getActiveUnreadChat } from "@/redux/slice/chatSlice";
+import OmniChannelServiceStandalone from "@/components/popups/OmniChannelServiceStandalone";
 
 
 // ASSETS
@@ -130,6 +132,17 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       socket.disconnect();
     };
   }, []);
+
+  const onAccept = () => {
+    console.log("Accept clicked")
+  }
+  const onDecline = () => {
+    console.log("Decline clicked")
+  }
+  
+  useEffect(() => {
+    dispatch(getActiveUnreadChat({ campaign_uuid: selectedCampaign })).unwrap();
+  }, [onAccept, onDecline]);
 
   useEffect(() => {
     let browserToken = user?.agent_detail?.browserToken;
@@ -360,11 +373,10 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <Header breakValue={breakValue} onBreakSelection={onBreakSelection} />
         <SideBar />
         <main
-          className={`flex-1 transition-all mt-[12px] rounded-[30px] mr-[10px] bg-[#F4F7FE] pl-[10px] pt-[70px] pb-[10px] tsm:pt-[110px] pr-[10px] tsm:pr-3 ${
-            isdrawerOpen
-              ? "pl-[0px] ml-[255px] tmd:pl-[0px]"
-              : "ml-[85px] pl-[0px]"
-          } tsm:pl-3 relative overflow-hidden`}
+          className={`flex-1 transition-all mt-[12px] rounded-[30px] mr-[10px] bg-[#F4F7FE] pl-[10px] pt-[70px] pb-[10px] tsm:pt-[110px] pr-[10px] tsm:pr-3 ${isdrawerOpen
+            ? "pl-[0px] ml-[255px] tmd:pl-[0px]"
+            : "ml-[85px] pl-[0px]"
+            } tsm:pl-3 relative overflow-hidden`}
         >
           <div className="h-full flex flex-col">
             <div className="flex-1 bg-white rounded-[25px] overflow-auto scrollbar-hide">
@@ -375,9 +387,8 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
         {/* footer */}
         <div
-          className={`py-3 flex justify-center items-center fixed bottom-0 left-0 right-0  z-10 ${
-            isdrawerOpen ? "pl-[240px]" : "pl-[70px]"
-          }`}
+          className={`py-3 flex justify-center items-center fixed bottom-0 left-0 right-0  z-10 ${isdrawerOpen ? "pl-[240px]" : "pl-[70px]"
+            }`}
         >
           <div
             className="flex items-center justify-center bg-primary-green rounded-full 3xl:h-[54px] 3xl:w-[54px] h-[44px] w-[44px] fixed right-7 bottom-8 z-50 drop-shadow-lg cursor-pointer hover:bg-opacity-80"
@@ -425,7 +436,9 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         />
 
         {/* WhatsApp Service Popup - Controlled by Redux */}
-        <WhatsAppServiceStandalone />
+        <WhatsAppServiceStandalone onAccept={onAccept} onDecline={onDecline} />
+        {/* Omnichannel Service Popup - Controlled by Redux */}
+        <OmniChannelServiceStandalone />
       </div>
     </>
   );

@@ -6,11 +6,13 @@ import { Button } from "../forms";
 import { useAppDispatch } from "@/redux/hooks";
 import {
   useWhatsAppPopupMessage,
-  useShowWhatsAppPopup,
   hideWhatsAppPopup,
   onStartConversation,
   setActiveConversation,
   aceeptChat,
+  useOmnichannelPopupMessage,
+  useShowOmnichannelPopup,
+  hideOmniChannelPopup,
 } from "@/redux/slice/chatSlice";
 import { io } from "socket.io-client";
 import { useAuth } from "@/contexts/hooks/useAuth";
@@ -28,8 +30,17 @@ interface WhatsAppMessage {
   timestamp: string;
   type: string;
 }
+interface Message {
+  from_number: string;
+  phone_number_id: string;
+  messageBody: string;
+  messageId: string;
+  timestamp: string;
+  type: string;
+  channelType:string
+}
 
-interface WhatsAppServiceStandaloneProps {
+interface OmniChannelServiceStandaloneProps {
   onAccept?: (messageId: string) => void;
   onDecline?: (messageId: string) => void;
 }
@@ -40,18 +51,26 @@ const closeIcon = "/assets/icons/close.svg";
 
 /* ============================== WHATSAPP SERVICE STANDALONE POPUP ============================== */
 
-const WhatsAppServiceStandalone = (props: WhatsAppServiceStandaloneProps) => {
+const OmniChannelServiceStandalone = (props: OmniChannelServiceStandaloneProps) => {
   const {
-    onAccept = () => {},
-    onDecline = () => {},
+    onAccept = () => console.log("Accept clicked"),
+    onDecline = () => console.log("Decline clicked"),
   } = props;
   const baseUrl: any = process.env.BASE_URL;
   const socketConnection = io(baseUrl);
   const dispatch = useAppDispatch();
-  const whatsAppMessage = useWhatsAppPopupMessage();
+  // const whatsAppMessage = useWhatsAppPopupMessage();
+  const whatsAppMessage = useOmnichannelPopupMessage();
+
+  // const omnichannelMessage = useomni();
+
   const { user } = useAuth();
-  console.log(whatsAppMessage, user, "whatsAppMessage");
-  const showPopup = useShowWhatsAppPopup();
+  console.log(whatsAppMessage,  "whatsAppMessage");
+  const showPopup = useShowOmnichannelPopup();
+  // const showPopup =  useShowOmniChannelPopup();
+  console.warn(whatsAppMessage,"llll")
+  console.warn(showPopup,"pppppp")
+
 
   // Mock message for testing when no message is provided
   const mockMessage: WhatsAppMessage = {
@@ -64,7 +83,8 @@ const WhatsAppServiceStandalone = (props: WhatsAppServiceStandaloneProps) => {
     type: "text",
   };
 
-  const displayMessage = whatsAppMessage || mockMessage;
+  const displayMessage =  whatsAppMessage ||  mockMessage;
+  debugger
   const visible = showPopup;
 
   const handleAccept = async () => {
@@ -121,7 +141,7 @@ const WhatsAppServiceStandalone = (props: WhatsAppServiceStandaloneProps) => {
 
   const handleDecline = () => {
     onDecline(displayMessage.messageId);
-    dispatch(hideWhatsAppPopup());
+    dispatch(hideOmniChannelPopup());
   };
 
   const handleClose = () => {
@@ -142,6 +162,18 @@ const WhatsAppServiceStandalone = (props: WhatsAppServiceStandaloneProps) => {
   };
 
   if (!visible) return null;
+  const isIg = whatsAppMessage?.channelType === "instagram";
+
+const headerGradient = isIg
+  ? "bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400"
+  : "bg-gradient-to-r from-green-500 to-green-600";
+
+
+const messageBorder = isIg ? "border-pink-500" : "border-green-500";
+const bottomAccent = isIg
+  ? "from-pink-400 via-rose-500 to-yellow-500"
+  : "from-green-400 via-blue-500 to-purple-600";
+
 
   return (
     <div
@@ -153,7 +185,7 @@ const WhatsAppServiceStandalone = (props: WhatsAppServiceStandaloneProps) => {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header with WhatsApp branding */}
-        <div className="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4 relative">
+        <div className={`${headerGradient} px-6 py-4 relative`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="bg-white p-2 rounded-full shadow-md">
@@ -167,7 +199,7 @@ const WhatsAppServiceStandalone = (props: WhatsAppServiceStandaloneProps) => {
               </div>
               <div>
                 <h3 className="text-white font-bold text-lg">
-                  New WhatsApp Message
+                 {isIg? "New Instagram Message" : "New WhatsApp Message"}
                 </h3>
                 <p className="text-green-100 text-sm">
                   Incoming customer inquiry
@@ -199,30 +231,30 @@ const WhatsAppServiceStandalone = (props: WhatsAppServiceStandaloneProps) => {
           {/* Customer Info */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                {displayMessage.from_number.charAt(1)}
-              </div>
+              {displayMessage?.from_number && <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                {displayMessage?.from_number?.charAt(1)}
+              </div>}
               <div>
                 <p className="font-semibold text-gray-800 text-lg">
                   Unknown Customer
                 </p>
                 <p className="text-gray-500 text-sm">
-                  {displayMessage.from_number}
+                  {displayMessage?.from_number}
                 </p>
               </div>
             </div>
             <div className="text-right">
               <p className="text-xs text-gray-400">Received</p>
               <p className="text-sm font-medium text-gray-600">
-                {formatTime(displayMessage.timestamp)}
+                {formatTime(displayMessage?.timestamp)}
               </p>
             </div>
           </div>
 
           {/* Message Preview */}
-          <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-4 mb-6 border-l-4 border-green-500">
+          <div className={`bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-4 mb-6 border-l-4 ${messageBorder}`}>
             <p className="text-gray-700 leading-relaxed">
-              "{truncateMessage(displayMessage.messageBody)}"
+              "{truncateMessage(displayMessage?.messageBody)}"
             </p>
           </div>
 
@@ -242,10 +274,10 @@ const WhatsAppServiceStandalone = (props: WhatsAppServiceStandaloneProps) => {
         </div>
 
         {/* Bottom accent */}
-        <div className="h-1 bg-gradient-to-r from-green-400 via-blue-500 to-purple-600"></div>
+        <div className={`h-1 bg-gradient-to-r ${bottomAccent}`}></div>
       </div>
     </div>
   );
 };
 
-export default WhatsAppServiceStandalone;
+export default OmniChannelServiceStandalone;

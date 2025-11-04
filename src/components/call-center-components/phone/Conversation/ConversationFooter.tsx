@@ -20,7 +20,7 @@ const attachSquare = "/assets/icons/white/attach_square.svg";
 const send = "/assets/icons/white/send.svg";
 const transfer = "/assets/icons/gray/transfer.svg";
 const arrowDown = "/assets/icons/arrow-down.svg";
-const pdfIcon = "/assets/images/pdfIcon.png";
+const pdfIcon = "/assets/images/pdfIcon.svg";
 const imageIcon = "/assets/images/photo.png";
 
 const platformIcons: any = {

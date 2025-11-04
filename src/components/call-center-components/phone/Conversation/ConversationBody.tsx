@@ -16,7 +16,7 @@ const downloadDocument = "/assets/icons/gray/document_download.svg";
 const deleteIcon = "/assets/icons/gray/trash.svg";
 const replyIcon = "/assets/icons/gray/reply.svg";
 const editIcon = "/assets/icons/gray/edit.svg";
-const pdfIcon = "/assets/images/pdfIcon.png";
+const pdfIcon = "/assets/images/pdfIcon.svg";
 const sentIcon = "/assets/icons/blue/single-tic.svg";
 const deliveredIcon = "/assets/icons/blue/double-tic.svg";
 const readIcon = "/assets/icons/blue/read-tic.svg";
@@ -298,7 +298,7 @@ const ConversationBody = ({
       <div className="flex justify-end items-center">
         <div className="5xl:text-[13px] 4xl:text-[11px] text-[10px] px-1 text-dark-400">
           {format(
-            getValidTime(msg?.timestamp ?? msg?.createdAt),
+            getValidTime(msg?.createdAt),
             "dd/MM/yyyy hh:mm a"
           )}
         </div>
@@ -427,7 +427,7 @@ const ConversationBody = ({
       <div
         key={index}
         className={`conversation-msg flex justify-between items-center p-2 hover:bg-[#F0F0F0] ${
-          msg.message_type === "1" ? "flex-row-reverse" : ""
+          msg.message_type === "1" || !msg.name  ? "flex-row-reverse" : ""
         } ${
           editMessageId === index
             ? "bg-[#F0F0F0] conversation-edit-message"
