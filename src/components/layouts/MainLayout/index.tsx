@@ -43,6 +43,7 @@ import CallHistoryHeader from "@/components/pbx-components/phone/CallHistoryHead
 import ActiveList from "@/components/call-center-components/phone/ActiveList";
 import CrmInformation from "@/components/call-center-components/phone/CrmInformation";
 import WhatsAppServiceStandalone from "@/components/popups/WhatsAppServiceStandalone";
+import OmniChannelServiceStandalone from "@/components/popups/OmniChannelServiceStandalone";
 
 
 // ASSETS
@@ -426,6 +427,8 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
         {/* WhatsApp Service Popup - Controlled by Redux */}
         <WhatsAppServiceStandalone />
+        {/* Omnichannel Service Popup - Controlled by Redux */}
+        <OmniChannelServiceStandalone />
       </div>
     </>
   );

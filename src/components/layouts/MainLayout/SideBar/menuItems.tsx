@@ -149,4 +149,11 @@ export const CallCenterMenuList: NavItemsTypes[] = [
     title: "Message",
     url: "/call-center/message",
   },
+   {
+    id: "insta",
+    icon: Message,
+    activeIcon: Active_Phone,
+    title: "Insta",
+    url: "/call-center/insta",
+  },
 ];

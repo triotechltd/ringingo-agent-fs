@@ -5,6 +5,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import {
   acceptChatPost,
+  // acceptOmniChatPost,
   activeUnreadChatListPost,
   channelListPost,
   chatHistoryPost,
@@ -29,6 +30,16 @@ interface WhatsAppPopupMessage {
   type: string;
 }
 
+// Omnichannel Popup Message Type
+interface OmnichannelPopupMessage {
+  from_number: string;
+  phone_number_id: string;
+  messageBody: string;
+  messageId: string;
+  timestamp: string;
+  type: string;
+}
+
 interface ChatState {
   whatsAppMessageList: any[];
   activeChatList: any[];
@@ -43,6 +54,8 @@ interface ChatState {
   isActiveChat?: boolean;
   whatsAppPopupMessage?: WhatsAppPopupMessage | null;
   showWhatsAppPopup: boolean;
+  omnichannelPopupMessage:OmnichannelPopupMessage | null,
+  showOmnichannelPopup:boolean
 }
 
 // TYPES
@@ -68,7 +81,10 @@ const initialState: InitialState = {
     chatHistory: [],
     isActiveChat: false,
     whatsAppPopupMessage: null,
-    showWhatsAppPopup: false
+    showWhatsAppPopup: false,
+    omnichannelPopupMessage: null,
+    showOmnichannelPopup: false
+
   },
   call: {
     whatsAppMessageList: [],
@@ -83,7 +99,10 @@ const initialState: InitialState = {
     waitingCount: {},
     isActiveChat: false,
     whatsAppPopupMessage: null,
-    showWhatsAppPopup: false
+    showWhatsAppPopup: false,
+    omnichannelPopupMessage: null,
+    showOmnichannelPopup: false
+
   },
 };
 
@@ -110,6 +129,10 @@ export const getWhatsAppMessagesList = createAsyncThunk(
 
 export const aceeptChat = createAsyncThunk("aceept", async (payload: any) => {
   return await acceptChatPost(payload);
+});
+
+export const aceeptOmniChat = createAsyncThunk("aceeptOmni", async (payload: any) => {
+  return await acceptOmniChatPost(payload);
 });
 
 export const endChat = createAsyncThunk("end", async (payload: any) => {
@@ -307,6 +330,23 @@ const chatSlice = createSlice({
         getChatState(state).showWhatsAppPopup = true;
       }
     },
+   // Omnichannel Popup Actions
+    setOmniChannelPopupMessage: (state, action: PayloadAction<WhatsAppPopupMessage>) => {
+      getChatState(state).omnichannelPopupMessage = action.payload;
+      getChatState(state).showOmnichannelPopup = true;
+    },
+    hideOmniChannelPopup: (state) => {
+      getChatState(state).showWhatsAppPopup = false;
+      getChatState(state).omnichannelPopupMessage = null;
+    },
+    onReceiveOmniChannelMessage: (state, action: PayloadAction<WhatsAppPopupMessage>) => {
+      // Set the message and show popup when messageId is provided
+      if (action.payload.messageId) {
+        debugger
+        getChatState(state).omnichannelPopupMessage = action.payload;
+        getChatState(state).showOmnichannelPopup = true;
+      }
+    },
 
     clearChatSlice: () => initialState,
   },
@@ -433,7 +473,9 @@ export const {
   setIsActiveChat,
   setWhatsAppPopupMessage,
   hideWhatsAppPopup,
-  onReceiveWhatsAppMessage
+  onReceiveWhatsAppMessage,
+  onReceiveOmniChannelMessage,
+  hideOmniChannelPopup
 } = chatSlice.actions;
 
 export const selectWhatsAppMessages = (state: RootState) =>
@@ -503,6 +545,21 @@ export const useShowWhatsAppPopup = () => {
   const showWhatsAppPopup = useAppSelector(selectShowWhatsAppPopup);
   return useMemo(() => showWhatsAppPopup, [showWhatsAppPopup]);
 };
+// Omn ichannel Popup Selectors
+export const selectOmnichannelPopupMessage = (state: RootState) =>
+  getChatState(state.chat).omnichannelPopupMessage;
+export const useOmnichannelPopupMessage = () => {
+  const omnichannelPopupMessage = useAppSelector(selectOmnichannelPopupMessage);
+  return useMemo(() => omnichannelPopupMessage, [omnichannelPopupMessage]);
+};
+
+export const selectShowOmnichannelPopup = (state: RootState) =>
+  getChatState(state.chat).showOmnichannelPopup;
+export const useShowOmnichannelPopup = () => {
+  const showOmnichannelPopup = useAppSelector(selectShowOmnichannelPopup);
+  return useMemo(() => showOmnichannelPopup, [showOmnichannelPopup]);
+};
+
 
 export const selectChatMode = (state: RootState) => state.chat.modeType;
 export const useChatMode = () => {
