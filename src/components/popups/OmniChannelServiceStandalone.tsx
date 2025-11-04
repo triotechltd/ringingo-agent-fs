@@ -84,7 +84,6 @@ const OmniChannelServiceStandalone = (props: OmniChannelServiceStandaloneProps) 
   };
 
   const displayMessage =  whatsAppMessage ||  mockMessage;
-  debugger
   const visible = showPopup;
 
   const handleAccept = async () => {
