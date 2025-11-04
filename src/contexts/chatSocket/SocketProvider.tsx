@@ -7,6 +7,7 @@ import {
   onRemoveUnReadChat,
   onReceiveWhatsAppMessage,
   hideWhatsAppPopup,
+  onReceiveOmniChannelMessage
 } from "@/redux/slice/chatSlice";
 
 interface ISocketProvider {
@@ -63,6 +64,15 @@ export const SocketProvider = (props: ISocketProvider) => {
         dispatch(onReceiveWhatsAppMessage(data));
       }
     });
+    // Trigger Omnichannel popop
+        socketConnection.on("omnichannel_message", (data) => {
+      console.log("Received omnichannel_message message from server:", data);
+      // Trigger WhatsApp popup if messageId is provided
+      if (data.messageId) {
+        dispatch(onReceiveOmniChannelMessage(data))
+      }
+    });
+
 
     socketConnection.on("ui:closePopup", (data) => {
       console.log("Popup:", data);

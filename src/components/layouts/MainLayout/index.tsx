@@ -44,6 +44,7 @@ import ActiveList from "@/components/call-center-components/phone/ActiveList";
 import CrmInformation from "@/components/call-center-components/phone/CrmInformation";
 import WhatsAppServiceStandalone from "@/components/popups/WhatsAppServiceStandalone";
 import { getActiveUnreadChat } from "@/redux/slice/chatSlice";
+import OmniChannelServiceStandalone from "@/components/popups/OmniChannelServiceStandalone";
 
 
 // ASSETS
@@ -436,6 +437,8 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
         {/* WhatsApp Service Popup - Controlled by Redux */}
         <WhatsAppServiceStandalone onAccept={onAccept} onDecline={onDecline} />
+        {/* Omnichannel Service Popup - Controlled by Redux */}
+        <OmniChannelServiceStandalone />
       </div>
     </>
   );
