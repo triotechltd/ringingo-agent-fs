@@ -47,6 +47,7 @@ import {
 import { useAuth } from "@/contexts/hooks/useAuth";
 import {
   endChat,
+  getActiveUnreadChat,
   useActiveConversation,
   useChatMode,
   useIsActiveChat,
@@ -322,6 +323,7 @@ const FinishLead = (props: FinishLeadProps) => {
         data.disposition_uuid = values.lead_status;
       }
       await dispatch(endChat(data)).unwrap();
+      dispatch(getActiveUnreadChat({ campaign_uuid: selectedCampaign })).unwrap();
       setIsLoading(false);
       setIsHangUp(false);
       resetForm();

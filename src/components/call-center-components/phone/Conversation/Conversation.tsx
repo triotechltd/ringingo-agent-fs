@@ -11,6 +11,7 @@ import { useAppDispatch } from "@/redux/hooks";
 import {
   aceeptChat,
   chatHistory,
+  getActiveUnreadChat,
   getWhatsAppMessagesList,
   onRecieveUnReadChat,
   onStartConversation,
@@ -24,7 +25,7 @@ import { getExtension } from "@/redux/slice/callSlice";
 import { Loader } from "@/components/ui-components";
 import { getMessageFromNumber } from "@/components/helperFunctions";
 import { getSingleChatLead } from "@/redux/slice/callCenter/callCenterPhoneSlice";
-import { onShowLeadInfo } from "@/redux/slice/commonSlice";
+import { onShowLeadInfo, useSelectedCampaign } from "@/redux/slice/commonSlice";
 import { io } from "socket.io-client";
 interface ConversationProps {}
 
@@ -33,6 +34,7 @@ interface ConversationProps {}
 const Conversation = ({}: ConversationProps) => {
   let scrollTimeOut: any;
   const activeConversation = useActiveConversation();
+  const selectedCampaign = useSelectedCampaign();
   const newConversation = useNewConversation();
   const { user } = useAuth();
   const dispatch = useAppDispatch();
@@ -50,7 +52,7 @@ const Conversation = ({}: ConversationProps) => {
   const [chatHistoryList, setChatHistoryList] = useState<Array<any>>([]);
 
   // Socket connection for live message updates
-  const baseUrl: any = process.env.CHAT_SOCKET_URL;
+  const baseUrl: any = process.env.BASE_URL;
   const socketConnection = io(baseUrl, {
     query: {
       token: user?.access_token,
@@ -85,6 +87,8 @@ const Conversation = ({}: ConversationProps) => {
         phone_number_id: data.phone_number_id,
         unread: "0", // Mark as read since we're accepting it
         notification_type: undefined,
+        image_url: [],
+        document_url: []
       };
       let payload = {
         from_number: data.from_number,
@@ -98,6 +102,8 @@ const Conversation = ({}: ConversationProps) => {
           user?.agent_detail?.whatsapp_messaging_channel_uuid,
         unread_message_count: 0,
         messages: [initialMessage],
+        image_url: data.image_url,
+        document_url: data.document_url
       };
       // Check if this message belongs to the current conversation
       if (conversationData && data) {
@@ -117,7 +123,8 @@ const Conversation = ({}: ConversationProps) => {
             ...conversationData,
             messages: updatedMessages,
           });
-
+          dispatch(setActiveConversation({ ...conversationData, messages: updatedMessages }))
+          dispatch(getActiveUnreadChat({ campaign_uuid: selectedCampaign })).unwrap();
           // Scroll to the bottom to show the new message
           scrollToEnd();
         }
@@ -127,7 +134,9 @@ const Conversation = ({}: ConversationProps) => {
     return () => {
       socketConnection.off("whatsapp_message_live");
     };
-  }, [conversationData, socketConnection]);
+  }, [conversationData, socketConnection, activeConversation]);
+
+  console.log("logg activeConversationactiveConversation", activeConversation);
 
   // Cleanup socket connection on unmount
   useEffect(() => {
@@ -196,7 +205,7 @@ const Conversation = ({}: ConversationProps) => {
       if (
         (conversationData &&
           conversationData?.[getMessageFromNumber(conversationData)] !==
-            activeConversation?.[getMessageFromNumber(conversationData)]) ||
+          activeConversation?.[getMessageFromNumber(conversationData)]) ||
         !activeConversation?.messages ||
         activeConversation?.messages?.length === 0
       ) {
@@ -247,6 +256,7 @@ const Conversation = ({}: ConversationProps) => {
           messages: [...messages],
         })
       );
+      dispatch(getActiveUnreadChat({ campaign_uuid: selectedCampaign })).unwrap();
       if (
         messageResponse?.message.lead_management_uuid !==
         conversationData?.lead_management_uuid

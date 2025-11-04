@@ -42,8 +42,8 @@ const closeIcon = "/assets/icons/close.svg";
 
 const WhatsAppServiceStandalone = (props: WhatsAppServiceStandaloneProps) => {
   const {
-    onAccept = () => console.log("Accept clicked"),
-    onDecline = () => console.log("Decline clicked"),
+    onAccept = () => {},
+    onDecline = () => {},
   } = props;
   const baseUrl: any = process.env.BASE_URL;
   const socketConnection = io(baseUrl);
