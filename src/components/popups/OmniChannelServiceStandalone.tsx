@@ -29,6 +29,7 @@ interface WhatsAppMessage {
   messageId: string;
   timestamp: string;
   type: string;
+  channelType: string
 }
 interface Message {
   from_number: string;
@@ -37,7 +38,7 @@ interface Message {
   messageId: string;
   timestamp: string;
   type: string;
-  channelType:string
+  channelType: string
 }
 
 interface OmniChannelServiceStandaloneProps {
@@ -53,8 +54,8 @@ const closeIcon = "/assets/icons/close.svg";
 
 const OmniChannelServiceStandalone = (props: OmniChannelServiceStandaloneProps) => {
   const {
-    onAccept = () => console.log("Accept clicked"),
-    onDecline = () => console.log("Decline clicked"),
+    onAccept = () => { },
+    onDecline = () => { },
   } = props;
   const baseUrl: any = process.env.BASE_URL;
   const socketConnection = io(baseUrl);
@@ -65,11 +66,11 @@ const OmniChannelServiceStandalone = (props: OmniChannelServiceStandaloneProps) 
   // const omnichannelMessage = useomni();
 
   const { user } = useAuth();
-  console.log(whatsAppMessage,  "whatsAppMessage");
+  console.log(whatsAppMessage, "whatsAppMessage");
   const showPopup = useShowOmnichannelPopup();
   // const showPopup =  useShowOmniChannelPopup();
-  console.warn(whatsAppMessage,"llll")
-  console.warn(showPopup,"pppppp")
+  console.warn(whatsAppMessage, "llll")
+  console.warn(showPopup, "pppppp")
 
 
   // Mock message for testing when no message is provided
@@ -81,10 +82,11 @@ const OmniChannelServiceStandalone = (props: OmniChannelServiceStandaloneProps) 
     timestamp: Math.floor(Date.now() / 1000).toString(),
     phone_number_id: "phone_123",
     type: "text",
+    channelType: ""
   };
 
-  const displayMessage =  whatsAppMessage ||  mockMessage;
-  debugger
+  const displayMessage = whatsAppMessage || mockMessage;
+  // debugger
   const visible = showPopup;
 
   const handleAccept = async () => {
@@ -123,14 +125,19 @@ const OmniChannelServiceStandalone = (props: OmniChannelServiceStandaloneProps) 
     // dispatch(hideWhatsAppPopup());
 
     // Uncomment these when ready to use socket connection and chat acceptance
-    socketConnection.emit("wa:accept", {
+    socketConnection.emit("in:accept", {
       messageId: displayMessage.messageId,
       tenant_uuid: user?.agent_detail?.tenant_uuid,
       agent_uuid: user?.agent_detail?.uuid,
       browserToken: user?.agent_detail?.browserToken,
-      from_number: displayMessage.from_number,
-      phone_number_id: displayMessage.phone_number_id,
+      channel_identifiers: {
+        from_number: displayMessage.from_number,
+        phone_number_id: displayMessage.phone_number_id,
+      },
+      // from_number: displayMessage.from_number,
+      // phone_number_id: displayMessage.phone_number_id,
       user_uuid: user?.agent_detail?.uuid,
+      channel_type: displayMessage?.channelType
     });
     // await dispatch(
     //   onStartConversation({
@@ -164,15 +171,15 @@ const OmniChannelServiceStandalone = (props: OmniChannelServiceStandaloneProps) 
   if (!visible) return null;
   const isIg = whatsAppMessage?.channelType === "instagram";
 
-const headerGradient = isIg
-  ? "bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400"
-  : "bg-gradient-to-r from-green-500 to-green-600";
+  const headerGradient = isIg
+    ? "bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400"
+    : "bg-gradient-to-r from-green-500 to-green-600";
 
 
-const messageBorder = isIg ? "border-pink-500" : "border-green-500";
-const bottomAccent = isIg
-  ? "from-pink-400 via-rose-500 to-yellow-500"
-  : "from-green-400 via-blue-500 to-purple-600";
+  const messageBorder = isIg ? "border-pink-500" : "border-green-500";
+  const bottomAccent = isIg
+    ? "from-pink-400 via-rose-500 to-yellow-500"
+    : "from-green-400 via-blue-500 to-purple-600";
 
 
   return (
@@ -199,7 +206,7 @@ const bottomAccent = isIg
               </div>
               <div>
                 <h3 className="text-white font-bold text-lg">
-                 {isIg? "New Instagram Message" : "New WhatsApp Message"}
+                  {isIg ? "New Instagram Message" : "New WhatsApp Message"}
                 </h3>
                 <p className="text-green-100 text-sm">
                   Incoming customer inquiry

@@ -30,12 +30,13 @@ const ConversationTitle = ({
       <div className="flex justify-between w-[100%]">
         <div className="flex">
           <div className="bg-[#adadb6] text-[#313349] font-bold 5xl:text-[18px] 4xl:text-[15px] text-[14px] 5xl:w-[32px] 4xl:w-[30px] 5xl:h-[32px] 4xl:h-[30px] h-[28px] w-[28px] rounded-[50%] flex justify-center items-center m-2 capitalize">
-            {conversationData?.name?.charAt(0) ||
-              singleChatLeadDetails?.first_name?.charAt(0)}
+            {singleChatLeadDetails?.first_name?.charAt(0)}
+            {/* {conversationData?.name?.charAt(0) || singleChatLeadDetails?.first_name?.charAt(0)} */}
           </div>
           <div className="p-1 flex items-center">
             <div className="font-bold 5xl:text-[16px] 4xl:text-[14px] text-[12px] capitalize">
-              {conversationData?.name || singleChatLeadDetails?.first_name}
+              {singleChatLeadDetails?.first_name}
+              {/* {conversationData?.name || singleChatLeadDetails?.first_name} */}
             </div>
             <div className="5xl:text-[13px] 4xl:text-[11px] text-[9px] text-[#646567]">
               {/* Session time: {"1:00"} */}

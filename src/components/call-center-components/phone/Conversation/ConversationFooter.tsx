@@ -155,12 +155,15 @@ const ConversationFooter = ({
   const onFileSelected = (e: any) => {
     if (e?.target?.files) {
       const allFiles = e?.target?.files;
+      console.log("allfiles", allFiles);
+      
       let images = [];
       let documnets = [];
       for (let index = 0; index < allFiles.length; index++) {
         if (
           allFiles[index].type === "image/png" ||
           allFiles[index].type === "image/jpg" ||
+          allFiles[index].type === "image/webp" ||
           allFiles[index].type === "image/jpeg"
         ) {
           images.push(allFiles[index]);
@@ -181,6 +184,7 @@ const ConversationFooter = ({
       });
     }
   };
+      // console.log("currentMessagecurrentMessagecurrentMessage",currentMessage,URL.createObjectURL(currentMessage?.image_url&&currentMessage?.image_url[0]));
 
   const onPhotoInput = () => {
     setCurrentMessage({ ...currentMessage, document_url: [] });
@@ -234,6 +238,8 @@ const ConversationFooter = ({
               );
             })}
             {currentMessage?.image_url?.map((file: any, index: number) => {
+              console.log("filefileeeee",getImagePreview(file));
+              
               if (index < maxFilePreview) {
                 return (
                   <div

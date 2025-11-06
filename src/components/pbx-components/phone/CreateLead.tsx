@@ -145,6 +145,7 @@ const CreateLead = (props: CreateLeadProps) => {
   const onGetLeadInfo = async (lead_uuid: string) => {
     try {
       if (activeConversation?.user_uuid) {
+        console.log("et single chat lead detailssss")
         await dispatch(getSingleChatLead(lead_uuid)).unwrap();
       } else {
         await dispatch(getSingleLead(lead_uuid)).unwrap();

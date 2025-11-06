@@ -438,7 +438,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         {/* WhatsApp Service Popup - Controlled by Redux */}
         <WhatsAppServiceStandalone onAccept={onAccept} onDecline={onDecline} />
         {/* Omnichannel Service Popup - Controlled by Redux */}
-        <OmniChannelServiceStandalone />
+        <OmniChannelServiceStandalone onAccept={onAccept} onDecline={onDecline} />
       </div>
     </>
   );

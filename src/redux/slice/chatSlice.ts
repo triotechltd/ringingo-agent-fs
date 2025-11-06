@@ -38,6 +38,7 @@ interface OmnichannelPopupMessage {
   messageId: string;
   timestamp: string;
   type: string;
+  channelType: string
 }
 
 interface ChatState {
@@ -131,9 +132,9 @@ export const aceeptChat = createAsyncThunk("aceept", async (payload: any) => {
   return await acceptChatPost(payload);
 });
 
-export const aceeptOmniChat = createAsyncThunk("aceeptOmni", async (payload: any) => {
-  return await acceptOmniChatPost(payload);
-});
+// export const aceeptOmniChat = createAsyncThunk("aceeptOmni", async (payload: any) => {
+//   return await acceptOmniChatPost(payload);
+// });
 
 export const endChat = createAsyncThunk("end", async (payload: any) => {
   return await endChatPost(payload);
@@ -331,18 +332,18 @@ const chatSlice = createSlice({
       }
     },
    // Omnichannel Popup Actions
-    setOmniChannelPopupMessage: (state, action: PayloadAction<WhatsAppPopupMessage>) => {
+    setOmniChannelPopupMessage: (state, action: PayloadAction<OmnichannelPopupMessage>) => {
       getChatState(state).omnichannelPopupMessage = action.payload;
       getChatState(state).showOmnichannelPopup = true;
     },
     hideOmniChannelPopup: (state) => {
-      getChatState(state).showWhatsAppPopup = false;
+      getChatState(state).showOmnichannelPopup = false;
       getChatState(state).omnichannelPopupMessage = null;
     },
-    onReceiveOmniChannelMessage: (state, action: PayloadAction<WhatsAppPopupMessage>) => {
+    onReceiveOmniChannelMessage: (state, action: PayloadAction<OmnichannelPopupMessage>) => {
       // Set the message and show popup when messageId is provided
       if (action.payload.messageId) {
-        debugger
+        // debugger
         getChatState(state).omnichannelPopupMessage = action.payload;
         getChatState(state).showOmnichannelPopup = true;
       }
@@ -353,6 +354,7 @@ const chatSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(getActiveUnreadChat.fulfilled, (state, action: any) => {
       const chatList = action?.payload?.data;
+      console.log("chatListchatList",chatList);
       getChatState(state).campaign_uuid =
         action?.meta?.arg?.[
         state.modeType === "pbx" ? "user_uuid" : "campaign_uuid"
