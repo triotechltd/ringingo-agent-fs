@@ -343,7 +343,6 @@ const chatSlice = createSlice({
     onReceiveOmniChannelMessage: (state, action: PayloadAction<OmnichannelPopupMessage>) => {
       // Set the message and show popup when messageId is provided
       if (action.payload.messageId) {
-        // debugger
         getChatState(state).omnichannelPopupMessage = action.payload;
         getChatState(state).showOmnichannelPopup = true;
       }
