@@ -7,7 +7,8 @@ import {
   onRemoveUnReadChat,
   onReceiveWhatsAppMessage,
   hideWhatsAppPopup,
-  onReceiveOmniChannelMessage
+  onReceiveOmniChannelMessage,
+  hideOmniChannelPopup
 } from "@/redux/slice/chatSlice";
 
 interface ISocketProvider {
@@ -76,7 +77,10 @@ export const SocketProvider = (props: ISocketProvider) => {
 
     socketConnection.on("ui:closePopup", (data) => {
       console.log("Popup:", data);
-      if (data?.reason === "accepted") {
+      if (data?.reason === "accepted" && data?.channelType === "instagram") {
+        dispatch(hideOmniChannelPopup());
+      }
+      else {
         dispatch(hideWhatsAppPopup());
       }
       // Trigger WhatsApp popup if messageId is provided

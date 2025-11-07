@@ -39,6 +39,7 @@ interface OmnichannelPopupMessage {
   timestamp: string;
   type: string;
   channelType: string
+  channelIdentifiers: any
 }
 
 interface ChatState {
@@ -360,7 +361,7 @@ const chatSlice = createSlice({
         ];
       getChatState(state).activeChatList =
         chatList.active?.map((message: any) => {
-          message.latest_message.chat_user_id = message.from_number;
+          // message.latest_message.chat_user_id = message.from_number;
           message.latest_message.unread_message_count =
             message.unread_message_count;
           return message.latest_message;
@@ -370,7 +371,7 @@ const chatSlice = createSlice({
       }
       getChatState(state).unReadChatList =
         chatList.unread?.map((message: any) => {
-          message.latest_message.chat_user_id = message.from_number;
+          // message.latest_message.chat_user_id = message.from_number;
           message.latest_message.unread_message_count =
             message.unread_message_count;
           return message.latest_message;

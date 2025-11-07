@@ -30,6 +30,7 @@ interface WhatsAppMessage {
   timestamp: string;
   type: string;
   channelType: string
+  channelIdentifiers: object
 }
 interface Message {
   from_number: string;
@@ -39,6 +40,7 @@ interface Message {
   timestamp: string;
   type: string;
   channelType: string
+  channelIdentifiers: any
 }
 
 interface OmniChannelServiceStandaloneProps {
@@ -82,10 +84,13 @@ const OmniChannelServiceStandalone = (props: OmniChannelServiceStandaloneProps) 
     timestamp: Math.floor(Date.now() / 1000).toString(),
     phone_number_id: "phone_123",
     type: "text",
-    channelType: ""
+    channelType: "",
+    channelIdentifiers:{}
   };
 
-  const displayMessage =  whatsAppMessage ||  mockMessage;
+  const displayMessage = whatsAppMessage || mockMessage;
+  console.log("dislpalyy mesage from instaaa", displayMessage);
+
   const visible = showPopup;
 
   const handleAccept = async () => {
@@ -95,18 +100,20 @@ const OmniChannelServiceStandalone = (props: OmniChannelServiceStandaloneProps) 
 
     // Create the initial message object for the messages array
     const initialMessage = {
-      message_id: displayMessage.messageId,
+      message_id: displayMessage.messageId || "",
       text_content: displayMessage.messageBody,
       timestamp: displayMessage.timestamp,
       message_type: "1", // Incoming message
-      from_number: displayMessage.from_number,
-      phone_number_id: displayMessage.phone_number_id,
+      from_number: displayMessage.from_number || "",
+      phone_number_id: displayMessage.phone_number_id || "",
       unread: "0", // Mark as read since we're accepting it
       notification_type: undefined,
     };
 
     await dispatch(
       setActiveConversation({
+        channelType: displayMessage?.channelType,
+        senderName: "Test",
         from_number: displayMessage.from_number,
         phone_number_id: displayMessage.phone_number_id,
         tenant_uuid: user?.agent_detail?.tenant_uuid,
@@ -125,14 +132,11 @@ const OmniChannelServiceStandalone = (props: OmniChannelServiceStandaloneProps) 
 
     // Uncomment these when ready to use socket connection and chat acceptance
     socketConnection.emit("in:accept", {
-      messageId: displayMessage.messageId,
+      // messageId: displayMessage.messageId,
       tenant_uuid: user?.agent_detail?.tenant_uuid,
       agent_uuid: user?.agent_detail?.uuid,
       browserToken: user?.agent_detail?.browserToken,
-      channel_identifiers: {
-        from_number: displayMessage.from_number,
-        phone_number_id: displayMessage.phone_number_id,
-      },
+      channel_identifiers: displayMessage?.channelIdentifiers,
       // from_number: displayMessage.from_number,
       // phone_number_id: displayMessage.phone_number_id,
       user_uuid: user?.agent_detail?.uuid,
