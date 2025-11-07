@@ -131,14 +131,26 @@ const OmniChannelServiceStandalone = (props: OmniChannelServiceStandaloneProps) 
     // dispatch(hideWhatsAppPopup());
 
     // Uncomment these when ready to use socket connection and chat acceptance
-    socketConnection.emit("in:accept", {
-      // messageId: displayMessage.messageId,
+    // socketConnection.emit("in:accept", {
+    //   // messageId: displayMessage.messageId,
+    //   tenant_uuid: user?.agent_detail?.tenant_uuid,
+    //   agent_uuid: user?.agent_detail?.uuid,
+    //   browserToken: user?.agent_detail?.browserToken,
+    //   channel_identifiers: displayMessage?.channelIdentifiers,
+    //   // from_number: displayMessage.from_number,
+    //   // phone_number_id: displayMessage.phone_number_id,
+    //   user_uuid: user?.agent_detail?.uuid,
+    //   channel_type: displayMessage?.channelType
+    // });
+    
+        socketConnection.emit("om:accept", {
+      messageId: displayMessage?.messageId || "",
       tenant_uuid: user?.agent_detail?.tenant_uuid,
       agent_uuid: user?.agent_detail?.uuid,
       browserToken: user?.agent_detail?.browserToken,
       channel_identifiers: displayMessage?.channelIdentifiers,
-      // from_number: displayMessage.from_number,
-      // phone_number_id: displayMessage.phone_number_id,
+      // from_number: displayMessage?.from_number || "",
+      // phone_number_id: displayMessage?.phone_number_id || "",
       user_uuid: user?.agent_detail?.uuid,
       channel_type: displayMessage?.channelType
     });
