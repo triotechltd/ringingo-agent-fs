@@ -77,12 +77,13 @@ export const SocketProvider = (props: ISocketProvider) => {
 
     socketConnection.on("ui:closePopup", (data) => {
       console.log("Popup:", data);
-      if (data?.reason === "accepted" && data?.channelType === "instagram") {
-        dispatch(hideOmniChannelPopup());
-      }
-      else {
-        dispatch(hideWhatsAppPopup());
-      }
+      // debugger
+      dispatch(hideOmniChannelPopup());
+      // if (data?.reason === "accepted" && data?.channelType === "instagram") {
+      // }
+      // else {
+      //   dispatch(hideWhatsAppPopup());
+      // }
       // Trigger WhatsApp popup if messageId is provided
     });
     // Listen for 'browser_token-message' event
