@@ -15,6 +15,7 @@ import {
   getWhatsAppMessagesList,
   onRecieveUnReadChat,
   onStartConversation,
+  senInstaMessage,
   senMessage,
   setActiveConversation,
   useActiveConversation,
@@ -236,7 +237,10 @@ const Conversation = ({}: ConversationProps) => {
   // }, []);
 
   const messageSendApi = async (formData: any, messages: any, payload: any) => {
-    let messageResponse: any = await dispatch(senMessage(formData)).unwrap();
+    console.log("message send apii",messages);
+    console.log("message send apii payloadd",payload);
+    // let messageResponse: any = await dispatch(senMessage(formData)).unwrap();
+    let messageResponse: any = await dispatch(senInstaMessage(formData)).unwrap();
     if (messageResponse) {
       messages[messages?.length - 1]["message_id"] =
         messageResponse.message["message_id"];
@@ -373,6 +377,7 @@ const Conversation = ({}: ConversationProps) => {
         image_url: data?.image_url,
         document_url: data?.document_url,
         temp_uuid: new Date().getTime(),
+        channelType: conversationData?.channelType
       };
       const formData = new FormData();
       formData.append("to", payload.to);
