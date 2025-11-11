@@ -123,10 +123,10 @@ export const CALLWAITING_COUNT = "/agent-call-center/getcallwaitingcount/count";
 // CHAT
 export const CALL_WAITING_COUNT = "/agent-call-center/getcallwaitingcount/count";
 export const WHATS_APP_MESSAGE_LIST = "/WhatsappMessage/all_whatsappmessage";
-export const ACTIVE_UNREAD_CHAT_LIST = "/WhatsappMessage/read_unreadsection";
+export const ACTIVE_UNREAD_CHAT_LIST = "/omnichannelsync/read_unreadsection";
 export const ACCEPT_CHAT = "/Whatsappsync";
 export const ACCEPT_OMNI_CHAT ="omnichannelsync/instagram"
-export const SEND_MESSAGE = "/WhatsappMessage";
+export const SEND_MESSAGE = "/OmnichannelMessage/whatsapp/send";
 export const END_CHAT = "/agent-call-center/end-chat";
 export const TRANSFER_CHAT = "/agent-call-center/transfer-chat";
 export const QUEUE_LIST = "/WhatsappMessage/select_queue";

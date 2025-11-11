@@ -27,6 +27,7 @@ interface WhatsAppMessage {
   messageId: string;
   timestamp: string;
   type: string;
+  imageUrls:any
 }
 
 interface WhatsAppServiceStandaloneProps {
@@ -62,6 +63,7 @@ const WhatsAppServiceStandalone = (props: WhatsAppServiceStandaloneProps) => {
     timestamp: Math.floor(Date.now() / 1000).toString(),
     phone_number_id: "phone_123",
     type: "text",
+    imageUrls:""
   };
 
   const displayMessage = whatsAppMessage || mockMessage;

@@ -13,6 +13,7 @@ import {
   useOmnichannelPopupMessage,
   useShowOmnichannelPopup,
   hideOmniChannelPopup,
+  getActiveUnreadChat,
 } from "@/redux/slice/chatSlice";
 import { io } from "socket.io-client";
 import { useAuth } from "@/contexts/hooks/useAuth";
@@ -20,6 +21,7 @@ import {
   clearSingleChatLeadDetails,
   clearSingleLeadDetails,
 } from "@/redux/slice/callCenter/callCenterPhoneSlice";
+import { useSelectedCampaign } from "@/redux/slice/commonSlice";
 
 // TYPES
 interface WhatsAppMessage {
@@ -30,7 +32,9 @@ interface WhatsAppMessage {
   timestamp: string;
   type: string;
   channelType: string
-  channelIdentifiers: object
+  channelIdentifiers: object;
+  image_url:any;
+  document_url:any
 }
 interface Message {
   from_number: string;
@@ -64,6 +68,7 @@ const OmniChannelServiceStandalone = (props: OmniChannelServiceStandaloneProps) 
   const dispatch = useAppDispatch();
   // const whatsAppMessage = useWhatsAppPopupMessage();
   const whatsAppMessage = useOmnichannelPopupMessage();
+  const selectedCampaign = useSelectedCampaign();
 
   // const omnichannelMessage = useomni();
 
@@ -85,7 +90,9 @@ const OmniChannelServiceStandalone = (props: OmniChannelServiceStandaloneProps) 
     phone_number_id: "phone_123",
     type: "text",
     channelType: "",
-    channelIdentifiers:{}
+    channelIdentifiers:{},
+    image_url:[],
+    document_url:[]
   };
 
   const displayMessage = whatsAppMessage || mockMessage;
@@ -97,7 +104,7 @@ const OmniChannelServiceStandalone = (props: OmniChannelServiceStandaloneProps) 
     dispatch(clearSingleChatLeadDetails());
     dispatch(clearSingleLeadDetails());
     onAccept(displayMessage.messageId);
-
+    
     // Create the initial message object for the messages array
     const initialMessage = {
       message_id: displayMessage.messageId || "",
@@ -109,7 +116,7 @@ const OmniChannelServiceStandalone = (props: OmniChannelServiceStandaloneProps) 
       unread: "0", // Mark as read since we're accepting it
       notification_type: undefined,
     };
-
+    
     await dispatch(
       setActiveConversation({
         channelType: displayMessage?.channelType,
@@ -122,11 +129,12 @@ const OmniChannelServiceStandalone = (props: OmniChannelServiceStandaloneProps) 
         user_uuid: user?.agent_detail?.uuid,
         message_type: "1",
         whatsapp_messaging_channel_uuid:
-          user?.agent_detail?.whatsapp_messaging_channel_uuid,
+        user?.agent_detail?.whatsapp_messaging_channel_uuid,
         unread_message_count: 0,
         messages: [initialMessage], // Include the messages array with the initial message
       })
     );
+    dispatch(getActiveUnreadChat({ campaign_uuid: selectedCampaign })).unwrap();
 
     // dispatch(hideWhatsAppPopup());
 
@@ -149,8 +157,8 @@ const OmniChannelServiceStandalone = (props: OmniChannelServiceStandaloneProps) 
       agent_uuid: user?.agent_detail?.uuid,
       browserToken: user?.agent_detail?.browserToken,
       channel_identifiers: displayMessage?.channelIdentifiers,
-      // from_number: displayMessage?.from_number || "",
-      // phone_number_id: displayMessage?.phone_number_id || "",
+      from_number: displayMessage?.from_number || "",
+      phone_number_id: displayMessage?.phone_number_id || "",
       user_uuid: user?.agent_detail?.uuid,
       channel_type: displayMessage?.channelType
     });
@@ -278,6 +286,14 @@ const OmniChannelServiceStandalone = (props: OmniChannelServiceStandaloneProps) 
             <p className="text-gray-700 leading-relaxed">
               "{truncateMessage(displayMessage?.messageBody)}"
             </p>
+            {Array.isArray(displayMessage?.image_url) && displayMessage?.image_url.length > 0 &&
+            <img src={displayMessage?.image_url[0]} alt="img" height="40px" width="60px"/>
+            }
+            {Array.isArray(displayMessage?.document_url) && displayMessage?.document_url.length > 0 &&
+            <img src={displayMessage?.document_url[0]} alt="docs" height="40px" width="60px"/>
+            }
+
+            
           </div>
 
           {/* Action Buttons */}

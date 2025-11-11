@@ -39,7 +39,9 @@ interface OmnichannelPopupMessage {
   timestamp: string;
   type: string;
   channelType: string
-  channelIdentifiers: any
+  channelIdentifiers: any;
+  image_url:any
+  document_url:any
 }
 
 interface ChatState {
