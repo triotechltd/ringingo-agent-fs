@@ -203,7 +203,7 @@ const LoginForm = () => {
             <h2 className="text-[26px] font-bold text-gray-800 leading-snug mt-8">
               Find Latest Updates Here!
             </h2>
-            <p className="text-sm text-gray-600  leading-relaxed">
+            <p className="text-sm text-gray-600  leading-relaxed mt-4">
               Now check added displays on the status page along with other technical
               upgrades. Stay updated with our latest features and performance
               improvements.
@@ -221,9 +221,22 @@ const LoginForm = () => {
                 className="w-[120px] cursor-pointer"
               />
             </div> */}
+              <div className="mt-6 border-t border-gray-300 pt-4">
+    <h3 className="text-[16px] font-semibold text-gray-800 mb-1">
+      📢 What’s New:
+    </h3>
+    <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
+      <li>Enhanced dashboard performance</li>
+      <li>Improved security & reliability</li>
+      <li>New responsive layout for better experience</li>
+        <li>Faster load times with optimized codebase</li>
+              <li>Fresh modern UI with smoother navigation</li>
+
+    </ul>
+  </div>
           </div>
         </div>
-        
+        <div className="border-l border-gray-400 "></div>
 
         {/* ✅ RIGHT SECTION (your original login form untouched) */}
         <div className="w-1/2 p-6 flex flex-col justify-center bg-[#f5f6fa]">
