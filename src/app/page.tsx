@@ -79,7 +79,7 @@ const Login = () => {
         </Helmet>
       )}
       <Layouts variant={LAYOUT.minimal}>
-        <div className="flex justify-center items-center min-h-screen bg-black">
+        <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-[#43cea2] via-[#185a9d] to-[#6a11cb]">
           <LoginForm />
         </div>
       </Layouts>

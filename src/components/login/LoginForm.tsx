@@ -97,7 +97,12 @@ const LoginForm = () => {
     }
   };
 
-  const sendLogout = (browserToken: any, user_uuid: any, newToken: any, user: any) => {
+  const sendLogout = (
+    browserToken: any,
+    user_uuid: any,
+    newToken: any,
+    user: any
+  ) => {
     const socket = io(baseUrl, {
       query: { token: browserToken, uuid: user_uuid, new_token: newToken },
     });
@@ -160,12 +165,19 @@ const LoginForm = () => {
     }
   };
 
-  const { values, touched, errors, handleBlur, handleChange, handleSubmit, setFieldValue } =
-    useFormik({
-      initialValues,
-      validationSchema,
-      onSubmit,
-    });
+  const {
+    values,
+    touched,
+    errors,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit,
+  });
 
   useEffect(() => {
     const savedUsername = Cookies.get("username") || "";
@@ -178,108 +190,146 @@ const LoginForm = () => {
   }, [setFieldValue]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-teal-50">
-      <div className="w-[400px] h-[500px] p-5 border-2 rounded-[20px] shadow-md bg-white">
-        {/* Logo */}
-        <div className="flex justify-center mb-4">
-          <Icon name="MenuLogoExpandedImage" height={50} width={220} alt="Logo" />
-        </div>
+    <div className="min-h-screen flex items-center justify-center ">
+      <div className="flex rounded-2xl shadow-lg overflow-hidden max-w-3xl w-full bg-white">
+        {/* ✅ LEFT SECTION (Added same as first code) */}
+        <div className="w-1/2 bg-[#f5f6fa] p-6 flex flex-col  rounded-l-2xl relative ">
+          {/* Logo moved to top */}
+          <div className="items-center mt-3" >
+            <Icon name="MenuLogoExpandedImage" width={180} height={50} alt="Logo" />
+          </div>
 
-        <h2 className="text-[24px] font-medium mb-6 text-center text-[#322996]">
-          Welcome Back
-        </h2>
+          <div >
+            <h2 className="text-[26px] font-bold text-gray-800 leading-snug mt-8">
+              Find Latest Updates Here!
+            </h2>
+            <p className="text-sm text-gray-600  leading-relaxed">
+              Now check added displays on the status page along with other technical
+              upgrades. Stay updated with our latest features and performance
+              improvements.
+            </p>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <Input
-            isLogin
-            icon="userLogin"
-            name="username"
-            label={
-              <>
-                User Name <span className="text-red-500">*</span>
-              </>
-            }
-            value={values.username}
-            touched={touched}
-            errors={errors}
-            onChange={handleChange}
-            onBlur={(e) => {
-              handleBlur(e);
-              fetchAllowedCampaigns(e.target.value);
-            }}
-            isInfo={false}
-            noSpace
-          />
-
-          <Password
-            className="bg-white text-sm"
-            name="password"
-            label={
-              <>
-                Password <span className="text-red-500">*</span>
-              </>
-            }
-            value={values.password}
-            touched={touched}
-            errors={errors}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            isInfo={false}
-          />
-
-          <div className="flex justify-between items-center">
-            <div className="flex items-center pb-0">
-              <CheckBox
-                label="Remember Me"
-                checked={values.rememberMe}
-                onChange={(checked: boolean) => setFieldValue("rememberMe", checked)}
+            {/* <div className="mt-8 flex gap-4">
+              <img
+                src="/assets/images/google-play.png"
+                alt="Google Play"
+                className="w-[120px] cursor-pointer"
               />
+              <img
+                src="/assets/images/app-store.png"
+                alt="App Store"
+                className="w-[120px] cursor-pointer"
+              />
+            </div> */}
+          </div>
+        </div>
+        
+
+        {/* ✅ RIGHT SECTION (your original login form untouched) */}
+        <div className="w-1/2 p-6 flex flex-col justify-center bg-[#f5f6fa]">
+          {/* <div className="flex justify-center mb-4">
+            <Icon name="MenuLogoExpandedImage" height={50} width={220} alt="Logo" />
+          </div> */}
+
+          <h2 className="text-[28px] font-extrabold mb-6 text-center text-[#111827]">
+            Login
+          </h2>
+
+          <form onSubmit={handleSubmit} className="space-y-5 ">
+            <Input
+              isLogin
+              icon="userLogin"
+              name="username"
+              label={
+                <>
+                  User Name <span className="text-red-500">*</span>
+                </>
+              }
+              value={values.username}
+              touched={touched}
+              errors={errors}
+              onChange={handleChange}
+              onBlur={(e) => {
+                handleBlur(e);
+                fetchAllowedCampaigns(e.target.value);
+              }}
+              isInfo={false}
+              noSpace
+            />
+
+            <Password
+              className="bg-white text-sm"
+              name="password"
+              label={
+                <>
+                  Password <span className="text-red-500">*</span>
+                </>
+              }
+              value={values.password}
+              touched={touched}
+              errors={errors}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              isInfo={false}
+            />
+
+            <div className="flex justify-between items-center">
+              <div className="flex items-center pb-0">
+                <CheckBox
+                  label="Remember Me"
+                  checked={values.rememberMe}
+                  onChange={(checked: boolean) =>
+                    setFieldValue("rememberMe", checked)
+                  }
+                />
+              </div>
+              <Link
+                href="/forgot-password"
+                className="text-[#322996] text-xs font-light hover:underline"
+              >
+                Forgot password ?
+              </Link>
             </div>
-            <Link
-              href="/forgot-password"
-              className="text-[#322996] text-xs font-light hover:underline"
-            >
-              Forgot password ?
-            </Link>
-          </div>
 
-          <Select
-            label={
-              <>
-                Select Campaign <span className="text-red-500">*</span>
-              </>
-            }
-            name="campaign_uuid"
-            placeholder="Select Campaign"
-            options={campaignOptions}
-            value={values.campaign_uuid}
-            touched={touched}
-            errors={errors}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-              setFieldValue("campaign_uuid", e.target.value)
-            }
-          />
+            <Select
+              label={
+                <>
+                  Select Campaign <span className="text-red-500">*</span>
+                </>
+              }
+              name="campaign_uuid"
+              placeholder="Select Campaign"
+              options={campaignOptions}
+              value={values.campaign_uuid}
+              touched={touched}
+              errors={errors}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                setFieldValue("campaign_uuid", e.target.value)
+              }
+            />
 
-          <Button
-            text="LOGIN"
-            className="w-full rounded-md bg-button-background py-2.5 text-sm font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            type="submit"
-            style="save"
-            icon="LoginIcon"
-            isLoading={isLoading}
-            disabled={isLoading}
-          />
+            <Button
+              text="LOGIN"
+              className="w-full rounded-md bg-button-background py-2.5 text-sm font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              type="submit"
+              style="save"
+              icon="LoginIcon"
+              isLoading={isLoading}
+              disabled={isLoading}
+            />
 
-          <div className="text-center mt-4">
-            <p className="text-[10px] text-gray-500">
-              By clicking to continue, you agree to our{" "}
-              <span className="font-bold text-gray-700">Terms & Condition</span>
-            </p>
-            <p className="text-xs text-gray-600 text-center mt-4">
-              Powered by <span className="text-[#322996] font-medium">Ringingo</span>
-            </p>
-          </div>
-        </form>
+            <div className="text-center mt-4">
+              <p className="text-[10px] text-gray-500">
+                By clicking to continue, you agree to our{" "}
+                <span className="font-bold text-gray-700">Terms & Condition</span>
+              </p>
+              <p className="text-xs text-gray-600 text-center mt-4">
+                Powered by{" "}
+                <span className="text-[#322996] font-medium">Ringingo</span>
+              </p>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
