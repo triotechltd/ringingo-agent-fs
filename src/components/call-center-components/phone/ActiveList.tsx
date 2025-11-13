@@ -85,11 +85,203 @@ const ActiveList = ({
   const isCallHangUp = useIsCallHangUp();
   const campaignType = useCampaignType();
   const callQueueList = useActiveCallQueueList();
-  const activeChatList = useActiveChats();
+  const activeChatListData = useActiveChats();
   const chatModeType = useChatMode();
   const isActiveChat = useIsActiveChat();
 
   const [data, setData] = useState<any>([]);
+
+  /**
+ * Robust merge function that normalizes timestamps and picks true last message.
+ * Accepts an array of message objects with mixed timestamp fields/formats.
+ */
+  function mergeChatMessagesWithTimestampFix(messages: any) {
+    const chats = {} as any;
+
+    function pickTimestampField(msg: any) {
+      // Common fields in your data
+      const candidates = [
+        msg.timestamp,
+        msg.createdAt,
+        msg.updatedAt,
+        msg.time,
+        msg.ts,
+        msg.datetime
+      ];
+      for (const c of candidates) {
+        if (c !== undefined && c !== null && String(c).trim() !== "") return String(c).trim();
+      }
+      return null;
+    }
+
+    function parseToEpoch(value: any) {
+      if (!value) return null;
+
+      // If it's a number string or number (unix seconds/ms)
+      if (/^\d+$/.test(value)) {
+        const n = Number(value);
+        // guess seconds vs ms: if seconds (10 digits) -> *1000
+        if (n < 1e12) return n * 1000;
+        return n;
+      }
+
+      // Try Date.parse (handles ISO and RFC formats)
+      const d = new Date(value);
+      if (!isNaN(d.getTime())) return d.getTime();
+
+      // Try MM-DD-YYYY or M-D-YYYY with optional comma and time "MM-DD-YYYY, HH:MM:SS"
+      // Example: "10-30-2025, 16:04:39" or "10-30-2025 16:04:39"
+      const mmddRegex = /^\s*(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})(?:\s*,?\s*|\s+)(\d{1,2}):(\d{2})(?::(\d{2}))?\s*$/;
+      const m = value.match(mmddRegex);
+      if (m) {
+        const month = Number(m[1]);
+        const day = Number(m[2]);
+        let year = Number(m[3]);
+        if (year < 100) year += 2000;
+        const hour = Number(m[4]);
+        const min = Number(m[5]);
+        const sec = m[6] ? Number(m[6]) : 0;
+        const dd = new Date(Date.UTC(year, month - 1, day, hour, min, sec)); // parse as UTC to be consistent
+        if (!isNaN(dd.getTime())) return dd.getTime();
+      }
+
+      // Try "Thu Oct 30 2025 16:03:17 GMT+0000 (Coordinated Universal Time)" style -- Date already covered, but fallback: try removing parenthetical parts
+      const stripped = value.replace(/\s*\(.*\)$/, "");
+      const d2 = new Date(stripped);
+      if (!isNaN(d2.getTime())) return d2.getTime();
+
+      // If all fails, return null
+      return null;
+    }
+
+    for (const msg of messages) {
+      const from = (msg.from_number || msg.from || "").toString().trim();
+      const to = (msg.to || msg.to_number || "").toString().trim();
+      if (!from || !to) continue;
+
+      // consistent key so (A|B) == (B|A)
+      const key = from < to ? `${from}|${to}` : `${to}|${from}`;
+
+      if (!chats[key]) {
+        chats[key] = {
+          chat_id: key,
+          participants: [from, to],
+          messages: []
+        };
+      }
+
+      // find best timestamp text and epoch
+      const tsText = pickTimestampField(msg);
+      const epoch = parseToEpoch(tsText) ?? (() => {
+        // as last resort try updatedAt/createdAt again with Date parse
+        const fallback = new Date();
+        return fallback.getTime();
+      })();
+
+      chats[key].messages.push({
+        from,
+        to,
+        text: msg.text_content ?? msg.text ?? msg.message ?? null,
+        rawTimestamp: tsText,
+        epoch, // ms since epoch, used for sorting
+        isoTimestamp: (epoch ? new Date(epoch).toISOString() : null),
+        original: msg
+      });
+    }
+
+    // Sort and attach last_message properly
+    const result = Object.values(chats).map((chat: any) => {
+      chat.messages.sort((a: any, b: any) => a.epoch - b.epoch); // oldest -> newest
+      const last = chat.messages[chat.messages.length - 1] ?? null;
+      chat.last_message = last ? {
+        from: last.from,
+        to: last.to,
+        text: last.text,
+        epoch: last.epoch,
+        isoTimestamp: last.isoTimestamp,
+        rawTimestamp: last.rawTimestamp
+      } : null;
+      return chat;
+    });
+
+    return result;
+  }
+
+
+
+  function processMessages(data: any[]) {
+    console.log("whatsappp isnideee processs emssageage")
+    const uniqueMap = new Map();
+
+    data.forEach((item) => {
+      const existing = uniqueMap.get(item.user_uuid);
+      console.log("existingexisting", existing);
+      if (!existing) {
+        console.log("not existing", existing, item);
+        uniqueMap.set(item.user_uuid, item);
+      } else {
+        console.log("existing", item);
+        // Prefer the record that has a 'name' field (if existing doesn't have it)
+        // if (item.name ) {
+        uniqueMap.set(item.user_uuid, item);
+        // }
+      }
+    });
+    console.log("whatsappp isnideee processs emssageage uniquemapppp", uniqueMap)
+    // Convert map back to array and keep only those with 'name'
+    const filteredMessages = Array.from(data).filter(
+      // const filteredMessages = Array.from(uniqueMap.values()).filter(
+      (item) => item.name
+    );
+
+    console.log("whatsappp filtereedddd message ", filteredMessages)
+    return data;
+    // return filteredMessages;
+  }
+
+  //   function processMessages(data: any[]) {
+  //     const userMessagesMap = new Map<string, any[]>();
+
+  //     data.forEach((item) => {
+  //       if (!userMessagesMap.has(item.user_uuid)) {
+  //         userMessagesMap.set(item.user_uuid, []);
+  //       }
+  //       userMessagesMap.get(item.user_uuid)!.push(item);
+  //     });
+
+  //     // Optionally filter messages with 'name'
+  //     const grouped = Array.from(userMessagesMap.entries()).map(([user_uuid, messages]) => ({
+  //       user_uuid,
+  //       name: messages.find((m) => m.name)?.name || null,
+  //       messages, // all messages from that user
+  //     }));
+  // console.log("grpupeedd",grouped);
+
+  //     return grouped.filter((item) => item.name);
+  //   }
+
+  console.log("whatsappp activeChatListData mmerege", (activeChatListData))
+  // Filter messages where from_number === to
+  const merged = activeChatListData.filter(
+    (msg1: any, _, arr) => arr.some(msg2 => msg1.from_number === msg2.to)
+  );
+
+  console.log("Last messages per phone megrgegrer:", merged);
+  // Group by unique phone number (from_number)
+  const groupedByNumber = merged.reduce((acc: any, msg: any) => {
+    const key = msg.from_number;
+    if (!acc[key] || new Date(msg.createdAt) > new Date(acc[key].createdAt)) {
+      acc[key] = msg; // keep the latest message
+    }
+    return acc;
+  }, {});
+
+  // Convert back to array
+  const lastMessages = Object.values(groupedByNumber);
+
+  console.log("Last messages per phone number:", lastMessages);
+
+  const activeChatList = processMessages(activeChatListData);
 
   useEffect(() => {
     if (Object.keys(singleLeadDetails).length) {
@@ -205,7 +397,7 @@ const ActiveList = ({
       clearInterval(interval);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allLeadsDetails]);
+  }, [allLeadsDetails, activeConversation]);
 
   useEffect(() => {
     let interval = setInterval(() => {
@@ -246,7 +438,7 @@ const ActiveList = ({
   const isLeadActive = (activeItem: any) => {
     return singleLeadDetails &&
       singleLeadDetails.lead_management_uuid ===
-        activeItem?.lead_management_uuid &&
+      activeItem?.lead_management_uuid &&
       !isActiveChat
       ? "bg-[#66A28625]"
       : "";
@@ -259,6 +451,8 @@ const ActiveList = ({
   };
 
   const renderWhatsAppItems = () => {
+    console.log("whatsappp inside renderr whatsapp items")
+    console.log("whatsappp active chat list", activeChatList)
     return (
       <>
         {activeChatList?.map((activeItem: any, index: number) => {
@@ -266,14 +460,13 @@ const ActiveList = ({
           return (
             <div
               key={index}
-              className={`grid grid-cols-6 items-center pr-2 gap-2 py-1.5 border-b border-dark-800 cursor-pointer h-[7.2vh] ${
-                activeConversation?._id === activeItem?._id && isActiveChat
-                  ? "bg-[#66A28625]"
-                  : ""
-              }`}
+              className={`grid grid-cols-6 items-center pr-2 gap-2 py-1.5 border-b border-dark-800 cursor-pointer h-[7.2vh] ${activeConversation?._id === activeItem?._id && isActiveChat
+                ? "bg-[#66A28625]"
+                : ""
+                }`}
               onClick={() => {
                 dispatch(setActiveConversation(activeItem));
-                // onGetSingleChatLeadInfo(activeItem.lead_management_uuid);
+                onGetSingleChatLeadInfo(activeItem.lead_management_uuid);
                 setActiveId("2");
               }}
             >
@@ -303,14 +496,14 @@ const ActiveList = ({
                 <span className="5xl:text-[13px] 4xl:text-[12px] text-[10px] text-txt-primary">
                   {format(
                     getValidTime(
-                      getLatestActiveDetails(activeItem)?.timestamp ??
-                        getLatestActiveDetails(activeItem)?.createdAt
+                      // getLatestActiveDetails(activeItem)?.timestamp ??
+                      getLatestActiveDetails(activeItem)?.createdAt
                     ),
                     "dd/MM/yyyy hh:mm a"
                   )}
                 </span>
                 {activeConversation?.user_uuid !== activeItem.user_uuid &&
-                activeItem?.unread_message_count ? (
+                  activeItem?.unread_message_count ? (
                   <span className="5xl:text-[12px] 4xl:text-[10px] text-[8px] 5xl:w-[16px] 4xl:w-[14px] 5xl:h-[16px] 4xl:h-[14px] w-[12px] h-[12px] flex bg-[#2C99FE] text-white text-center justify-center rounded-[50%]">
                     {activeItem?.unread_message_count}
                   </span>
@@ -358,7 +551,7 @@ const ActiveList = ({
         {campaignType === "outbound" || campaignType === "blended" ? (
           <div className="rounded-b-lg">
             {selectedCampaign &&
-            (campaignMode === "1" || campaignMode === "3") ? (
+              (campaignMode === "1" || campaignMode === "3") ? (
               data?.length && leadInfo ? (
                 data?.map((val: any, index: number) => {
                   return (
@@ -410,8 +603,8 @@ const ActiveList = ({
                                 Cookies.set(
                                   "LeadDialName",
                                   (val?.first_name || "") +
-                                    " " +
-                                    (val?.last_name || "")
+                                  " " +
+                                  (val?.last_name || "")
                                 );
                               }
                               dispatch(
@@ -521,8 +714,8 @@ const ActiveList = ({
                               Cookies.set(
                                 "LeadDialName",
                                 (val?.first_name || "") +
-                                  " " +
-                                  (val?.last_name || "")
+                                " " +
+                                (val?.last_name || "")
                               );
                             }
                             dispatch(
@@ -608,7 +801,7 @@ const ActiveList = ({
           <></>
         )}
         {chatModeType === "pbx" ||
-        (selectedCampaign && campaignType === "blended")
+          (selectedCampaign && campaignType === "blended")
           ? renderWhatsAppItems()
           : null}
       </div>
@@ -624,7 +817,7 @@ const ActiveList = ({
           </span>
           {((selectedCampaign && campaignType === "blended") ||
             chatModeType === "pbx") &&
-          isWhatsAppEnabled(user) ? (
+            isWhatsAppEnabled(user) ? (
             <>
               <Button
                 text="Start Conversation"

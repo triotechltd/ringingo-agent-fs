@@ -11,6 +11,7 @@ const newCallLog = "/assets/icons/gray/sidebarMyCallLog.svg";
 
 /* NORMAL ICONS */
 const Phone = "/assets/icons/gray/call.svg";
+const Message = "/assets/icons/chat-notification.svg";
 const My_Lead = "/assets/icons/gray/calling.svg";
 const Recording = "/assets/icons/gray/record.svg";
 const CDR_Report = "/assets/icons/gray/report.svg";
@@ -140,5 +141,19 @@ export const CallCenterMenuList: NavItemsTypes[] = [
     title: "Settings",
     url: "/call-center/settings",
     roleId: "settings",
+  },
+  {
+    id: "message",
+    icon: Message,
+    activeIcon: Active_Phone,
+    title: "Message",
+    url: "/call-center/message",
+  },
+   {
+    id: "insta",
+    icon: Message,
+    activeIcon: Active_Phone,
+    title: "Insta",
+    url: "/call-center/insta",
   },
 ];

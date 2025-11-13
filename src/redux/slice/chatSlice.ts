@@ -5,6 +5,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import {
   acceptChatPost,
+  // acceptOmniChatPost,
   activeUnreadChatListPost,
   channelListPost,
   chatHistoryPost,
@@ -29,6 +30,18 @@ interface WhatsAppPopupMessage {
   type: string;
 }
 
+// Omnichannel Popup Message Type
+interface OmnichannelPopupMessage {
+  from_number: string;
+  phone_number_id: string;
+  messageBody: string;
+  messageId: string;
+  timestamp: string;
+  type: string;
+  channelType: string
+  channelIdentifiers: any
+}
+
 interface ChatState {
   whatsAppMessageList: any[];
   activeChatList: any[];
@@ -43,6 +56,8 @@ interface ChatState {
   isActiveChat?: boolean;
   whatsAppPopupMessage?: WhatsAppPopupMessage | null;
   showWhatsAppPopup: boolean;
+  omnichannelPopupMessage:OmnichannelPopupMessage | null,
+  showOmnichannelPopup:boolean
 }
 
 // TYPES
@@ -68,7 +83,10 @@ const initialState: InitialState = {
     chatHistory: [],
     isActiveChat: false,
     whatsAppPopupMessage: null,
-    showWhatsAppPopup: false
+    showWhatsAppPopup: false,
+    omnichannelPopupMessage: null,
+    showOmnichannelPopup: false
+
   },
   call: {
     whatsAppMessageList: [],
@@ -83,7 +101,10 @@ const initialState: InitialState = {
     waitingCount: {},
     isActiveChat: false,
     whatsAppPopupMessage: null,
-    showWhatsAppPopup: false
+    showWhatsAppPopup: false,
+    omnichannelPopupMessage: null,
+    showOmnichannelPopup: false
+
   },
 };
 
@@ -111,6 +132,10 @@ export const getWhatsAppMessagesList = createAsyncThunk(
 export const aceeptChat = createAsyncThunk("aceept", async (payload: any) => {
   return await acceptChatPost(payload);
 });
+
+// export const aceeptOmniChat = createAsyncThunk("aceeptOmni", async (payload: any) => {
+//   return await acceptOmniChatPost(payload);
+// });
 
 export const endChat = createAsyncThunk("end", async (payload: any) => {
   return await endChatPost(payload);
@@ -307,19 +332,36 @@ const chatSlice = createSlice({
         getChatState(state).showWhatsAppPopup = true;
       }
     },
+   // Omnichannel Popup Actions
+    setOmniChannelPopupMessage: (state, action: PayloadAction<OmnichannelPopupMessage>) => {
+      getChatState(state).omnichannelPopupMessage = action.payload;
+      getChatState(state).showOmnichannelPopup = true;
+    },
+    hideOmniChannelPopup: (state) => {
+      getChatState(state).showOmnichannelPopup = false;
+      getChatState(state).omnichannelPopupMessage = null;
+    },
+    onReceiveOmniChannelMessage: (state, action: PayloadAction<OmnichannelPopupMessage>) => {
+      // Set the message and show popup when messageId is provided
+      if (action.payload.messageId) {
+        getChatState(state).omnichannelPopupMessage = action.payload;
+        getChatState(state).showOmnichannelPopup = true;
+      }
+    },
 
     clearChatSlice: () => initialState,
   },
   extraReducers: (builder) => {
     builder.addCase(getActiveUnreadChat.fulfilled, (state, action: any) => {
       const chatList = action?.payload?.data;
+      console.log("chatListchatList",chatList);
       getChatState(state).campaign_uuid =
         action?.meta?.arg?.[
         state.modeType === "pbx" ? "user_uuid" : "campaign_uuid"
         ];
       getChatState(state).activeChatList =
         chatList.active?.map((message: any) => {
-          message.latest_message.chat_user_id = message.from_number;
+          // message.latest_message.chat_user_id = message.from_number;
           message.latest_message.unread_message_count =
             message.unread_message_count;
           return message.latest_message;
@@ -329,7 +371,7 @@ const chatSlice = createSlice({
       }
       getChatState(state).unReadChatList =
         chatList.unread?.map((message: any) => {
-          message.latest_message.chat_user_id = message.from_number;
+          // message.latest_message.chat_user_id = message.from_number;
           message.latest_message.unread_message_count =
             message.unread_message_count;
           return message.latest_message;
@@ -433,7 +475,9 @@ export const {
   setIsActiveChat,
   setWhatsAppPopupMessage,
   hideWhatsAppPopup,
-  onReceiveWhatsAppMessage
+  onReceiveWhatsAppMessage,
+  onReceiveOmniChannelMessage,
+  hideOmniChannelPopup
 } = chatSlice.actions;
 
 export const selectWhatsAppMessages = (state: RootState) =>
@@ -503,6 +547,21 @@ export const useShowWhatsAppPopup = () => {
   const showWhatsAppPopup = useAppSelector(selectShowWhatsAppPopup);
   return useMemo(() => showWhatsAppPopup, [showWhatsAppPopup]);
 };
+// Omn ichannel Popup Selectors
+export const selectOmnichannelPopupMessage = (state: RootState) =>
+  getChatState(state.chat).omnichannelPopupMessage;
+export const useOmnichannelPopupMessage = () => {
+  const omnichannelPopupMessage = useAppSelector(selectOmnichannelPopupMessage);
+  return useMemo(() => omnichannelPopupMessage, [omnichannelPopupMessage]);
+};
+
+export const selectShowOmnichannelPopup = (state: RootState) =>
+  getChatState(state.chat).showOmnichannelPopup;
+export const useShowOmnichannelPopup = () => {
+  const showOmnichannelPopup = useAppSelector(selectShowOmnichannelPopup);
+  return useMemo(() => showOmnichannelPopup, [showOmnichannelPopup]);
+};
+
 
 export const selectChatMode = (state: RootState) => state.chat.modeType;
 export const useChatMode = () => {

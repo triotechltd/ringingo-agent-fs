@@ -11,6 +11,7 @@ import {
   aceeptChat,
   getActiveUnreadChat,
   onRejectUnReadChat,
+  setActiveConversation,
   useChatMode,
   useUnReadChats,
 } from "@/redux/slice/chatSlice";
@@ -58,7 +59,7 @@ const UnreadList = ({
       })
     ).unwrap();
     if (selectedCampaign || sectionName === "pbx") {
-      getActiveUnreadChat({ user_uuid: user.agent_detail.uuid });
+      // getActiveUnreadChat({ user_uuid: user.agent_detail.uuid });
       await dispatch(
         getActiveUnreadChat(
           sectionName === "pbx"
@@ -66,13 +67,54 @@ const UnreadList = ({
             : { campaign_uuid: selectedCampaign }
         )
       ).unwrap();
-      const baseUrl: any = process.env.CHAT_SOCKET_URL;
+      const baseUrl: any = process.env.BASE_URL;
       const socketConnection = io(baseUrl);
-      socketConnection.emit("message_from_client", {
-        accepted_browser: user?.agent_detail?.browserToken,
-        all_browser: unReadItem.browser_token,
-        message_data: unReadItem,
+      // socketConnection.emit("message_from_client", {
+      //   accepted_browser: user?.agent_detail?.browserToken,
+      //   all_browser: unReadItem.browser_token,
+      //   message_data: unReadItem,
+      // });
+      socketConnection.emit("wa:accept", {
+        // accepted_browser: user?.agent_detail?.browserToken,
+        // all_browser: unReadItem.browser_token,
+        // message_data: unReadItem,
+
+        // messageId: unReadItem.messageId,
+        tenant_uuid: unReadItem.tenant_uuid,
+        agent_uuid: user?.agent_detail?.uuid,
+        browserToken: user?.agent_detail?.browserToken,
+        from_number: unReadItem.from_number,
+        phone_number_id: unReadItem.phone_number_id,
+        user_uuid: user?.agent_detail?.uuid,
       });
+
+      // Create the initial message object for the messages array
+      const initialMessage = {
+        message_id: unReadItem.messageId || "",
+        text_content: unReadItem.text_content,
+        timestamp: unReadItem.timestamp,
+        message_type: "1", // Incoming message
+        from_number: unReadItem.from_number,
+        phone_number_id: unReadItem.phone_number_id,
+        unread: "0", // Mark as read since we're accepting it
+        notification_type: undefined,
+      };
+
+      await dispatch(
+        setActiveConversation({
+          from_number: unReadItem.from_number,
+          phone_number_id: unReadItem.phone_number_id,
+          tenant_uuid: user?.agent_detail?.tenant_uuid,
+          text_content: unReadItem.text_content,
+          timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2.9).toISOString(),
+          user_uuid: user?.agent_detail?.uuid,
+          message_type: "1",
+          whatsapp_messaging_channel_uuid:
+            user?.agent_detail?.whatsapp_messaging_channel_uuid,
+          unread_message_count: 0,
+          messages: [initialMessage], // Include the messages array with the initial message
+        })
+      );
     }
   };
 
@@ -111,12 +153,12 @@ const UnreadList = ({
                     "dd/MM/yyyy"
                   )}
                 </span>
-                <span
+                {/* <span
                   className="relative 5xl:w-[19px] 5xl:h-[19px] 4xl:w-[18px] 4xl:h-[18px] w-[16px] h-[16px] m-1 items-center cursor-pointer"
                   onClick={() => onRejectChat(index)}
                 >
                   <Legacy src={denied} alt="denied" layout="fill" />
-                </span>
+                </span> */}
                 <span
                   className="relative 5xl:w-[19px] 5xl:h-[19px] 4xl:w-[18px] 4xl:h-[18px] w-[16px] h-[16px] m-1 items-center cursor-pointer"
                   onClick={() => onAcceptChat(activeItem)}
@@ -144,7 +186,7 @@ const UnreadList = ({
         >
           {unReadChatList?.length ? (
             chatModeType === "pbx" ||
-            (selectedCampaign && campaignType === "blended") ? (
+              (selectedCampaign && campaignType === "blended") ? (
               renderWhatsAppItems()
             ) : null
           ) : (

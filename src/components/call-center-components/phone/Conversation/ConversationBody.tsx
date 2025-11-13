@@ -10,13 +10,14 @@ import { format } from "date-fns";
 import { Loader } from "@/components/ui-components";
 import { useAuth } from "@/contexts/hooks/useAuth";
 import { downloadFile, getValidTime } from "@/components/helperFunctions";
+import { useSingleChatLeadDetails } from "@/redux/slice/callCenter/callCenterPhoneSlice";
 
 const closeCircle = "/assets/icons/gray/close_circle.svg";
 const downloadDocument = "/assets/icons/gray/document_download.svg";
 const deleteIcon = "/assets/icons/gray/trash.svg";
 const replyIcon = "/assets/icons/gray/reply.svg";
 const editIcon = "/assets/icons/gray/edit.svg";
-const pdfIcon = "/assets/images/pdfIcon.png";
+const pdfIcon = "/assets/images/pdfIcon.svg";
 const sentIcon = "/assets/icons/blue/single-tic.svg";
 const deliveredIcon = "/assets/icons/blue/double-tic.svg";
 const readIcon = "/assets/icons/blue/read-tic.svg";
@@ -70,6 +71,7 @@ const ConversationBody = ({
   console.log(conversationData, "chatHistoryList");
   const { user } = useAuth();
   const [deleteMessageId, setDeleteMessageId] = useState<number>(-1);
+  const singleChatLeadDetails = useSingleChatLeadDetails();
   const previewIconClassName =
     "relative 5xl:w-[28px] 4xl:w-[24px] 5xl:h-[28px] 4xl:h-[24px] 3xl:w-[20px] 3xl:h-[20px] w-[20px] h-[20px] cursor-pointer z-[99]";
 
@@ -181,8 +183,8 @@ const ConversationBody = ({
                     alt="img"
                   />
                   {msg?.image_url?.length &&
-                  msg?.image_url?.length > 4 &&
-                  index === 3 ? (
+                    msg?.image_url?.length > 4 &&
+                    index === 3 ? (
                     <div className="bg-[#00000060] absolute top-0 left-0 w-full h-full flex justify-center items-center text-[11px] text-white rounded">
                       +{msg?.image_url?.length - 4}
                     </div>
@@ -230,8 +232,8 @@ const ConversationBody = ({
                     <Image src={pdfIcon} alt="pdf" height={50} width={50} />
                   </div>
                   {msg?.document_url?.length &&
-                  msg?.document_url?.length > 4 &&
-                  index === 3 ? (
+                    msg?.document_url?.length > 4 &&
+                    index === 3 ? (
                     <div className="bg-[#00000060] absolute top-0 left-0 w-full h-full flex justify-center items-center text-[11px] text-white rounded">
                       +{msg?.document_url?.length - 4}
                     </div>
@@ -298,7 +300,7 @@ const ConversationBody = ({
       <div className="flex justify-end items-center">
         <div className="5xl:text-[13px] 4xl:text-[11px] text-[10px] px-1 text-dark-400">
           {format(
-            getValidTime(msg?.timestamp ?? msg?.createdAt),
+            getValidTime(msg?.createdAt),
             "dd/MM/yyyy hh:mm a"
           )}
         </div>
@@ -347,8 +349,9 @@ const ConversationBody = ({
   const renderMessageAvtar = (msg: any) => {
     return (
       <div className="bg-[#adadb6] text-[#313349] font-bold 5xl:text-[15px] 4xl:text-[13px] text-[12px] 5xl:w-[28px] 4xl:w-[26px] 5xl:h-[28px] 4xl:h-[26px] h-[24px] w-[24px] rounded-[50%] flex justify-center items-center m-2 capitalize">
-        {msg.message_type === "1"
-          ? msg?.name?.charAt(0)
+        {!msg.name
+          // {msg.message_type === "1"
+          ? singleChatLeadDetails?.first_name?.charAt(0)
           : user?.agent_detail?.username?.charAt(0)}
       </div>
     );
@@ -426,21 +429,18 @@ const ConversationBody = ({
     return (
       <div
         key={index}
-        className={`conversation-msg flex justify-between items-center p-2 hover:bg-[#F0F0F0] ${
-          msg.message_type === "1" ? "flex-row-reverse" : ""
-        } ${
-          editMessageId === index
+        className={`conversation-msg flex justify-between items-center p-2 hover:bg-[#F0F0F0] ${msg.message_type === "1" || !msg.name ? "flex-row-reverse" : ""
+          } ${editMessageId === index
             ? "bg-[#F0F0F0] conversation-edit-message"
             : ""
-        }`}
+          }`}
       >
         <div className="conversation-msg-buttons">
           {/* {renderMessageButtons(msg, index)} */}
         </div>
         <div
-          className={`flex ${
-            msg.message_type === "1" ? "justify-start flex-row-reverse" : ""
-          } justify-end item-center`}
+          className={`flex ${msg.message_type === "1" || !msg.name ? "justify-start flex-row-reverse" : ""
+            } justify-end item-center`}
         >
           {renderMessageContent(msg)}
           {renderMessageAvtar(msg)}
@@ -456,11 +456,10 @@ const ConversationBody = ({
           return (
             <div
               key={index}
-              className={`${
-                index === chatHistoryList.length - 1
+              className={`${index === chatHistoryList.length - 1
                   ? "border-dark-800 border-b"
                   : ""
-              }`}
+                }`}
             >
               {agentHistory?.agent?.map((history: any, hIndex: number) => {
                 return (
@@ -506,9 +505,8 @@ const ConversationBody = ({
   return (
     <div
       id="messageBody"
-      className={`bg-[#f9f9f9] h-[52vh] ${
-        selectedItem !== -1 ? "" : "overflow-y-auto"
-      } scrollbar-hide`}
+      className={`bg-[#f9f9f9] h-[52vh] ${selectedItem !== -1 ? "" : "overflow-y-auto"
+        } scrollbar-hide`}
     >
       <>
         {isLoading ? (
