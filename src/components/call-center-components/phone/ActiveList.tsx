@@ -483,9 +483,9 @@ const ActiveList = ({
                   {getLatestActiveDetails(activeItem)?.image_url?.length ? (
                     <div className="flex items-center">
                       <div className="relative 5xl:w-[13px] 5xl:h-[13px] 4xl:w-[12px] 4xl:-h-[12px] w-[12px] h-[12px]">
-                        <Legacy src={imageIcon} alt="photo" layout="fill" />
+                        <Legacy src={getLatestActiveDetails(activeItem)?.image_url} alt="photo" layout="fill" />
                       </div>
-                      <span className="ml-1">Photo</span>
+                      {/* <span className="ml-1">Photo</span> */}
                     </div>
                   ) : (
                     getLatestActiveDetails(activeItem)?.text_content
@@ -546,6 +546,8 @@ const ActiveList = ({
   };
 
   const renderActiveList = () => {
+    console.log("renederrrrr active list compomenenenneeeeeeeeeeee",campaignType,callQueueList);
+    
     return (
       <div className={`${sectionBodyClass} overflow-y-auto scrollbar-hide`}>
         {campaignType === "outbound" || campaignType === "blended" ? (

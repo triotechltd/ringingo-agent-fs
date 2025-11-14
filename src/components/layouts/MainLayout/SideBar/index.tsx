@@ -131,7 +131,7 @@ const SideBar = (props: InputProps) => {
                 width={25}
                 height={25}
               />
-              <p className="font-bold font-lexend text-[27px]  text-[black]">Call Center</p>
+              <p className="font-bold font-lexend text-[27px]  text-[black]">Ringingo</p>
             </div>
           </div>
         </div>

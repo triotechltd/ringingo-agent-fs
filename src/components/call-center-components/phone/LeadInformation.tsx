@@ -23,6 +23,7 @@ import { Button } from "@/components/forms";
 import { NoRecordFound } from "@/components/ui-components";
 import LeadEditModal from "./LeadEditModal";
 import {
+  getActiveUnreadChat,
   useActiveConversation,
   useChatMode,
   useIsActiveChat,
@@ -108,6 +109,10 @@ const LeadInformation = ({ setIsHangUp }: LeadInformationProps) => {
       setData(null);
     }
   }, [currentLeadDetails, allLeadsDetails]);
+
+  useEffect(() => {
+    dispatch(getActiveUnreadChat({ campaign_uuid: selectedCampaign })).unwrap();
+  }, [editLead]);
 
   const checkSelectedCampaign = () => {
     return chatModeType === "pbx" ? !!selectedCampaign : true;
@@ -195,8 +200,8 @@ const LeadInformation = ({ setIsHangUp }: LeadInformationProps) => {
                       data?.gender === "0"
                         ? "Male"
                         : data?.gender === "1"
-                        ? "Female"
-                        : data?.gender || "",
+                          ? "Female"
+                          : data?.gender || "",
                     ],
                     ["Description", data?.description],
                     ["Address", data?.address],
@@ -233,7 +238,7 @@ const LeadInformation = ({ setIsHangUp }: LeadInformationProps) => {
       </div>
     );
   };
-
+  
   return (
     <>
       {showLeadInformation() || chatModeType !== "pbx" ? renderLeadInformation() : <Search />}

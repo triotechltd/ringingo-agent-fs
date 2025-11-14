@@ -13,6 +13,7 @@ import {
   useAllLeadListDetails,
 } from "@/redux/slice/leadListSlice";
 import { useAppDispatch } from "@/redux/hooks";
+import Icon from "@/components/ui-components/Icon";
 
 const emojiHappy = "/assets/icons/white/emoji_happy.svg";
 const location = "/assets/icons/white/location.svg";
@@ -338,7 +339,7 @@ const ConversationFooter = ({
       ...currentMessage,
       text,
     });
-    setIsEmojiOpen(false);
+    // setIsEmojiOpen(false);
   };
 
   const renderFileInputTypes = () => {
@@ -349,7 +350,7 @@ const ConversationFooter = ({
             className="flex items-center p-1 cursor-pointer"
             onClick={onPhotoInput}
           >
-            <Image src={imageIcon} alt="pdf" height={16} width={16} />
+            <Icon name={"ImageIcon"} alt="pdf" height={16} width={16} />
             <div className="5xl:text-[14px] 4xl:text-[12px] text-[10px] px-2">
               Image
             </div>
