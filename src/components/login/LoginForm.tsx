@@ -67,34 +67,85 @@ const LoginForm = () => {
   };
 
   const sipRegistration = (user: any) => {
-    try {
-      const username = user?.agent_detail?.extension_details[0]?.username;
-      const password = user?.agent_detail?.extension_details[0]?.password;
-      const domain = user?.agent_detail?.tenant[0]?.domain;
-      const UAURI = UserAgent.makeURI(`sip:${username}@${domain}`);
-
-      if (!UAURI) throw new Error("Failed to create UserAgent URI.");
-
-      const userAgent = new UserAgent({
-        uri: UAURI,
-        authorizationPassword: password,
-        authorizationUsername: username,
-        transportOptions: { server: WSS_URL, traceSip: true },
-        register: true,
-        displayName: username,
-        userAgentString: "ASTPP | WEBRTC",
-      });
-
-      userAgent.start().then(() => {
-        const registerer = new Registerer(userAgent);
-        registerer.stateChange.addListener((state) => {
-          console.log("SIP registration state:", state);
-        });
-        registerer.register();
-      });
-    } catch (err) {
-      console.error("SIP Registration Error:", err);
+    let userAgent: any;
+    let callScreen = "false";
+    let username = user?.agent_detail?.extension_details[0]?.username;
+    let password = user?.agent_detail?.extension_details[0]?.password;
+    // let domain = "itsmycc-bytebran.local";
+    // let domain = "192.168.1.25";
+    let domain = user?.agent_detail?.tenant[0]?.domain;
+    var UAURI = UserAgent.makeURI("sip:" + username + "@" + domain);
+    console.log("UAURI=====>", UAURI);
+    if (!UAURI) {
+      throw new Error("Failed to create UserAgent URI ....");
     }
+    const userOptions: any = {
+      uri: UAURI,
+      authorizationPassword: password,
+      authorizationUsername: username,
+      transportOptions: {
+        server: WSS_URL,
+        traceSip: true,
+      },
+      register: true,
+      noAnswerTimeout: 60,
+      userAgentString: "ASTPP | WEBRTC ",
+      dtmfType: "info",
+      displayName: username,
+      activeAfterTransfer: false, //	Die when the transfer is completed
+      logBuiltinEnabled: false, //	Boolean - true or false - If true throws console logs
+    };
+    console.log(userOptions);
+    userAgent = new UserAgent(userOptions);
+    userAgent
+      .start()
+      .then(() => {
+        console.log("Connected ....");
+        console.log(userAgent);
+        //	Create register object
+        const registerer = new Registerer(userAgent);
+        registerer.stateChange.addListener(
+          (registrationState: RegistererState) => {
+            switch (registrationState) {
+              case RegistererState.Registered:
+                console.log("Registered ....");
+                Cookies.set("username", username);
+                Cookies.set("password", password);
+                Cookies.set("domain", domain);
+                Cookies.set("authenticated", "true");
+                // window.setTimeout(function () {
+                //     window.location.href = "/";
+                // }, 2000);
+                break;
+              case RegistererState.Unregistered:
+                console.log("Unregistered ....");
+                break;
+              case RegistererState.Terminated:
+                console.log("Terminated ....");
+                break;
+              default:
+                console.log(
+                  "Could not identified registration state .... ",
+                  registrationState
+                );
+                break;
+            }
+          }
+        );
+        if (callScreen !== "true") {
+          registerer
+            .register()
+            .then((request) => {
+              console.log("Successfully sent REGISTER request .... ", request);
+            })
+            .catch((error: any) => {
+              console.log("Failed to send REGISTER request .... ", error);
+            });
+        }
+      })
+      .catch((error: any) => {
+        console.log("Failed to connect user agent .... ", error);
+      });
   };
 
   const sendLogout = (
@@ -221,19 +272,19 @@ const LoginForm = () => {
                 className="w-[120px] cursor-pointer"
               />
             </div> */}
-              <div className="mt-6 border-t border-gray-300 pt-4">
-    <h3 className="text-[16px] font-semibold text-gray-800 mb-1">
-      📢 What’s New:
-    </h3>
-    <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
-      <li>Enhanced dashboard performance</li>
-      <li>Improved security & reliability</li>
-      <li>New responsive layout for better experience</li>
-        <li>Faster load times with optimized codebase</li>
-              <li>Fresh modern UI with smoother navigation</li>
+            <div className="mt-6 border-t border-gray-300 pt-4">
+              <h3 className="text-[16px] font-semibold text-gray-800 mb-1">
+                📢 What’s New:
+              </h3>
+              <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
+                <li>Enhanced dashboard performance</li>
+                <li>Improved security & reliability</li>
+                <li>New responsive layout for better experience</li>
+                <li>Faster load times with optimized codebase</li>
+                <li>Fresh modern UI with smoother navigation</li>
 
-    </ul>
-  </div>
+              </ul>
+            </div>
           </div>
         </div>
         <div className="border-l border-gray-400 "></div>
