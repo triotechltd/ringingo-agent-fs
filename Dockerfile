@@ -33,9 +33,6 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/package-lock.json ./
 
-# Install only production deps
-RUN npm install --production --force
-
 EXPOSE 3100
 
 # Start Next.js on port 3100
