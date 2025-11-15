@@ -29,6 +29,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 # Copy node_modules from builder
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/certs ./certs
 # Only copy what the app needs to run
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
