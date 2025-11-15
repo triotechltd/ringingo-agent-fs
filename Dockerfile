@@ -35,6 +35,8 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/package-lock.json ./
 
+COPY --from=builder /app/server.js ./
+
 EXPOSE 3100
 
 # Start Next.js on port 3100
