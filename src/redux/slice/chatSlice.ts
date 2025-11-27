@@ -12,6 +12,7 @@ import {
   endChatPost,
   getCallWaitingCountGet,
   queueListGet,
+  sendInstaMessagePost,
   sendMessagePost,
   transferChatPut,
   updateMessagePut,
@@ -150,6 +151,10 @@ export const transferChat = createAsyncThunk(
 
 export const senMessage = createAsyncThunk("send", async (payload: any) => {
   return await sendMessagePost(payload);
+});
+
+export const senInstaMessage = createAsyncThunk("send", async (payload: any) => {
+  return await sendInstaMessagePost(payload);
 });
 
 export const queueList = createAsyncThunk("queue-list", async () => {

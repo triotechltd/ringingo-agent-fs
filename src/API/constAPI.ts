@@ -122,17 +122,25 @@ export const CALLWAITING_COUNT = "/agent-call-center/getcallwaitingcount/count";
 
 // CHAT
 export const CALL_WAITING_COUNT = "/agent-call-center/getcallwaitingcount/count";
-export const WHATS_APP_MESSAGE_LIST = "/WhatsappMessage/all_whatsappmessage";
-export const ACTIVE_UNREAD_CHAT_LIST = "/WhatsappMessage/read_unreadsection";
-export const ACCEPT_CHAT = "/Whatsappsync";
+export const WHATS_APP_MESSAGE_LIST = "/OmnichannelMessage/all_whatsappmessage";
+// export const WHATS_APP_MESSAGE_LIST = "/WhatsappMessage/all_whatsappmessage";
+export const ACTIVE_UNREAD_CHAT_LIST = "/OmnichannelSync/read_unreadsection";
+// export const ACTIVE_UNREAD_CHAT_LIST = "/WhatsappMessage/read_unreadsection";
+export const ACCEPT_CHAT = "/OmnichannelSync/webhook/WhatsApp";
+// export const ACCEPT_CHAT = "/Whatsappsync";
 export const ACCEPT_OMNI_CHAT ="omnichannelsync/instagram"
-export const SEND_MESSAGE = "/WhatsappMessage";
-export const END_CHAT = "/agent-call-center/end-chat";
+export const SEND_INSTA_MESSAGE = "/OmnichannelMessage/instagram/send";
+export const SEND_MESSAGE = "/OmnichannelMessage/WhatsApp/send";
+// export const SEND_MESSAGE = "/WhatsappMessage";
+export const END_CHAT = "/agent-call-center/omnichannel/end-chat";
+// export const END_CHAT = "/agent-call-center/end-chat";
+// export const END_CHAT = "/agent-call-center/end-chat";
 export const TRANSFER_CHAT = "/agent-call-center/transfer-chat";
 export const QUEUE_LIST = "/WhatsappMessage/select_queue";
 export const CHANNEL_LIST = "/WhatsappMessage/messaging_queue_channel";
 export const UPDATE_CHANNEL = "/agent-call-center/update-default-messaging-channel";
-export const CHAT_HISTORY = "/agent-call-center/get-whatsapp-history";
+export const CHAT_HISTORY = "/agent-call-center/omnichannel/get-whatsapp-history";
+// export const CHAT_HISTORY = "/agent-call-center/get-whatsapp-history";
 
 // Tenant Personalize
 export const TENANT_PERSONALIZE = "/tenant/tenantpersonalization";

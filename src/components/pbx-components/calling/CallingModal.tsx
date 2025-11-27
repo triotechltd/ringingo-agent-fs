@@ -2089,6 +2089,7 @@ const CallingModal = (props: CallingModelProps) => {
                 `X-Leaduuid: ${leaduuid}`,
                 `X-selectedcampaignuuid: ${selectedCampaign}`,
                 `X-previous_destination_number : ${number}`,
+                `X-campaign_flag:${campaignType}`,
               ],
             };
           }
@@ -2102,6 +2103,7 @@ const CallingModal = (props: CallingModelProps) => {
               `X-selectedcampaignuuid: ${selectedCampaign}`,
               `X-previous_destination_number : ${number}`,
               `X-autocall_flag : true`,
+              `X-campaign_flag:${campaignType}`,
             ];
             extraHeader = { ...extraHeader, extraHeaders: newheader };
             console.log(extraHeader, "newheader");

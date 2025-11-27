@@ -59,6 +59,7 @@ const callGreen = "/assets/icons/green/call.svg";
 const next = "/assets/icons/next-play.svg";
 const whatsapp = "/assets/icons/green/whatsapp.svg";
 const whatsappBlue = "/assets/icons/blue/whatsapp.svg";
+const instagram = "/assets/icons/instagram.svg";
 const imageIcon = "/assets/images/photo.png";
 
 interface ActiveListProps {
@@ -472,7 +473,7 @@ const ActiveList = ({
             >
               <div className="col-span-1 flex justify-center">
                 <div className="relative 5xl:w-[26px] 5xl:h-[26px] 4xl:w-[22px] 4xl:-h-[22px] w-[18px] h-[18px]">
-                  <Legacy src={whatsappBlue} alt="whatsapp" layout="fill" />
+                  {activeItem.channel_type == "WhatsApp" ? <Legacy src={whatsappBlue} alt="whatsapp" layout="fill" /> : <Legacy src={instagram} alt="instagram" layout="fill" /> }
                 </div>
               </div>
               <div className="col-span-3 flex flex-col">
