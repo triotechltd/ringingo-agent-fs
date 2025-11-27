@@ -162,7 +162,7 @@ const LeadInformation = ({ setIsHangUp }: LeadInformationProps) => {
                       {isCallHangUp && Cookies.get("is_call_start") === "1" ? (
                         <Button
                           text={"Finish Lead"}
-                          className="px-2 py-1 rounded-md"
+                          className="px-2 py-1 rounded-md bg-[#4DA6FF]"
                           onClick={() => {
                             setIsHangUp(true);
                             !!!addLeadNoteId &&

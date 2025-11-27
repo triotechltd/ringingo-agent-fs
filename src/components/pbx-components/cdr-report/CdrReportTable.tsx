@@ -261,7 +261,7 @@ const CdrReportTable = () => {
 
     return (
       <>
-        <div className="bg-white py-[7px] px-[3px] pb-[15px]  rounded-[25px]">
+        <div className="bg-white py-[7px] px-[3px] pb-[15px]  rounded-[10px]">
           <div className="pb-4">
             <Head
               onChange={(e: any) =>

@@ -47,7 +47,7 @@ const SideBar = (props: InputProps) => {
   return (
     <div
       className={`fixed h-full  bg-[#FFFFFF] z-50 drop-shadow-lg border-r border-[#E5E7EB] transition-all rounded-r-[20px] ${
-        isdrawerOpen ? "w-[240px]" : "w-[70px]"
+        isdrawerOpen ? "w-[240px]" : "w-[70px]" 
       }`}
     >
       <LogoSection />
@@ -78,8 +78,8 @@ const SideBar = (props: InputProps) => {
                     !isdrawerOpen ? "justify-center" : "justify-between"
                   } ${
                     isSelected
-                      ? "bg-[#F4F7FE] shadow-sm rounded-[30px]"
-                      : "hover:bg-[#F4F7FE] hover:shadow-sm rounded-[30px]"
+                      ? "bg-[#F4F7FE] shadow-sm rounded-[10px]"
+                      : "hover:bg-[#F4F7FE] hover:shadow-sm rounded-[10px]"
                   } transition-all duration-200`}
                   onClick={() => {
                     if (window.innerWidth < 821) {
@@ -107,7 +107,7 @@ const SideBar = (props: InputProps) => {
                         className={`text-sm font-lexend
                         ${
                           isSelected
-                            ? "text-[#322996] font-normal"
+                            ? "text-[#4da6ff] font-normal"
                             : "text-[#8D8D8D] font-normal"
                         }`}
                       >

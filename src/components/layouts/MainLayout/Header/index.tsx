@@ -672,8 +672,7 @@ if (user && user.isPbx) {
   return (
     <>
       <div
-        className={`fixed flex h-[50px] mt-5 bg-white rounded-[60px]  z-40 border-b border-[#E5E7EB] transition-all
-
+        className={`fixed flex h-[50px] mt-5 bg-white rounded-[10px]  z-40 border-b border-[#E5E7EB] transition-all
            ${
              isdrawerOpen
                ? "pl-[15px] ml-[265px] w-[81.2%]"
