@@ -47,7 +47,7 @@ const Tabs = (props: TabsProps) => {
           tabType === "dashboard"
             ? "border border-dark-800"
             : "rounded-lg drop-shadow-lg"
-        } h-full bg-white`}
+        } h-full bg-white border `}
       >
         <div>
           <ul
@@ -65,7 +65,7 @@ const Tabs = (props: TabsProps) => {
                     idx === array.length - 1 && "border-s-2 border-dark-700"
                   } ${idx === 0 && "border-e-2 border-dark-700"} ${
                     isActive
-                      ? "border-b-primary border-b-[3px]"
+                      ? "border-b-[#4DA6FF] border-b-[3px]"
                       : "border-dark-700 border-b-2"
                   } ${tabType === "dashboard" ? "h-[5.8vh]" : ""}`}
                 >

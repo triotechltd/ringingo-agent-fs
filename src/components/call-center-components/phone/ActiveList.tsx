@@ -813,8 +813,8 @@ const ActiveList = ({
 
   return (
     <>
-      <div className={`bg-blue-50 h-[42vh] ${sectionClass}`}>
-        <div className="bg-white 3xl:px-6 3xl:py-2.5 py-1.5 px-4 flex items-center rounded-[46px] justify-between h-[5.8vh]">
+      <div className={ `bg-blue-50 h-[42vh] ${sectionClass}`}>
+        <div className="bg-[#F2F2F2] 3xl:px-6 3xl:py-2.5 py-1.5 px-4 flex items-center  justify-between h-[5.8vh]">
           <span className="3xl:text-base text-xs text-heading font-bold ">
             Active
           </span>
@@ -825,9 +825,9 @@ const ActiveList = ({
               <Button
                 text="Start Conversation"
                 loaderClass="!border-primary-green !border-t-transparent"
-                style="primary"
+                style=""
                 icon="plus-white"
-                className="px-1.5 py-1 font-normal"
+                className="px-1.5 py-1 font-normal text-white bg-[#4DA6FF]"
                 onClick={async () => {
                   await dispatch(
                     onStartConversation({

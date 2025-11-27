@@ -264,7 +264,7 @@ export default function Phone() {
           <button
             key={t.id}
             onClick={() => setActive(t.id)}
-            className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-400 ${active === t.id ? "bg-indigo-50 shadow-sm" : "hover:bg-gray-100"}`}
+            className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#4DA6FF] ${active === t.id ? "bg-indigo-50 shadow-sm" : "hover:bg-gray-100"}`}
             aria-pressed={active === t.id}
             role="tab"
             aria-selected={active === t.id}
@@ -291,7 +291,7 @@ export default function Phone() {
 
             {typeof t.badge === "number" && (
               <span
-                className={`ml-2 ml-auto inline-flex items-center justify-center px-2 py-0.5 text-xs rounded-full font-medium ${t.badge > 0 ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600"
+                className={`ml-2 ml-auto inline-flex items-center justify-center px-2 py-0.5 text-xs rounded-full font-medium ${t.badge > 0 ? "bg-[#4DA6FF] text-white" : "bg-gray-100 text-gray-600"
                   }`}
               >
                 {t.badge}
@@ -301,10 +301,9 @@ export default function Phone() {
         ))}
       </div>
       <div
-        className="grid gap-4 min-h-[calc(100vh-120px)] bg-[#f8f9fc] p-4"
+        className="grid gap-4 min-h-[calc(100vh-120px)] bg-[#f8f9fc] pt-4"
         style={{ gridTemplateColumns: "25% 75%" }}
       >
-        {/* llll */}
         {/* LEFT PANEL (Now has history instead of ActiveList) */}
         <div className="flex flex-col gap-4 overflow-y-auto ">
           {/* <div className="bg-white rounded-2xl shadow-md p-4">
@@ -329,7 +328,6 @@ export default function Phone() {
           )} */}
         </div>
 
-        {/* RIGHT PANEL */}
         {/* RIGHT PANEL */}
         <div className="flex flex-col gap-4 overflow-y-auto ">
           {/* Top Row: ActiveList + LeadInformationTab */}

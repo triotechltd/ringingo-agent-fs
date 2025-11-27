@@ -511,9 +511,9 @@ const Conversation = ({}: ConversationProps) => {
           <Button
             text="Start Conversation"
             loaderClass="!border-primary-green !border-t-transparent"
-            style="primary"
+            style=""
             icon="plus-white"
-            className="px-1.5 py-1 font-normal"
+            className="px-1.5 py-1 text-white font-normal bg-[#4DA6FF] "
             onClick={async () => {
               await dispatch(
                 onStartConversation({

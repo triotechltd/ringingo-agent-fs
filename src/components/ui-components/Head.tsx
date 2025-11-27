@@ -52,12 +52,12 @@ const Head = (props: HeadProps) => {
   };
   return (
     <>
-      <div className="items-cente mx-3 mt-2 rounded-[60pc] ">
+      <div className="items-cente mx-3 mt-2 rounded-[10px] ">
         <div className="flex justify-end">
           <div className="flex gap-3 smd:gap-2">
             {onTodayClick && (
               <Button
-                className="px-3 h-full"
+                className="px-3 h-full bg-[#4da6ff] "
                 text={isToday ? "Today" : "All"}
                 style="primary"
                 onClick={() => {
@@ -80,7 +80,7 @@ const Head = (props: HeadProps) => {
                 icon="plus-white"
                 tooltip={`Create ${title}`}
                 text="Create Lead"
-                className="flex h-full items-center border bg-button-background text-white rounded-[46px] px-3 smd:p-1.5 cursor-pointer text-sm font-medium"
+                className="flex h-full items-center border bg-[#4da6ff] text-white rounded-[10px] px-3 smd:p-1.5 cursor-pointer text-sm font-medium"
                 style=""
                 onClick={onCreateButtonClick}
               />
@@ -89,7 +89,7 @@ const Head = (props: HeadProps) => {
           </div>
         </div>
         <div
-          className={`flex flex-col mt-5 bg-white border border-dark-800 relative z-[1] rounded-md drop-shadow-lg ${
+          className={`flex flex-col mt-5 bg-white border border-dark-800 relative z-[1] rounded-[10px] drop-shadow-lg ${
             !filterOpen && "hidden"
           }`}
         >
@@ -116,7 +116,7 @@ const Head = (props: HeadProps) => {
                 onClick={onHide}
               />
               <Button
-                className="3xl:px-3 3xl:py-2 px-2 py-1.5 rounded-md"
+                className="3xl:px-3 3xl:py-2 px-2 py-1.5 rounded-[10px] bg-[#4da6ff]"
                 text="Search"
                 style="primary"
                 onClick={onSearchClick}
