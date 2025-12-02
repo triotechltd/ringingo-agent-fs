@@ -47,6 +47,7 @@ import {
 import { useAuth } from "@/contexts/hooks/useAuth";
 import {
   endChat,
+  getActiveUnreadChat,
   useActiveConversation,
   useChatMode,
   useIsActiveChat,
@@ -317,11 +318,13 @@ const FinishLead = (props: FinishLeadProps) => {
         note: values.comment,
         lead_management_uuid: addLeadNoteId ? addLeadNoteId : "",
         type: chatModeType === "pbx" ? 1 : 0,
+        channel_type : activeConversation?.channel_type
       };
       if (chatModeType !== "pbx") {
         data.disposition_uuid = values.lead_status;
       }
       await dispatch(endChat(data)).unwrap();
+      dispatch(getActiveUnreadChat({ campaign_uuid: selectedCampaign })).unwrap();
       setIsLoading(false);
       setIsHangUp(false);
       resetForm();

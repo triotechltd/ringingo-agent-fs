@@ -2,6 +2,7 @@
 import { Button } from "../forms";
 import Legacy from "next/legacy/image";
 import Image from "next/image";
+import Icon from "../ui-components/Icon";
 
 // TYPES
 interface ModalProps {
@@ -21,8 +22,8 @@ interface ModalProps {
 }
 
 // ASSETS
-const closeIcon = "/assets/icons/close.svg";
-const followUpImage = "/assets/images/FeaturedIcon.png";
+// const closeIcon = "/assets/icons/close.svg";
+// const followUpImage = "/assets/images/FeaturedIcon.png";
 
 /* ============================== DELETE MODEL ============================== */
 
@@ -101,12 +102,12 @@ const Modal = (props: ModalProps) => {
                 </div>
               </div> */}
               <div className="pt-[20px] flex flex-col items-center justify-center">
-                <Image
-                  src={followUpImage}
+                <Icon
+                  name={"FollowUpImage"}
                   alt="Followup"
                   width={48}
                   height={48}
-                  priority
+                  // priority
                   className="object-contain"
                 />
                 <p className="font-bold text-sm mt-[4px]">{title}</p>

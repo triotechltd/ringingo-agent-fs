@@ -13,6 +13,7 @@ import {
   useAllLeadListDetails,
 } from "@/redux/slice/leadListSlice";
 import { useAppDispatch } from "@/redux/hooks";
+import Icon from "@/components/ui-components/Icon";
 
 const emojiHappy = "/assets/icons/white/emoji_happy.svg";
 const location = "/assets/icons/white/location.svg";
@@ -20,7 +21,7 @@ const attachSquare = "/assets/icons/white/attach_square.svg";
 const send = "/assets/icons/white/send.svg";
 const transfer = "/assets/icons/gray/transfer.svg";
 const arrowDown = "/assets/icons/arrow-down.svg";
-const pdfIcon = "/assets/images/pdfIcon.png";
+const pdfIcon = "/assets/images/pdfIcon.svg";
 const imageIcon = "/assets/images/photo.png";
 
 const platformIcons: any = {
@@ -155,12 +156,15 @@ const ConversationFooter = ({
   const onFileSelected = (e: any) => {
     if (e?.target?.files) {
       const allFiles = e?.target?.files;
+      console.log("allfiles", allFiles);
+      
       let images = [];
       let documnets = [];
       for (let index = 0; index < allFiles.length; index++) {
         if (
           allFiles[index].type === "image/png" ||
           allFiles[index].type === "image/jpg" ||
+          allFiles[index].type === "image/webp" ||
           allFiles[index].type === "image/jpeg"
         ) {
           images.push(allFiles[index]);
@@ -181,6 +185,7 @@ const ConversationFooter = ({
       });
     }
   };
+      // console.log("currentMessagecurrentMessagecurrentMessage",currentMessage,URL.createObjectURL(currentMessage?.image_url&&currentMessage?.image_url[0]));
 
   const onPhotoInput = () => {
     setCurrentMessage({ ...currentMessage, document_url: [] });
@@ -234,6 +239,8 @@ const ConversationFooter = ({
               );
             })}
             {currentMessage?.image_url?.map((file: any, index: number) => {
+              console.log("filefileeeee",getImagePreview(file));
+              
               if (index < maxFilePreview) {
                 return (
                   <div
@@ -332,7 +339,7 @@ const ConversationFooter = ({
       ...currentMessage,
       text,
     });
-    setIsEmojiOpen(false);
+    // setIsEmojiOpen(false);
   };
 
   const renderFileInputTypes = () => {
@@ -343,7 +350,7 @@ const ConversationFooter = ({
             className="flex items-center p-1 cursor-pointer"
             onClick={onPhotoInput}
           >
-            <Image src={imageIcon} alt="pdf" height={16} width={16} />
+            <Icon name={"ImageIcon"} alt="pdf" height={16} width={16} />
             <div className="5xl:text-[14px] 4xl:text-[12px] text-[10px] px-2">
               Image
             </div>

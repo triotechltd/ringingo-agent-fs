@@ -10,16 +10,32 @@ import {
   getActiveUnreadChat,
   onUnSelectCampaign,
 } from "@/redux/slice/chatSlice";
-import { onSelectCampaign, onSelectCampaignMode, onSetCampaignType, setCampaignFetched, setCampaignUpdated, useCampaignFetched, useCampaignUpdated, useSelectedCampaign, useUserEntry } from "@/redux/slice/commonSlice";
+import {
+  onSelectCampaign,
+  onSelectCampaignMode,
+  onSetCampaignType,
+  setCampaignFetched,
+  setCampaignUpdated,
+  useCampaignFetched,
+  useCampaignUpdated,
+  useSelectedCampaign,
+  useUserEntry,
+} from "@/redux/slice/commonSlice";
 import { SocketProvider } from "@/contexts/chatSocket/SocketProvider";
 import { useAuth } from "@/contexts/hooks/useAuth";
 import { isWhatsAppEnabled } from "@/components/helperFunctions";
-import { getCampaign, getCampaignList, getCampaignOption, updateAgentCampaign } from "@/redux/slice/campaignSlice";
+import {
+  getCampaign,
+  getCampaignList,
+  getCampaignOption,
+  updateAgentCampaign,
+} from "@/redux/slice/campaignSlice";
 import ActiveList from "@/components/call-center-components/phone/ActiveList";
+import ListingTabWhatsapps from "@/components/call-center-components/phone/ListingTabWhatsapps";
 /* ============================== PHONE PAGE ============================== */
 
 export default function Phone() {
-  const [activeId, setActiveId] = useState<string>("1");
+  const [activeId, setActiveId] = useState<string>("2");
   const selectedCampaign = useSelectedCampaign();
   const campaignFetched = useCampaignFetched();
   const campaignUpdated = useCampaignUpdated();
@@ -98,10 +114,13 @@ export default function Phone() {
         let prepareData = [...inboundData, ...outboundData, ...blendedData];
 
         prepareData.forEach((val: any) => {
-          console.log("selectedCampaignselectedCampaign preparedataaaa", prepareData)
+          console.log(
+            "selectedCampaignselectedCampaign preparedataaaa",
+            prepareData
+          );
           if (response?.data?.length) {
             response.data?.forEach((value: any) => {
-              console.log("selectedCampaignselectedCampaign valuessss", value)
+              console.log("selectedCampaignselectedCampaign valuessss", value);
               if (value._id.campaign_uuid === val.uuid) {
                 newObj = {
                   ...newObj,
@@ -121,7 +140,7 @@ export default function Phone() {
             });
           }
         });
-        console.log("selectedCampaignselectedCampaign newobjj", newObj)
+        console.log("selectedCampaignselectedCampaign newobjj", newObj);
         let Ids: any = [];
         newData?.map((x: any) => {
           Ids.push(x.uuid);
@@ -137,8 +156,6 @@ export default function Phone() {
         });
         setInitialValues(newObj);
       }
-
-
     } catch (error: any) {
       console.log("Get campaign list Err ---->", error?.message);
     }
@@ -147,12 +164,22 @@ export default function Phone() {
   const onGetCampaignOption = async () => {
     try {
       console.log("selectedCampaignselectedCampaign before ");
-      const result = await dispatch(getCampaignOption({ list: "all" })).unwrap();
+      const result = await dispatch(
+        getCampaignOption({ list: "all" })
+      ).unwrap();
       console.log("selectedCampaignselectedCampaign after ", result);
 
       if (result?.data?.length > 0) {
         dispatch(onSelectCampaignMode(result?.data[0]?.dial_method));
-        dispatch(onSetCampaignType(result?.data[0]?.campaign_type === "0" ? "outbound" : result.data[0]?.campaign_type === "2" ? "blended" : "inbound"));
+        dispatch(
+          onSetCampaignType(
+            result?.data[0]?.campaign_type === "0"
+              ? "outbound"
+              : result.data[0]?.campaign_type === "2"
+              ? "blended"
+              : "inbound"
+          )
+        );
         dispatch(onSelectCampaign(result.data[0].uuid));
       }
     } catch (error: any) {
@@ -161,13 +188,12 @@ export default function Phone() {
   };
 
   const campaignUpdate = async () => {
-
     try {
       let payload: any = {
         campaigns_details: [],
         feature: userEntry ? userEntry : "login-entry",
       };
-      console.log("initialValues", initialValues)
+      console.log("initialValues", initialValues);
       Object.entries(initialValues)?.map(([key, val]: any) => {
         let obj: any = {
           campaign_uuid: key,
@@ -175,7 +201,7 @@ export default function Phone() {
         };
         payload["campaigns_details"].push(obj);
       });
-      console.log("selectedCampaignselectedCampaign  payload", payload)
+      console.log("selectedCampaignselectedCampaign  payload", payload);
       let res: any = await dispatch(updateAgentCampaign(payload)).unwrap();
       if (res && res.statusCode === 200) {
         // Success(res.data);
@@ -187,9 +213,8 @@ export default function Phone() {
       }
     } catch (error: any) {
       console.log("error while updating campaign", error.message);
-
     }
-  }
+  };
 
   useEffect(() => {
     if (userEntry === "login-entry" && !campaignFetched) {
@@ -213,7 +238,9 @@ export default function Phone() {
 
   useEffect(() => {
     if (selectedCampaign) {
-      dispatch(getActiveUnreadChat({ campaign_uuid: selectedCampaign })).unwrap();
+      dispatch(
+        getActiveUnreadChat({ campaign_uuid: selectedCampaign })
+      ).unwrap();
     } else {
       dispatch(onUnSelectCampaign());
     }
@@ -223,58 +250,61 @@ export default function Phone() {
     // chat socket ::yaksh::
     <SocketProvider>
       <div
-        className="w-full flex gap-4 min-h-[calc(100vh-120px)] "
-        // style={{ gridTemplateColumns: "30% 70%" }}
+        className="grid gap-4 min-h-[calc(100vh-120px)] bg-[#f8f9fc] p-4"
+        style={{ gridTemplateColumns: "30% 70%" }}
       >
+        {/* llll */}
         {/* LEFT PANEL (Now has history instead of ActiveList) */}
-        <div className="w-4/12 flex flex-col gap-4 ">
-          <div className="bg-white rounded-[10px] shadow-md p-4">
+        <div className="flex flex-col gap-4 overflow-y-auto ">
+          {/* <div className="bg-white rounded-2xl shadow-md p-4">
             <WaitingCalls />
-          </div>
+          </div> */}
 
-          <div className="bg-white rounded-[10px] shadow-md p-5 flex-1 min-h-[360px]">
-            <ListingTab
-              activeId={activeId}
+          {/* <div className="bg-white rounded-2xl shadow-md p-5 flex-1 min-h-[360px]">
+            <ListingTab activeId={activeId} setActiveId={setActiveId} activeTab="" />
+          </div> */}
+          <div className="bg-white rounded-2xl shadow-md p-4 min-h-[400px]">
+            <ActiveList
               setActiveId={setActiveId}
-              activeTab=""
+              sectionClass="h-full"
+              sectionBodyClass="h-[calc(100%-2rem)]"
             />
           </div>
 
-          {isWhatsAppEnabled(user) && (
-            <div className="bg-white rounded-[10px] shadow-md p-4 min-h-[200px]">
-              <UnreadList
-                sectionClass="h-full"
-                sectionBodyClass=""
-                // sectionBodyClass="h-[calc(100%-1.5rem)]"
-              />
+          {/* {isWhatsAppEnabled(user) && (
+            <div className="bg-white rounded-2xl shadow-md p-4 min-h-[200px]">
+              <UnreadList sectionClass="h-full" sectionBodyClass="h-[calc(100%-1.5rem)]" />
             </div>
-          )}
+          )} */}
         </div>
 
         {/* RIGHT PANEL */}
         {/* RIGHT PANEL */}
-        <div className="w-8/12 flex flex-col gap-4 overflow-y-auto ">
+        <div className="flex flex-col gap-4 overflow-y-auto ">
           {/* Top Row: ActiveList + LeadInformationTab */}
           <div
-            className="flex gap-4"
-            // style={{ gridTemplateColumns: "50% 50%" }}
+            className="grid gap-4"
+            style={{ gridTemplateColumns: "50% 50%" }}
           >
-            <div className="bg-white rounded-[10px] shadow-md p-4 min-h-[400px] w-1/2">
+            <div className="bg-white rounded-2xl shadow-md p-5 flex-1 min-h-[360px]">
+              <ListingTabWhatsapps />
+            </div>
+            {/* <div className="bg-white rounded-2xl shadow-md p-4 min-h-[400px]">
               <ActiveList
                 setActiveId={setActiveId}
                 sectionClass="h-full"
                 sectionBodyClass="h-[calc(100%-2rem)]"
               />
-            </div>
-            <div className="bg-white rounded-[10px] shadow-md p-4 min-h-[400px] w-1/2">
+            </div> */}
+            <div className="bg-white rounded-2xl shadow-md p-4 min-h-[400px]">
               <LeadInformationTab />
             </div>
           </div>
 
           {/* Full-width CrmInformation */}
-          <div className="w-full bg-white rounded-[10px] shadow-md p-4 min-h-[220px]">
+          {/* <div className="bg-white rounded-2xl shadow-md p-4 min-h-[220px]">
             <CrmInformation />
-          </div>
+          </div> */}
         </div>
       </div>
     </SocketProvider>

@@ -7,6 +7,7 @@ import {
   CHAT_HISTORY,
   END_CHAT,
   QUEUE_LIST,
+  SEND_INSTA_MESSAGE,
   SEND_MESSAGE,
   TRANSFER_CHAT,
   UPDATE_CHANNEL,
@@ -42,6 +43,12 @@ export const transferChatPut = (payload: any) => {
 
 export const sendMessagePost = (payload: any) => {
   return apiInstance.post(SEND_MESSAGE, payload, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+export const sendInstaMessagePost = (payload: any) => {
+  return apiInstance.post(SEND_INSTA_MESSAGE, payload, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };

@@ -7,6 +7,8 @@ import {
   onRemoveUnReadChat,
   onReceiveWhatsAppMessage,
   hideWhatsAppPopup,
+  onReceiveOmniChannelMessage,
+  hideOmniChannelPopup
 } from "@/redux/slice/chatSlice";
 
 interface ISocketProvider {
@@ -16,7 +18,7 @@ interface ISocketProvider {
 export const SocketProvider = (props: ISocketProvider) => {
   const dispatch = useAppDispatch();
   const { user } = useAuth();
-  const baseUrl: any = process.env.CHAT_SOCKET_URL;
+  const baseUrl: any = process.env.BASE_URL;
   console.log("user", user);
   // Configure socket with authentication and query parameters
   const socketConnection = io(baseUrl, {
@@ -63,12 +65,25 @@ export const SocketProvider = (props: ISocketProvider) => {
         dispatch(onReceiveWhatsAppMessage(data));
       }
     });
+    // Trigger Omnichannel popop
+        socketConnection.on("omnichannel_message", (data) => {
+      console.log("Received omnichannel_message message from server:", data);
+      // Trigger WhatsApp popup if messageId is provided
+      if (data.messageId) {
+        dispatch(onReceiveOmniChannelMessage(data))
+      }
+    });
+
 
     socketConnection.on("ui:closePopup", (data) => {
       console.log("Popup:", data);
-      if (data?.reason === "accepted") {
-        dispatch(hideWhatsAppPopup());
-      }
+      // debugger
+      dispatch(hideOmniChannelPopup());
+      // if (data?.reason === "accepted" && data?.channelType === "instagram") {
+      // }
+      // else {
+      //   dispatch(hideWhatsAppPopup());
+      // }
       // Trigger WhatsApp popup if messageId is provided
     });
     // Listen for 'browser_token-message' event

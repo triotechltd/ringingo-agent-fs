@@ -79,15 +79,7 @@ const Login = () => {
         </Helmet>
       )}
       <Layouts variant={LAYOUT.minimal}>
-        <div
-          className="flex justify-center items-center min-h-screen  bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: 'url("/assets/images/LoginBg.png")',
-            //   backgroundRepeat: "no-repeat",
-            //   backgroundSize: "100% 100%",
-            //   backgroundColor: "rgba(255, 255, 255, 10)",
-          }}
-        >
+        <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-[#43cea2] via-[#185a9d] to-[#6a11cb]">
           <LoginForm />
         </div>
       </Layouts>

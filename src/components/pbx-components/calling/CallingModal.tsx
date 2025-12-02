@@ -1663,6 +1663,7 @@ const CallingModal = (props: CallingModelProps) => {
               dispatch(setCallScreen("ADDNOTE"));
             // && !user?.isPbx
             if (!!Cookies.get("callId")) {
+              console.log("after terination incominf calllllll");
               dispatch(setIsCallHangUp(true));
               dispatch(onShowCallModal("false"));
               setShowModal(false);
@@ -1711,10 +1712,10 @@ const CallingModal = (props: CallingModelProps) => {
             onMissedCallCountGet(); // call missed call count
             dispatch(setIsShowCallDuration(false));
             callKeypadSiderProperties("callTermination", "Termination"); //	On termination manage keypadsider states
-            console.log("iscall before hangup set to false campaign typeee",campaignType)
+            // console.log("iscall before hangup set to false campaign typeee",campaignType)
             // if (campaignType === "inbound") {
-              console.log("iscall the hang up is set to FALSE after termination")
-              dispatch(setIsCallHangUp(false));
+              // console.log("iscall the hang up is set to FALSE after termination")
+              // dispatch(setIsCallHangUp(false));
             // }
             if (
               (campaignType === "outbound" || campaignType === "blended") &&
@@ -2088,6 +2089,7 @@ const CallingModal = (props: CallingModelProps) => {
                 `X-Leaduuid: ${leaduuid}`,
                 `X-selectedcampaignuuid: ${selectedCampaign}`,
                 `X-previous_destination_number : ${number}`,
+                `X-campaign_flag:${campaignType}`,
               ],
             };
           }
@@ -2101,6 +2103,7 @@ const CallingModal = (props: CallingModelProps) => {
               `X-selectedcampaignuuid: ${selectedCampaign}`,
               `X-previous_destination_number : ${number}`,
               `X-autocall_flag : true`,
+              `X-campaign_flag:${campaignType}`,
             ];
             extraHeader = { ...extraHeader, extraHeaders: newheader };
             console.log(extraHeader, "newheader");
@@ -4778,7 +4781,7 @@ const CallingModal = (props: CallingModelProps) => {
     //alert(callHangUpType);
     setAddNoteSeconds(seconds);
     setAddNoteMinutes(minutes);
-    dispatch(setIsCallHangUp(false))
+    // dispatch(setIsCallHangUp(false))
     console.log("COMING HANGUP");
     console.log(callHangUpType);
     console.log(secondCallSession);
@@ -4951,7 +4954,7 @@ const CallingModal = (props: CallingModelProps) => {
             }
 
             if (incomingSession) {
-              dispatch(setIsCallHangUp(false))
+              // dispatch(setIsCallHangUp(false))
               if (
                 incomingSession._state === "Initial" ||
                 incomingSession._state === "Establishing"

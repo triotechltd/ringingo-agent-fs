@@ -2,79 +2,70 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Select } from "../forms"; // Make sure Select is imported
-import axios from "axios"; // Required to call the API
-
-// PROJECT IMPORTS
+import { Select } from "../forms";
+import axios from "axios";
 import { useAppDispatch } from "@/redux/hooks";
 import { useAuth } from "@/contexts/hooks/useAuth";
-
-//import { WSS_URL } from "@/API/baseURL";
-const WSS_URL = process.env.WSS_URL;
-const baseUrl = `${process.env.BASE_URL}`;
-
-//import { baseUrl } from "@/API/baseURL";
 import { Button, CheckBox, Input } from "../forms";
 import Password from "../../components/forms/Password";
 import getDomain from "@/utils/GetDoamin";
 import globalLogout from "@/utils/globalLogout";
-
-// THIRD-PARTY IMPORT
-
 import { Registerer, RegistererState, UserAgent } from "sip.js";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Cookies from "js-cookie";
 import io from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
-const logo: any = process.env.EXPANDED_LOGO;
-
-// TYPES
 import { LoginFormValues } from "@/types/loginTypes";
 import { agentEntryAdd, userAllowedCampaign } from "@/redux/slice/authSlice";
 import { onSetUserEntry } from "@/redux/slice/commonSlice";
 import { Danger } from "@/redux/services/toasterService";
-import { useCampaignOptions } from "@/redux/slice/campaignSlice";
 import Icon from "../ui-components/Icon";
 
-/* ============================== LOGIN FORM ============================== */
+const WSS_URL = process.env.WSS_URL;
+const baseUrl = `${process.env.BASE_URL}`;
 
 const LoginForm = () => {
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
   const dispatch = useAppDispatch();
-  const { logout } = useAuth();
-
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState("email"); // 'email' or 'number'
+  const [isLoading, setIsLoading] = useState(false);
+  const [campaignOptions, setCampaignOptions] = useState<
+    Array<{ label: string; value: string }>
+  >([]);
 
-  // SHOW PASSWORD
   const onEyeClick = () => setShowPassword(!showPassword);
-
-  // GET DOMAIN
-
   const domain = getDomain();
-
-  // const domain = "beltalk3.inextrix.com";
-  // const domain = "labtest2.belsmart.io";
   const tenantPortal: any = process.env.TENANT_PORTAL_DOMAIN;
+
   const initialValues: LoginFormValues = {
     username: "",
     password: "",
-    tenant_domain: tenantPortal, // ::yaksh::
+    tenant_domain: tenantPortal,
     rememberMe: false,
     browserToken: "",
-    campaign_uuid: "", // <- new
+    campaign_uuid: "",
   };
 
   const validationSchema = Yup.object<LoginFormValues>({
     username: Yup.string().required("Please enter your username"),
     password: Yup.string().required("Please enter your password"),
-    campaign_uuid: Yup.string().required("Please select a campaign"), // <- new
+    campaign_uuid: Yup.string().required("Please select a campaign"),
   });
 
-  // CALL REGISTRATION
+  const fetchAllowedCampaigns = async (username: string) => {
+    if (!username) return;
+    try {
+      const res: any = await dispatch(
+        userAllowedCampaign({ params: { username } })
+      ).unwrap();
+      setCampaignOptions(res);
+    } catch (error) {
+      console.error("Failed to fetch allowed campaigns", error);
+    }
+  };
+
   const sipRegistration = (user: any) => {
     let userAgent: any;
     let callScreen = "false";
@@ -156,69 +147,7 @@ const LoginForm = () => {
         console.log("Failed to connect user agent .... ", error);
       });
   };
-  const [campaignOptions, setCampaignOptions] = useState<
-    { label: string; value: string }[]
-  >([]);
 
-  // console.log("campaignOptions", campaignOptions);
-
-
-  const fetchAllowedCampaigns = async (username: string) => {
-    if (!username) return;
-
-    try {
-      let payload = { username };
-      // const res = await axios.get(`https://ringingo.cc.local:5000/user/allowed_campaigns?username=${encodeURIComponent(username)}`);
-      const res: any = await dispatch(userAllowedCampaign({ params: payload })).unwrap();
-      console.log("resresresres", res)
-      // Assuming res.data is an array of { label, value }
-      // setFieldValue("campaign_uuid", res.data); // You can store this however needed
-      setCampaignOptions(res); // Set for dropdown
-    } catch (error) {
-      console.error("Failed to fetch allowed campaigns", error);
-    }
-  };
-
-
-  // Load campaigns on mount
-  // useEffect(() => {
-  //   const fetchCampaigns = async () => {
-  //     try {
-  //       const res = await axios.get("https://ringingo.cc.local:5000/agent-call-center/campaign", {
-  //   headers: {
-  //     Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRlbW8iLCJkb21haW4iOiIxOTIuMTY4LjEuMzkiLCJlbWFpbCI6ImRlbW9AZ21haWwuY29tIiwicm9sZSI6InRlbmFudCIsInV1aWQiOiI4OWMxYjkzOS1iYjEzLTQ3NmQtYjIxNy05YmZhNTM3M2VkMGEiLCJ0aW1lem9uZSI6IkFzaWEvS29sa2F0YSIsImlhdCI6MTc1MDg0OTQxNCwiZXhwIjoxNzUwOTM1ODE0fQ.XA2qxgbp1cHuidcWDWx_259Z1DUlfVJ8QHUJ_PVTTZw",
-  //     "Content-Type": "application/json",
-  //   },
-  //   withCredentials: false,
-  // });
-
-  // console.log("ghgggggggggggg",res);
-
-  // const {
-  //   blended_campaign = [],
-  //   inbound_campaign = [],
-  //   outbound_campaign = [],
-  // } = res.data.data;
-
-  // const allCampaigns = [...blended_campaign, ...inbound_campaign, ...outbound_campaign];
-  //       const formatted = allCampaigns.map(c => ({
-  //         label: c.name,
-  //         value: c.uuid
-  //       }));
-  // console.log("formattedformatted",allCampaigns);
-
-  // setCampaignOptions(formatted);
-
-
-  //     } catch (error) {
-  //       console.error("Failed to fetch campaigns:", error);
-  //     }
-  //   };
-
-  //   fetchCampaigns();
-  // }, []);
-
-  // // SOCKET LOGOUT
   const sendLogout = (
     browserToken: any,
     user_uuid: any,
@@ -229,41 +158,28 @@ const LoginForm = () => {
       query: { token: browserToken, uuid: user_uuid, new_token: newToken },
     });
 
-    socket.on("connect", () => { });
     socket.on("logout", () => {
-      console.log(user);
-      console.log(newToken);
-      console.log(browserToken);
-      console.log(user_uuid);
       globalLogout(logout, user);
       console.log("Received logout event. Logging out...");
     });
   };
-  // ON SUBMIT FORM
+
   const onSubmit = async (values: LoginFormValues) => {
-    const campaignUUID = values.campaign_uuid; // ✅ CORRECT
-    console.log("campaignnn", campaignUUID);
     setErrorMsg(null);
     try {
       setIsLoading(true);
-      //Genrate browserToken
       const browserToken = uuidv4();
-      const newToken = browserToken;
-      //
+      const campaignUUID = values.campaign_uuid;
       const res: any = await login(
         values.username,
         values.password,
         values.tenant_domain,
-
-        //Socket browserToken
         browserToken,
         values.rememberMe,
         campaignUUID
       );
 
-      console.log(res);
-
-      if (res && res.data.access_token) {
+      if (res?.data?.access_token) {
         if (values.rememberMe) {
           Cookies.set("rememberMe", "true", { expires: 7 });
           Cookies.set("username", values.username, { expires: 7 });
@@ -272,37 +188,31 @@ const LoginForm = () => {
           Cookies.remove("username");
         }
 
-        let payload = {
-          login_status: "0",
-        };
-        let response: any = await dispatch(agentEntryAdd(payload)).unwrap();
-        if (
-          (response && response.statusCode === 201) ||
-          response.statusCode === 200
-        ) {
+        const payload = { login_status: "0" };
+        const response: any = await dispatch(agentEntryAdd(payload)).unwrap();
+
+        if (response?.statusCode === 200 || response?.statusCode === 201) {
           dispatch(onSetUserEntry("login-entry"));
         }
-        //Send logout response browserToken,agentuuid,newtoken,data
+
         sendLogout(
           res.data.agent_detail.browserToken,
           res.data.agent_detail.uuid,
-          newToken,
+          browserToken,
           res.data
         );
-        //
+
         sipRegistration(res?.data);
         Cookies.set("is_call_start", "1");
-        setIsLoading(false);
-      } else if (res && res?.data?.statusCode === 403) {
+      } else if (res?.data?.statusCode === 403) {
         setErrorMsg(res?.data?.data);
-        setIsLoading(false);
       } else {
         Danger(res?.data?.data);
-        setIsLoading(false);
       }
     } catch (e: any) {
-      setIsLoading(false);
       console.error("Login Error --->", e?.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -319,6 +229,7 @@ const LoginForm = () => {
     validationSchema,
     onSubmit,
   });
+
   useEffect(() => {
     const savedUsername = Cookies.get("username") || "";
     const rememberMe = Cookies.get("rememberMe") === "true";
@@ -330,184 +241,148 @@ const LoginForm = () => {
   }, [setFieldValue]);
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center"
-    // style={{
-    //     backgroundImage: 'url("/assets/images/Loginbg.png")', // Replace with the actual path of your image
-    //   }}
-    >
-      <div className="flex items-center" >
-        {/* Left Section (Image) */}
-        < div className="flex-1 flex items-center justify-center shadow-lg rounded-tl-lg rounded-bl-lg" >
-          <Icon
-            name="LoginLogo"
-            alt="Login"
-            width={400}
-            height={400}
-          // className="object-contain"
-          />
-        </div>
-
-        {/* Right Section (Login Form) */}
-        <div className="w-[400px] h-[500px] p-5 border-2 rounded-tr-[40px] rounded-br-[40px] shadow-md bg-white" >
-          {/* Logo */}
-          < div className=" flex justify-center" >
+    <div className="min-h-screen flex items-center justify-center ">
+      <div className="flex rounded-2xl shadow-lg overflow-hidden max-w-3xl w-full bg-white">
+        {/* ✅ LEFT SECTION (Added same as first code) */}
+        <div className="w-1/2 bg-[#f5f6fa] p-6 flex flex-col  rounded-l-2xl relative ">
+          {/* Logo moved to top */}
+          <div className="flex justify-center items-center mt-3">
             <Icon
               name="MenuLogoExpandedImage"
+              width={180}
               height={50}
-              width={220}
               alt="Logo"
             />
           </div>
 
-          < h2 className="text-[24px] font-medium mb-6 text-center text-[#322996]" >
-            Welcome Back
+          <div>
+            <h2 className="text-[26px] font-bold text-gray-800 leading-snug mt-8">
+              Find Latest Updates Here!
+            </h2>
+            <p className="text-sm text-gray-600  leading-relaxed mt-4">
+              Now check added displays on the status page along with other
+              technical upgrades. Stay updated with our latest features and
+              performance improvements.
+            </p>
+
+            {/* <div className="mt-8 flex gap-4">
+              <img
+                src="/assets/images/google-play.png"
+                alt="Google Play"
+                className="w-[120px] cursor-pointer"
+              />
+              <img
+                src="/assets/images/app-store.png"
+                alt="App Store"
+                className="w-[120px] cursor-pointer"
+              />
+            </div> */}
+            <div className="mt-6 border-t border-gray-300 pt-4">
+              <h3 className="text-[16px] font-semibold text-gray-800 mb-1">
+                📢 What’s New:
+              </h3>
+              <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
+                <li>Enhanced dashboard performance</li>
+                <li>Improved security & reliability</li>
+                <li>New responsive layout for better experience</li>
+                <li>Faster load times with optimized codebase</li>
+                <li>Fresh modern UI with smoother navigation</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div className="border-l border-gray-400 "></div>
+
+        {/* ✅ RIGHT SECTION (your original login form untouched) */}
+        <div className="w-1/2 p-6 flex flex-col justify-center bg-[#f5f6fa]">
+          {/* <div className="flex justify-center mb-4">
+            <Icon name="MenuLogoExpandedImage" height={50} width={220} alt="Logo" />
+          </div> */}
+
+          <h2 className="text-[28px] font-bold mb-6 text-center text-[#111827]">
+            Login
           </h2>
 
-          < form onSubmit={handleSubmit} className="space-y-5" >
-            <div>
-              {/* 
-              <Input
-              isLogin={true}
+          <form onSubmit={handleSubmit} className="space-y-5 ">
+            <Input
+              isLogin
               icon="userLogin"
-              className=""
               name="username"
               label={
                 <>
-                User Name <span className="text-red-500">*</span>
+                  User Name <span className="text-red-500">*</span>
                 </>
               }
               value={values.username}
-              placeholder=""
-              // placeholder="Enter Your Email/Username"
+              touched={touched}
+              errors={errors}
+              onChange={handleChange}
+              onBlur={(e) => {
+                handleBlur(e);
+                fetchAllowedCampaigns(e.target.value);
+              }}
+              isInfo={false}
+              noSpace
+            />
+
+            <Password
+              className=" text-sm"
+              name="password"
+              label={
+                <>
+                  Password <span className="text-red-500">*</span>
+                </>
+              }
+              value={values.password}
               touched={touched}
               errors={errors}
               onChange={handleChange}
               onBlur={handleBlur}
               isInfo={false}
-              noSpace
-              />
-            */}
-              < Input
-                isLogin={true}
-                icon="userLogin"
-                className=""
-                name="username"
-                label={
-                  <>
-                    User Name < span className="text-red-500" >* </span>
-                  </>
-                }
-                value={values.username}
-                touched={touched}
-                errors={errors}
-                onChange={handleChange}
-                onBlur={(e) => {
-                  handleBlur(e); // preserve Formik's behavior
-                  fetchAllowedCampaigns(e.target.value); // fetch after blur
-                }}
-                isInfo={false}
-                noSpace
+            />
 
-              />
-            </div>
-
-            < div >
-              <Password
-                className="bg-white text-sm"
-                name="password"
-                label={
-                  <>
-                    Password < span className="text-red-500" >* </span>
-                  </>
-                }
-                value={values.password}
-                // placeholder="Enter Password"
-                touched={touched}
-                errors={errors}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                // onRightIconClick={onEyeClick}
-                isInfo={false}
-              />
-              {/* <Input
-                demo="login"
-                className="w-full rounded-md border border-gray-200 bg-white py-3 pl-10 pr-10 text-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                name="password"
-                label="Enter Password *"
-                value={values.password}
-                type={showPassword ? "text" : "password"}
-                placeholder=""
-                // placeholder="Enter Password"
-                rightIcon={showPassword ? "eyeOpen" : "eyeClose-gray"}
-                touched={touched}
-                errors={errors}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                onRightIconClick={onEyeClick}
-                isInfo={false}
-              /> */}
-            </div>
-
-            < div className="flex justify-between items-center " >
-              <div className="flex items-center pb-0" >
+            <div className="flex justify-end">
+              {/* <div className="flex items-center pb-0">
                 <CheckBox
                   label="Remember Me"
-                  // className="text-sm text-gray-600"
-                  // label="Remember Me"
                   checked={values.rememberMe}
                   onChange={(checked: boolean) =>
                     setFieldValue("rememberMe", checked)
                   }
                 />
-              </div>
-              < Link
+              </div> */}
+              <Link
                 href="/forgot-password"
                 className="text-[#322996] text-xs font-light hover:underline"
               >
                 Forgot password ?
               </Link>
             </div>
-            < Select
+
+            <Select
+              className="bg-white text-sm"
               label={
                 <>
-                  Select Campaign < span className="text-red-500" >* </span>
+                  <div className="!text-[#322996] !text-xs">
+                    Select Campaign {" "}<span className="text-red-500 text-sm">*</span>
+                  </div>
                 </>
               }
               name="campaign_uuid"
-              placeholder="Select Campaign"
+              // placeholder="Select Campaign"
               options={campaignOptions}
               value={values.campaign_uuid}
               touched={touched}
               errors={errors}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                console.log("Selected campaign UUID:", e.target.value);
-                setFieldValue("campaign_uuid", e.target.value);
-              }}
-            />
-            {/*
-            <Select
-            label={
-              <>
-              Select Campaign <span className="text-red-500">*</span>
-              </>
+              isInfo={false}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                setFieldValue("campaign_uuid", e.target.value)
               }
-              name="campaign_uuid"
-              placeholder="Select Campaign"
-              options={campaignOptions}
-              value={values.campaign_uuid}
-              touched={touched}
-              errors={errors}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                console.log("Selected campaign UUID:", e.target.value);
-                setFieldValue("campaign_uuid", e.target.value);
-              }}
-              />
-              */}
+            />
 
             <Button
               text="LOGIN"
-              className="w-full rounded-md bg-button-background py-2.5 text-sm font-medium text-white transition-colors  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 "
+              className="w-full rounded-md bg-button-background py-2.5 text-sm font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               type="submit"
               style="save"
               icon="LoginIcon"
@@ -515,21 +390,16 @@ const LoginForm = () => {
               disabled={isLoading}
             />
 
-            <div className="text-center" > {/* Optional account link */} </div>
-
-            {/* Terms & Condition */}
-            <div className="text-center" >
-              <p className="text-[10px] text-gray-500  mt-4" >
+            <div className="text-center mt-4">
+              <p className="text-[10px] text-gray-500 mt-4">
                 By clicking to continue, you agree to our{" "}
-                <span className="font-bold text-gray-700" >
+                <a href="/dummy.pdf" target="_blank" rel="noopener noreferrer" className="font-bold text-[#322996] hover:underline">
                   Terms & Condition
-                </span>
+                </a>
               </p>
-
-              {/* Powered by Bytebran */}
-              <p className="text-xs text-gray-600 text-center mt-4" >
+              <p className="text-xs text-gray-600 text-center mt-4">
                 Powered by{" "}
-                <span className="text-[#322996] font-medium" > Ringingo </span>
+                <span className="text-[#322996] font-bold">Ringingo</span>
               </p>
             </div>
           </form>

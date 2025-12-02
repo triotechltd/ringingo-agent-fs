@@ -84,7 +84,7 @@ const CrmInformation = () => {
   return (
     <div className=" border-dark-800 bg-blue-50 h-[50vh] ">
       {/* <div className="bg-white 3xl:px-6 3xl:py-2.5 py-1.5 px-4 h-[5.8vh] rounded-md"> */}
-      <div className="bg-white 3xl:px-6 3xl:py-2.5 py-1.5 px-4 flex items-center rounded-[46px] justify-between h-[5.8vh]">
+      <div className="bg-[#F2F2F2] 3xl:px-6 3xl:py-2.5 py-1.5 px-4 flex items-center  justify-between h-[5.8vh]">
 
         <span className="3xl:text-base text-xs text-heading font-bold">
           CRM Information
