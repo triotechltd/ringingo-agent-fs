@@ -1,2 +1,2 @@
 @Library('jenkins-library') _
-ttbsfreeswitch(true, 0, "", 1, false)
+ttbsfreeswitchuae38(true, 0, "", 1, false)
