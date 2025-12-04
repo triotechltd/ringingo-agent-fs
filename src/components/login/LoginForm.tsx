@@ -37,7 +37,8 @@ const LoginForm = () => {
 
   const onEyeClick = () => setShowPassword(!showPassword);
   const domain = getDomain();
-  const tenantPortal: any = process.env.TENANT_PORTAL_DOMAIN;
+  const tenantPortal: any = domain;
+  // const tenantPortal: any = process.env.TENANT_PORTAL_DOMAIN;
 
   const initialValues: LoginFormValues = {
     username: "",
