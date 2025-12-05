@@ -1629,6 +1629,8 @@ const CallingModal = (props: CallingModelProps) => {
           console.log("invitation------------------->", secondCallSession);
           Cookies.set("is_call_start", "1");
           console.log("iscall call id valueeeee", Cookies.get("callId"))
+          callerBeepPlay.play()
+          callerBeepPlay.currentTime = 0;
           if (
             (secondCallSession && secondCallSession._state == "Established") ||
             (secondCallSession && secondCallSession._state == "Establishing")
@@ -2016,7 +2018,7 @@ const CallingModal = (props: CallingModelProps) => {
     }
   };
 
-  // OUTBOUND CALL
+  // OUTBOUND CALL---outgoing call function
   const callStatusCardProperties = (
     number: string,
     functionName = "",
@@ -2157,6 +2159,8 @@ const CallingModal = (props: CallingModelProps) => {
             switch (callingState) {
               case SessionState.Establishing:
                 console.log("Ringing on destination ....");
+                callerBeepPlay.play()
+                callerBeepPlay.currentTime = 0;
                 Cookies.set("is_call_start", "0");
                 console.log(inviter);
                 setShowModal(true);
@@ -2214,6 +2218,8 @@ const CallingModal = (props: CallingModelProps) => {
                 console.log("Call terminated ....");
                 console.log(secondCallSession);
                 console.log(outgoingSession);
+                callerBeepPlay.play()
+                callerBeepPlay.currentTime = 0;
                 if (
                   (secondCallSession &&
                     secondCallSession._state == "Established") ||
