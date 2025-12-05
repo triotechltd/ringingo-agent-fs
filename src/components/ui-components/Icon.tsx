@@ -22,10 +22,12 @@ const icons = {
 
   ChatHistory: "/assets/icons/gray/report.svg",
   Setting: "/assets/icons/gray/setting.svg",
-  MenuLogoExpandedImage: "/assets/images/ringingo_expanded_logo.svg",
-  // MenuLogoCollapsedImage: "/assets/images/Byte-collapsed-logo.png",
-  MenuLogoCollapsedImage: "/assets/images/ringingo_collapsed_logo.svg",
+//   MenuLogoExpandedImage: "/assets/images/ringingo_expanded_logo.svg",
+//   // MenuLogoCollapsedImage: "/assets/images/Byte-collapsed-logo.png",
+//   MenuLogoCollapsedImage: "/assets/images/ringingo_collapsed_logo.svg",
 //   Lock: "/assets/icons/lock.svg",
+MenuLogoExpandedImage: "/assets/images/RingingoLogotype.png",
+MenuLogoCollapsedImage: "/assets/images/fav.png",
   Lock: "/assets/icons/blue/Lock.svg",
 
   Eye: "/assets/icons/eye.svg",

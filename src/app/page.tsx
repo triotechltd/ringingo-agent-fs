@@ -12,7 +12,8 @@ import getDomain from "@/utils/GetDoamin";
 // ASSETS
 const logo = process.env.EXPANDED_LOGO;
 // const FaviconIcon = "/assets/images/Byte-collapsed-logo.png";
-const FaviconIcon = process.env.COLLAPSED_LOGO;
+// const FaviconIcon = process.env.COLLAPSED_LOGO;
+const FaviconIcon = "/assets/images/fav.png";
 
 // const logo = "/assets/images/aargon-expanded-logo.png";
 // const FaviconIcon = "/assets/images/aargon-favicon2.ico";

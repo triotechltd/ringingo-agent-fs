@@ -52,7 +52,8 @@ const callIcon = "/assets/icons/white/call_white.svg";
 let breakInterval: any;
 let timeInterval: any;
 // const FaviconIcon = "/assets/images/Byte-collapsed-logo.png";
-const FaviconIcon = process.env.COLLAPSED_LOGO;
+// const FaviconIcon = process.env.COLLAPSED_LOGO;
+const FaviconIcon = "/assets/images/fav.png";
 
 // const FaviconIcon = "/assets/images/aargon-favicon2.ico";
 
