@@ -15,6 +15,7 @@ import {
   getWhatsAppMessagesList,
   onRecieveUnReadChat,
   onStartConversation,
+  senInstaMessage,
   // senInstaMessage,
   senMessage,
   setActiveConversation,
@@ -37,7 +38,9 @@ const Conversation = ({}: ConversationProps) => {
   const activeConversation = useActiveConversation();
   const selectedCampaign = useSelectedCampaign();
   const newConversation = useNewConversation();
+  
   const { user } = useAuth();
+  // console.log("newconbversasads",newConversation,user?.agent_detail);
   const dispatch = useAppDispatch();
   const [selectedPlatform, setSelectedPlatform] = useState<OptionTypes>(
     platformOptions[0]
@@ -60,7 +63,7 @@ const Conversation = ({}: ConversationProps) => {
       agent_uuid: user?.agent_detail?.uuid,
       browserToken: user?.agent_detail?.browserToken,
       user_uuid: user?.agent_detail?.uuid,
-      user_id: user?.id,
+      // user_id: user?.id,
       agent_id: user?.agent_detail?.id,
     },
     auth: {
@@ -152,6 +155,7 @@ const Conversation = ({}: ConversationProps) => {
     const response = await dispatch(
       chatHistory({
         from_number: conversationData?.[getMessageFromNumber(conversationData)],
+        channel_type: conversationData?.channel_type,
       })
     ).unwrap();
     if (response?.data) {
@@ -165,7 +169,9 @@ const Conversation = ({}: ConversationProps) => {
     const response = await dispatch(
       getWhatsAppMessagesList({
         phone_number_id: activeData?.phone_number_id,
+        instagram_business_account_id: activeData?.channel_identifiers.instagram_business_account_id,
         from_number: activeData?.[getMessageFromNumber(activeData)],
+        channel_type:activeData?.channel_type
       })
     ).unwrap();
     const data = {
@@ -239,7 +245,13 @@ const Conversation = ({}: ConversationProps) => {
   const messageSendApi = async (formData: any, messages: any, payload: any) => {
     console.log("message send apii",messages);
     console.log("message send apii payloadd",payload);
-    let messageResponse: any = await dispatch(senMessage(formData)).unwrap();
+    let messageResponse: any;
+    if(payload.channelType == "WhatsApp"){
+      messageResponse = await dispatch(senMessage(formData)).unwrap();
+    }
+    else{
+      messageResponse = await dispatch(senInstaMessage(formData)).unwrap();
+    }
     // let messageResponse: any = await dispatch(senInstaMessage(formData)).unwrap();
     if (messageResponse) {
       messages[messages?.length - 1]["message_id"] =
@@ -499,9 +511,9 @@ const Conversation = ({}: ConversationProps) => {
           <Button
             text="Start Conversation"
             loaderClass="!border-primary-green !border-t-transparent"
-            style="primary"
+            style=""
             icon="plus-white"
-            className="px-1.5 py-1 font-normal"
+            className="px-1.5 py-1 text-white font-normal bg-[#4DA6FF] "
             onClick={async () => {
               await dispatch(
                 onStartConversation({

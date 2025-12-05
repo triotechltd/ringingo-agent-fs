@@ -59,6 +59,7 @@ const callGreen = "/assets/icons/green/call.svg";
 const next = "/assets/icons/next-play.svg";
 const whatsapp = "/assets/icons/green/whatsapp.svg";
 const whatsappBlue = "/assets/icons/blue/whatsapp.svg";
+const instagram = "/assets/icons/instagram.svg";
 const imageIcon = "/assets/images/photo.png";
 
 interface ActiveListProps {
@@ -472,7 +473,7 @@ const ActiveList = ({
             >
               <div className="col-span-1 flex justify-center">
                 <div className="relative 5xl:w-[26px] 5xl:h-[26px] 4xl:w-[22px] 4xl:-h-[22px] w-[18px] h-[18px]">
-                  <Legacy src={whatsappBlue} alt="whatsapp" layout="fill" />
+                  {activeItem.channel_type == "WhatsApp" ? <Legacy src={whatsappBlue} alt="whatsapp" layout="fill" /> : <Legacy src={instagram} alt="instagram" layout="fill" /> }
                 </div>
               </div>
               <div className="col-span-3 flex flex-col">
@@ -483,9 +484,9 @@ const ActiveList = ({
                   {getLatestActiveDetails(activeItem)?.image_url?.length ? (
                     <div className="flex items-center">
                       <div className="relative 5xl:w-[13px] 5xl:h-[13px] 4xl:w-[12px] 4xl:-h-[12px] w-[12px] h-[12px]">
-                        <Legacy src={imageIcon} alt="photo" layout="fill" />
+                        <Legacy src={getLatestActiveDetails(activeItem)?.image_url} alt="photo" layout="fill" />
                       </div>
-                      <span className="ml-1">Photo</span>
+                      {/* <span className="ml-1">Photo</span> */}
                     </div>
                   ) : (
                     getLatestActiveDetails(activeItem)?.text_content
@@ -546,6 +547,8 @@ const ActiveList = ({
   };
 
   const renderActiveList = () => {
+    console.log("renederrrrr active list compomenenenneeeeeeeeeeee",campaignType,callQueueList);
+    
     return (
       <div className={`${sectionBodyClass} overflow-y-auto scrollbar-hide`}>
         {campaignType === "outbound" || campaignType === "blended" ? (
@@ -810,8 +813,8 @@ const ActiveList = ({
 
   return (
     <>
-      <div className={`bg-blue-50 h-[42vh] ${sectionClass}`}>
-        <div className="bg-white 3xl:px-6 3xl:py-2.5 py-1.5 px-4 flex items-center rounded-[46px] justify-between h-[5.8vh]">
+      <div className={ `bg-blue-50 h-[42vh] ${sectionClass}`}>
+        <div className="bg-[#F2F2F2] 3xl:px-6 3xl:py-2.5 py-1.5 px-4 flex items-center  justify-between h-[5.8vh]">
           <span className="3xl:text-base text-xs text-heading font-bold ">
             Active
           </span>
@@ -822,9 +825,9 @@ const ActiveList = ({
               <Button
                 text="Start Conversation"
                 loaderClass="!border-primary-green !border-t-transparent"
-                style="primary"
+                style=""
                 icon="plus-white"
-                className="px-1.5 py-1 font-normal"
+                className="px-1.5 py-1 font-normal text-white bg-[#4DA6FF]"
                 onClick={async () => {
                   await dispatch(
                     onStartConversation({

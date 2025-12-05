@@ -17,6 +17,8 @@ interface IconProps {
 // ASSETS
 const icons = {
 
+  ImageIcon : "/assets/images/photo.svg",
+  FollowUpImage : "/assets/images/FeaturedIcon.svg",
   // Login Logo
   LoginLogo:"/assets/images/LoginLogo1.svg",
 

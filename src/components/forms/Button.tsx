@@ -47,8 +47,8 @@ const Button = (props: ButtonProps) => {
   } = props;
 
   const styles: any = {
-    save: "bg-button-background text-white",
-    primary: "bg-primary text-white",
+    save: "bg-[#4DA6FF] text-white",
+    primary: "bg-[#4DA6FF] text-white",
     "primary-green": "bg-primary-green text-white",
     "primary-outline": "bg-transparent border-2 border-primary text-heading",
     "primary-green-outline":
@@ -86,7 +86,7 @@ const Button = (props: ButtonProps) => {
       <div className="hover:bg-opacity-60 ">
         <button
           form={form}
-          className={`flex items-center font-bold 3xl:text-sm text-xs rounded-[36px] justify-center whitespace-nowrap  ${styles[style]} ${className}`}
+          className={`flex items-center font-bold 3xl:text-sm text-xs rounded-[10px] justify-center whitespace-nowrap   ${styles[style]} ${className}`}
           type={type}
           disabled={disabled}
           onClick={onClick}

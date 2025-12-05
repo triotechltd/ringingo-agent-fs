@@ -67,34 +67,85 @@ const LoginForm = () => {
   };
 
   const sipRegistration = (user: any) => {
-    try {
-      const username = user?.agent_detail?.extension_details[0]?.username;
-      const password = user?.agent_detail?.extension_details[0]?.password;
-      const domain = user?.agent_detail?.tenant[0]?.domain;
-      const UAURI = UserAgent.makeURI(`sip:${username}@${domain}`);
-
-      if (!UAURI) throw new Error("Failed to create UserAgent URI.");
-
-      const userAgent = new UserAgent({
-        uri: UAURI,
-        authorizationPassword: password,
-        authorizationUsername: username,
-        transportOptions: { server: WSS_URL, traceSip: true },
-        register: true,
-        displayName: username,
-        userAgentString: "ASTPP | WEBRTC",
-      });
-
-      userAgent.start().then(() => {
-        const registerer = new Registerer(userAgent);
-        registerer.stateChange.addListener((state) => {
-          console.log("SIP registration state:", state);
-        });
-        registerer.register();
-      });
-    } catch (err) {
-      console.error("SIP Registration Error:", err);
+    let userAgent: any;
+    let callScreen = "false";
+    let username = user?.agent_detail?.extension_details[0]?.username;
+    let password = user?.agent_detail?.extension_details[0]?.password;
+    // let domain = "itsmycc-bytebran.local";
+    // let domain = "192.168.1.25";
+    let domain = user?.agent_detail?.tenant[0]?.domain;
+    var UAURI = UserAgent.makeURI("sip:" + username + "@" + domain);
+    console.log("UAURI=====>", UAURI);
+    if (!UAURI) {
+      throw new Error("Failed to create UserAgent URI ....");
     }
+    const userOptions: any = {
+      uri: UAURI,
+      authorizationPassword: password,
+      authorizationUsername: username,
+      transportOptions: {
+        server: WSS_URL,
+        traceSip: true,
+      },
+      register: true,
+      noAnswerTimeout: 60,
+      userAgentString: "ASTPP | WEBRTC ",
+      dtmfType: "info",
+      displayName: username,
+      activeAfterTransfer: false, //	Die when the transfer is completed
+      logBuiltinEnabled: false, //	Boolean - true or false - If true throws console logs
+    };
+    console.log(userOptions);
+    userAgent = new UserAgent(userOptions);
+    userAgent
+      .start()
+      .then(() => {
+        console.log("Connected ....");
+        console.log(userAgent);
+        //	Create register object
+        const registerer = new Registerer(userAgent);
+        registerer.stateChange.addListener(
+          (registrationState: RegistererState) => {
+            switch (registrationState) {
+              case RegistererState.Registered:
+                console.log("Registered ....");
+                Cookies.set("username", username);
+                Cookies.set("password", password);
+                Cookies.set("domain", domain);
+                Cookies.set("authenticated", "true");
+                // window.setTimeout(function () {
+                //     window.location.href = "/";
+                // }, 2000);
+                break;
+              case RegistererState.Unregistered:
+                console.log("Unregistered ....");
+                break;
+              case RegistererState.Terminated:
+                console.log("Terminated ....");
+                break;
+              default:
+                console.log(
+                  "Could not identified registration state .... ",
+                  registrationState
+                );
+                break;
+            }
+          }
+        );
+        if (callScreen !== "true") {
+          registerer
+            .register()
+            .then((request) => {
+              console.log("Successfully sent REGISTER request .... ", request);
+            })
+            .catch((error: any) => {
+              console.log("Failed to send REGISTER request .... ", error);
+            });
+        }
+      })
+      .catch((error: any) => {
+        console.log("Failed to connect user agent .... ", error);
+      });
   };
 
   const sendLogout = (
@@ -195,18 +246,23 @@ const LoginForm = () => {
         {/* ✅ LEFT SECTION (Added same as first code) */}
         <div className="w-1/2 bg-[#f5f6fa] p-6 flex flex-col  rounded-l-2xl relative ">
           {/* Logo moved to top */}
-          <div className="items-center mt-3" >
-            <Icon name="MenuLogoExpandedImage" width={180} height={50} alt="Logo" />
+          <div className="flex justify-center items-center mt-3">
+            <Icon
+              name="MenuLogoExpandedImage"
+              width={180}
+              height={50}
+              alt="Logo"
+            />
           </div>
 
-          <div >
+          <div>
             <h2 className="text-[26px] font-bold text-gray-800 leading-snug mt-8">
               Find Latest Updates Here!
             </h2>
             <p className="text-sm text-gray-600  leading-relaxed mt-4">
-              Now check added displays on the status page along with other technical
-              upgrades. Stay updated with our latest features and performance
-              improvements.
+              Now check added displays on the status page along with other
+              technical upgrades. Stay updated with our latest features and
+              performance improvements.
             </p>
 
             {/* <div className="mt-8 flex gap-4">
@@ -221,19 +277,18 @@ const LoginForm = () => {
                 className="w-[120px] cursor-pointer"
               />
             </div> */}
-              <div className="mt-6 border-t border-gray-300 pt-4">
-    <h3 className="text-[16px] font-semibold text-gray-800 mb-1">
-      📢 What’s New:
-    </h3>
-    <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
-      <li>Enhanced dashboard performance</li>
-      <li>Improved security & reliability</li>
-      <li>New responsive layout for better experience</li>
-        <li>Faster load times with optimized codebase</li>
-              <li>Fresh modern UI with smoother navigation</li>
-
-    </ul>
-  </div>
+            <div className="mt-6 border-t border-gray-300 pt-4">
+              <h3 className="text-[16px] font-semibold text-gray-800 mb-1">
+                📢 What’s New:
+              </h3>
+              <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
+                <li>Enhanced dashboard performance</li>
+                <li>Improved security & reliability</li>
+                <li>New responsive layout for better experience</li>
+                <li>Faster load times with optimized codebase</li>
+                <li>Fresh modern UI with smoother navigation</li>
+              </ul>
+            </div>
           </div>
         </div>
         <div className="border-l border-gray-400 "></div>
@@ -244,7 +299,7 @@ const LoginForm = () => {
             <Icon name="MenuLogoExpandedImage" height={50} width={220} alt="Logo" />
           </div> */}
 
-          <h2 className="text-[28px] font-extrabold mb-6 text-center text-[#111827]">
+          <h2 className="text-[28px] font-bold mb-6 text-center text-[#111827]">
             Login
           </h2>
 
@@ -271,7 +326,7 @@ const LoginForm = () => {
             />
 
             <Password
-              className="bg-white text-sm"
+              className=" text-sm"
               name="password"
               label={
                 <>
@@ -286,8 +341,8 @@ const LoginForm = () => {
               isInfo={false}
             />
 
-            <div className="flex justify-between items-center">
-              <div className="flex items-center pb-0">
+            <div className="flex justify-end">
+              {/* <div className="flex items-center pb-0">
                 <CheckBox
                   label="Remember Me"
                   checked={values.rememberMe}
@@ -295,7 +350,7 @@ const LoginForm = () => {
                     setFieldValue("rememberMe", checked)
                   }
                 />
-              </div>
+              </div> */}
               <Link
                 href="/forgot-password"
                 className="text-[#322996] text-xs font-light hover:underline"
@@ -305,17 +360,21 @@ const LoginForm = () => {
             </div>
 
             <Select
+              className="bg-white text-sm"
               label={
                 <>
-                  Select Campaign <span className="text-red-500">*</span>
+                  <div className="!text-[#322996] !text-xs">
+                    Select Campaign {" "}<span className="text-red-500 text-sm">*</span>
+                  </div>
                 </>
               }
               name="campaign_uuid"
-              placeholder="Select Campaign"
+              // placeholder="Select Campaign"
               options={campaignOptions}
               value={values.campaign_uuid}
               touched={touched}
               errors={errors}
+              isInfo={false}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                 setFieldValue("campaign_uuid", e.target.value)
               }
@@ -332,13 +391,15 @@ const LoginForm = () => {
             />
 
             <div className="text-center mt-4">
-              <p className="text-[10px] text-gray-500">
+              <p className="text-[10px] text-gray-500 mt-4">
                 By clicking to continue, you agree to our{" "}
-                <span className="font-bold text-gray-700">Terms & Condition</span>
+                <a href="/dummy.pdf" target="_blank" rel="noopener noreferrer" className="font-bold text-[#322996] hover:underline">
+                  Terms & Condition
+                </a>
               </p>
               <p className="text-xs text-gray-600 text-center mt-4">
                 Powered by{" "}
-                <span className="text-[#322996] font-medium">Ringingo</span>
+                <span className="text-[#322996] font-bold">Ringingo</span>
               </p>
             </div>
           </form>

@@ -352,7 +352,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   }, []);
   return (
     <>
-      <div className="h-[98vh] flex flex-col overflow-hidden">
+      <div className="h-[100vh] flex flex-col overflow-hidden ">
         {personalizeData?.title && personalizeData?.faviconfile ? (
           <Helmet>
             <title>{personalizeData.title}</title>
@@ -374,13 +374,13 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <Header breakValue={breakValue} onBreakSelection={onBreakSelection} />
         <SideBar />
         <main
-          className={`flex-1 transition-all mt-[12px] rounded-[30px] mr-[10px] bg-[#F4F7FE] pl-[10px] pt-[70px] pb-[10px] tsm:pt-[110px] pr-[10px] tsm:pr-3 ${isdrawerOpen
+          className={`flex-1 transition-all mt-[12px] mb-[12px] rounded-[10px] mr-[10px] pl-[10px] pt-[70px] pb-[10px] tsm:pt-[110px] pr-[10px] tsm:pr-3 bg-[#F4F7FE] ${isdrawerOpen
             ? "pl-[0px] ml-[255px] tmd:pl-[0px]"
             : "ml-[85px] pl-[0px]"
             } tsm:pl-3 relative overflow-hidden`}
         >
           <div className="h-full flex flex-col">
-            <div className="flex-1 bg-white rounded-[25px] overflow-auto scrollbar-hide">
+            <div className="flex-1 rounded-[10px] overflow-auto scrollbar-hide">
               {children}
             </div>
           </div>

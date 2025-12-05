@@ -71,29 +71,29 @@ export default function Phone() {
         let inboundData =
           res?.data?.inbound_campaign && res?.data?.inbound_campaign.length
             ? res?.data?.inbound_campaign.map((x: any) => {
-              return {
-                ...x,
-                dataType: "inbound",
-              };
-            })
+                return {
+                  ...x,
+                  dataType: "inbound",
+                };
+              })
             : [];
         let outboundData =
           res?.data?.outbound_campaign && res?.data?.outbound_campaign.length
             ? res?.data?.outbound_campaign.map((x: any) => {
-              return {
-                ...x,
-                dataType: "outbound",
-              };
-            })
+                return {
+                  ...x,
+                  dataType: "outbound",
+                };
+              })
             : [];
         let blendedData =
           res?.data?.blended_campaign && res?.data?.blended_campaign.length
             ? res?.data?.blended_campaign.map((x: any) => {
-              return {
-                ...x,
-                dataType: "blended",
-              };
-            })
+                return {
+                  ...x,
+                  dataType: "blended",
+                };
+              })
             : [];
         let prepareData = [...inboundData, ...outboundData, ...blendedData];
 
@@ -223,48 +223,56 @@ export default function Phone() {
     // chat socket ::yaksh::
     <SocketProvider>
       <div
-        className="grid gap-4 min-h-[calc(100vh-120px)] bg-[#f8f9fc] p-4"
-        style={{ gridTemplateColumns: "30% 70%" }}
+        className="w-full flex gap-4 min-h-[calc(100vh-120px)] "
+        // style={{ gridTemplateColumns: "30% 70%" }}
       >
         {/* LEFT PANEL (Now has history instead of ActiveList) */}
-        <div className="flex flex-col gap-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-md p-4">
+        <div className="w-4/12 flex flex-col gap-4 ">
+          <div className="bg-white rounded-[10px] shadow-md p-4">
             <WaitingCalls />
           </div>
 
-          <div className="bg-white rounded-2xl shadow-md p-5 flex-1 min-h-[360px]">
-            <ListingTab activeId={activeId} setActiveId={setActiveId} activeTab="" />
+          <div className="bg-white rounded-[10px] shadow-md p-5 flex-1 min-h-[360px]">
+            <ListingTab
+              activeId={activeId}
+              setActiveId={setActiveId}
+              activeTab=""
+            />
           </div>
 
           {isWhatsAppEnabled(user) && (
-            <div className="bg-white rounded-2xl shadow-md p-4 min-h-[200px]">
-              <UnreadList sectionClass="h-full" sectionBodyClass="h-[calc(100%-1.5rem)]" />
+            <div className="bg-white rounded-[10px] shadow-md p-4 min-h-[200px]">
+              <UnreadList
+                sectionClass="h-full"
+                sectionBodyClass=""
+                // sectionBodyClass="h-[calc(100%-1.5rem)]"
+              />
             </div>
           )}
         </div>
 
         {/* RIGHT PANEL */}
         {/* RIGHT PANEL */}
-        <div className="flex flex-col gap-4 overflow-y-auto">
+        <div className="w-8/12 flex flex-col gap-4 overflow-y-auto ">
           {/* Top Row: ActiveList + LeadInformationTab */}
           <div
-            className="grid gap-4"
-            style={{ gridTemplateColumns: "50% 50%" }}
+            className="flex gap-4"
+            // style={{ gridTemplateColumns: "50% 50%" }}
           >
-            <div className="bg-white rounded-2xl shadow-md p-4 min-h-[400px]">
+            <div className="bg-white rounded-[10px] shadow-md p-4 min-h-[400px] w-1/2">
               <ActiveList
                 setActiveId={setActiveId}
                 sectionClass="h-full"
                 sectionBodyClass="h-[calc(100%-2rem)]"
               />
             </div>
-            <div className="bg-white rounded-2xl shadow-md p-4 min-h-[400px]">
+            <div className="bg-white rounded-[10px] shadow-md p-4 min-h-[400px] w-1/2">
               <LeadInformationTab />
             </div>
           </div>
 
           {/* Full-width CrmInformation */}
-          <div className="bg-white rounded-2xl shadow-md p-4 min-h-[220px]">
+          <div className="w-full bg-white rounded-[10px] shadow-md p-4 min-h-[220px]">
             <CrmInformation />
           </div>
         </div>

@@ -113,9 +113,9 @@ const InputSelect = (props: InputSelectProps) => {
             return {
                 ...styles,
                 backgroundColor: state.isSelected
-                    ? "#DB6443"
+                    ? "#4da6ff"
                     : state.isFocused
-                        ? "#FBE8E3"
+                        ? "#e3e9efff"
                         : "white",
                 fontWeight: state.isSelected ? 700 : 400,
                 color: state.isSelected ? "white" : "#13151F",
@@ -124,7 +124,7 @@ const InputSelect = (props: InputSelectProps) => {
         menuList: (styles: any) => {
             return {
                 ...styles,
-                borderColor: "#DB6443",
+                // borderColor: "#DB6443",
                 borderWidth: "2px",
                 borderRadius: "6px",
             };

@@ -23,6 +23,7 @@ import { Button } from "@/components/forms";
 import { NoRecordFound } from "@/components/ui-components";
 import LeadEditModal from "./LeadEditModal";
 import {
+  getActiveUnreadChat,
   useActiveConversation,
   useChatMode,
   useIsActiveChat,
@@ -109,6 +110,10 @@ const LeadInformation = ({ setIsHangUp }: LeadInformationProps) => {
     }
   }, [currentLeadDetails, allLeadsDetails]);
 
+  useEffect(() => {
+    dispatch(getActiveUnreadChat({ campaign_uuid: selectedCampaign })).unwrap();
+  }, [editLead]);
+
   const checkSelectedCampaign = () => {
     return chatModeType === "pbx" ? !!selectedCampaign : true;
   };
@@ -157,7 +162,7 @@ const LeadInformation = ({ setIsHangUp }: LeadInformationProps) => {
                       {isCallHangUp && Cookies.get("is_call_start") === "1" ? (
                         <Button
                           text={"Finish Lead"}
-                          className="px-2 py-1 rounded-md"
+                          className="px-2 py-1 rounded-md bg-[#4DA6FF]"
                           onClick={() => {
                             setIsHangUp(true);
                             !!!addLeadNoteId &&
@@ -195,8 +200,8 @@ const LeadInformation = ({ setIsHangUp }: LeadInformationProps) => {
                       data?.gender === "0"
                         ? "Male"
                         : data?.gender === "1"
-                        ? "Female"
-                        : data?.gender || "",
+                          ? "Female"
+                          : data?.gender || "",
                     ],
                     ["Description", data?.description],
                     ["Address", data?.address],
@@ -233,7 +238,7 @@ const LeadInformation = ({ setIsHangUp }: LeadInformationProps) => {
       </div>
     );
   };
-
+  
   return (
     <>
       {showLeadInformation() || chatModeType !== "pbx" ? renderLeadInformation() : <Search />}

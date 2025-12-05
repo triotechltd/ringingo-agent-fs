@@ -33,7 +33,7 @@ const SearchBar = (props: SearchBarProps) => {
       <input
         ref={ref}
         // (border border-dark-700)
-        className={`${className} focus:outline-none  bg-[#F4F7FE] rounded-[56px] pl-4 3xl:py-2 py-1.5 pr-4 placeholder:text-xs text-xs placeholder:font-normal placeholder:text-txt-secondary`}
+        className={`${className} focus:outline-none  bg-[#F4F7FE] rounded-[10px] pl-4 3xl:py-2 py-1.5 pr-4 placeholder:text-xs text-xs placeholder:font-normal placeholder:text-txt-secondary`}
         type="text"
         value={value}
         placeholder={placeholder}
