@@ -81,37 +81,49 @@ const DispositionTree = (props: DispositionTreeProps) => {
     <ul className="pl-2 space-y-1">
       {items.map((item: any) => (
         <li key={item.disposition_uuid || item.value}>
-          <div className="">
-            <span
-              className="cursor-pointer hover:underline"
-              onClick={() => {
-                if (!item.has_children) onSelect(item);
-              }}
-            >
-              {item.label || item.name}
-            </span>
+          {item.has_children ? (
+            // ✅ When item has children: text + arrow both toggle Disclosure
+            <Disclosure>
+              {({ open }) => (
+                <>
+                  <div className="">
+                    {/* CHANGED: span -> Disclosure.Button as="span" */}
+                    <Disclosure.Button
+                      as="span"
+                      className="cursor-pointer hover:underline"
+                    >
+                      {item.label || item.name}
+                    </Disclosure.Button>
 
-            {item.has_children && (
-              <Disclosure>
-                {({ open }) => (
-                  <>
                     <Disclosure.Button className="text-xs px-2 py-1 text-gray-500">
                       {open ? "▼" : "▶"}
                     </Disclosure.Button>
-                    <Disclosure.Panel>
-                      {/* Indent nested list */}
-                      <div className="pl-4 mt-1 border-l border-gray-200">
-                        <DispositionTree
-                          items={item.children || []}
-                          onSelect={onSelect}
-                        />
-                      </div>
-                    </Disclosure.Panel>
-                  </>
-                )}
-              </Disclosure>
-            )}
-          </div>
+                  </div>
+                  <Disclosure.Panel>
+                    {/* Indent nested list */}
+                    <div className="pl-4 mt-1 border-l border-gray-200">
+                      <DispositionTree
+                        items={item.children || []}
+                        onSelect={onSelect}
+                      />
+                    </div>
+                  </Disclosure.Panel>
+                </>
+              )}
+            </Disclosure>
+          ) : (
+            // ✅ When no children: keep your original behavior exactly
+            <div className="">
+              <span
+                className="cursor-pointer hover:underline"
+                onClick={() => {
+                  onSelect(item);
+                }}
+              >
+                {item.label || item.name}
+              </span>
+            </div>
+          )}
         </li>
       ))}
     </ul>

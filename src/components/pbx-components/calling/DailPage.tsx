@@ -26,6 +26,7 @@ interface DailPageProps {
 // const DailPage = ({ number, setNumber, dialNumber }: DailPageProps) => {
 //   const { user } = useAuth();
 const DailPage = (props: DailPageProps) => {
+  const [isCalling, setIsCalling] = useState(false);
   const { number, setNumber, dialNumber } = props;
   const { user } = useAuth();
   const campaignMode = useCampaignMode();
@@ -42,6 +43,8 @@ const DailPage = (props: DailPageProps) => {
     if (number?.length < 13) setNumber(number + val);
   };
   const checkDispostionCauses = async () => {
+    if (isCalling) return;  // Prevent double click
+    setIsCalling(true);
     try {
       let payload = {
         phoneNumber: number || "",
@@ -50,7 +53,7 @@ const DailPage = (props: DailPageProps) => {
       if (res && res.statusCode === 200) {
         setDispoFlag(res.data);
         if (res.data === 0) {
-          dialNumber();
+          await dialNumber();
         } else {
           setShowModal(true);
         }
@@ -60,6 +63,8 @@ const DailPage = (props: DailPageProps) => {
       }
     } catch (error: any) {
       console.log("sticky agent err -->", error?.message);
+    } finally {
+      setIsCalling(false); // Enable button again
     }
   };
   return (
@@ -138,10 +143,18 @@ const DailPage = (props: DailPageProps) => {
           >
             <Legacy src={callIcon} alt="call" height={32} width={32} />
           </button> */}
-          <div
-           className="bg-green-500 rounded-full w-11 h-11 flex items-center justify-center transition shadow-xl mr-[26px]"
+          {/* <div
+           className="bg-green-500 rounded-full w-11 h-11 flex items-center justify-center transition shadow-xl mr-[26px] "
             // className="bg-primary-green 3xl:w-[80px] 3xl:h-10 w-[65px] h-9 drop-shadow-sm flex justify-center items-center rounded-md hover:bg-opacity-80 cursor-pointer"
             onClick={() => checkDispostionCauses()}
+          >
+            <Legacy src={callIcon} alt="call" height={18} width={18} />
+          </div> */}
+          <div
+            className={`bg-primary-green 3xl:w-[80px] 3xl:h-10 w-[65px] h-9 drop-shadow-sm 
+             flex justify-center items-center rounded-md cursor-pointer 
+             ${isCalling ? "opacity-50 pointer-events-none" : "hover:bg-opacity-80"}`}
+            onClick={checkDispostionCauses}
           >
             <Legacy src={callIcon} alt="call" height={18} width={18} />
           </div>
