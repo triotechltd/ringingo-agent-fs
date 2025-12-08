@@ -75,7 +75,7 @@ const LogoutPopup = (props: LogoutPopupProps) => {
                 login_status: userStatus === "0" ? "0" : "1",
             };
             let response: any = await dispatch(agentEntryAdd(payload)).unwrap();
-            if (response && response.statusCode === 201) {
+            if (response &&( response.statusCode === 201 || response.statusCode === 200 )) {
                 // !user?.isPbx && onUpdateLiveAgentEntry(userStatus === "0" ? "0" : "3");
                 dispatch(
                     onSetUserEntry(userStatus === "0" ? "login-entry" : "busy-entry")
