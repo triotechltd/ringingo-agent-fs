@@ -21,6 +21,7 @@ const nextConfig = {
     EXPANDED_LOGO: process.env.NEXT_PUBLIC_EXPANDED_LOGO,
     COLLAPSED_LOGO: process.env.NEXT_PUBLIC_COLLAPSED_LOGO,
   },
+  
   output: "standalone",
 };
 
