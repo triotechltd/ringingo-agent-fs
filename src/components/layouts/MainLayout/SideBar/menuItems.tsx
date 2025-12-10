@@ -143,17 +143,25 @@ export const CallCenterMenuList: NavItemsTypes[] = [
     roleId: "settings",
   },
   {
+    id: "unallocated-leads",
+    icon: My_Lead,
+    activeIcon: Active_My_Lead,
+    title: "Unallocated Leads",
+    url: "/call-center/unallocated-leads",
+    roleId: "unallocated_leads",
+  },
+  /* {
     id: "message",
     icon: Message,
     activeIcon: Active_Phone,
     title: "Message",
     url: "/call-center/message",
   },
-  //  {
-  //   id: "insta",
-  //   icon: Message,
-  //   activeIcon: Active_Phone,
-  //   title: "Insta",
-  //   url: "/call-center/insta",
-  // },
+   {
+    id: "insta",
+    icon: Message,
+    activeIcon: Active_Phone,
+    title: "Insta",
+    url: "/call-center/insta",
+  }, */
 ];

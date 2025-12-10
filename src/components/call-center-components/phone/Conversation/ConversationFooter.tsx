@@ -234,7 +234,7 @@ const ConversationFooter = ({
                     onFilePreview(currentMessage?.document_url, index)
                   }
                 >
-                  <Image src={pdfIcon} alt="pdf" height={40} width={40} />
+                  <Legacy src={pdfIcon} alt="pdf" height={40} width={40} />
                 </div>
               );
             })}
@@ -339,7 +339,7 @@ const ConversationFooter = ({
       ...currentMessage,
       text,
     });
-    // setIsEmojiOpen(false);
+    setIsEmojiOpen(false);
   };
 
   const renderFileInputTypes = () => {

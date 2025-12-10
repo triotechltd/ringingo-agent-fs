@@ -211,31 +211,31 @@ const ActiveList = ({
 
 
   function processMessages(data: any[]) {
-    console.log("whatsappp isnideee processs emssageage")
+    //console.log("whatsappp isnideee processs emssageage")
     const uniqueMap = new Map();
 
     data.forEach((item) => {
       const existing = uniqueMap.get(item.user_uuid);
-      console.log("existingexisting", existing);
+      //console.log("existingexisting", existing);
       if (!existing) {
-        console.log("not existing", existing, item);
+        //console.log("not existing", existing, item);
         uniqueMap.set(item.user_uuid, item);
       } else {
-        console.log("existing", item);
+        //console.log("existing", item);
         // Prefer the record that has a 'name' field (if existing doesn't have it)
         // if (item.name ) {
         uniqueMap.set(item.user_uuid, item);
         // }
       }
     });
-    console.log("whatsappp isnideee processs emssageage uniquemapppp", uniqueMap)
+    //console.log("whatsappp isnideee processs emssageage uniquemapppp", uniqueMap)
     // Convert map back to array and keep only those with 'name'
     const filteredMessages = Array.from(data).filter(
       // const filteredMessages = Array.from(uniqueMap.values()).filter(
       (item) => item.name
     );
 
-    console.log("whatsappp filtereedddd message ", filteredMessages)
+    //console.log("whatsappp filtereedddd message ", filteredMessages)
     return data;
     // return filteredMessages;
   }
@@ -256,18 +256,18 @@ const ActiveList = ({
   //       name: messages.find((m) => m.name)?.name || null,
   //       messages, // all messages from that user
   //     }));
-  // console.log("grpupeedd",grouped);
+  // //console.log("grpupeedd",grouped);
 
   //     return grouped.filter((item) => item.name);
   //   }
 
-  console.log("whatsappp activeChatListData mmerege", (activeChatListData))
+  //console.log("whatsappp activeChatListData mmerege", (activeChatListData))
   // Filter messages where from_number === to
   const merged = activeChatListData.filter(
     (msg1: any, _, arr) => arr.some(msg2 => msg1.from_number === msg2.to)
   );
 
-  console.log("Last messages per phone megrgegrer:", merged);
+  //console.log("Last messages per phone megrgegrer:", merged);
   // Group by unique phone number (from_number)
   const groupedByNumber = merged.reduce((acc: any, msg: any) => {
     const key = msg.from_number;
@@ -280,7 +280,7 @@ const ActiveList = ({
   // Convert back to array
   const lastMessages = Object.values(groupedByNumber);
 
-  console.log("Last messages per phone number:", lastMessages);
+  //console.log("Last messages per phone number:", lastMessages);
 
   const activeChatList = processMessages(activeChatListData);
 
@@ -308,7 +308,7 @@ const ActiveList = ({
         onGetLeadInfoSkip();
       }
     } catch (error) {
-      console.log("Skip Dial error ----> ", error);
+      //console.log("Skip Dial error ----> ", error);
     }
   };
 
@@ -452,12 +452,12 @@ const ActiveList = ({
   };
 
   const renderWhatsAppItems = () => {
-    console.log("whatsappp inside renderr whatsapp items")
-    console.log("whatsappp active chat list", activeChatList)
+    //console.log("whatsappp inside renderr whatsapp items")
+    //console.log("whatsappp active chat list", activeChatList)
     return (
       <>
         {activeChatList?.map((activeItem: any, index: number) => {
-          console.log(activeItem, "cvzzzzzzz");
+          //console.log(activeItem, "cvzzzzzzz");
           return (
             <div
               key={index}
@@ -547,7 +547,7 @@ const ActiveList = ({
   };
 
   const renderActiveList = () => {
-    console.log("renederrrrr active list compomenenenneeeeeeeeeeee",campaignType,callQueueList);
+    //console.log("renederrrrr active list compomenenenneeeeeeeeeeee",campaignType,callQueueList);
     
     return (
       <div className={`${sectionBodyClass} overflow-y-auto scrollbar-hide`}>
@@ -813,8 +813,8 @@ const ActiveList = ({
 
   return (
     <>
-      <div className={ `bg-blue-50 h-[42vh] ${sectionClass}`}>
-        <div className="bg-[#F2F2F2] 3xl:px-6 3xl:py-2.5 py-1.5 px-4 flex items-center  justify-between h-[5.8vh]">
+      <div className={`bg-blue-50 h-[42vh] ${sectionClass}`}>
+        <div className="bg-white 3xl:px-6 3xl:py-2.5 py-1.5 px-4 flex items-center rounded-[46px] justify-between h-[5.8vh]">
           <span className="3xl:text-base text-xs text-heading font-bold ">
             Active
           </span>
@@ -825,9 +825,9 @@ const ActiveList = ({
               <Button
                 text="Start Conversation"
                 loaderClass="!border-primary-green !border-t-transparent"
-                style=""
+                style="primary"
                 icon="plus-white"
-                className="px-1.5 py-1 font-normal text-white bg-[#4DA6FF]"
+                className="px-1.5 py-1 font-normal"
                 onClick={async () => {
                   await dispatch(
                     onStartConversation({
@@ -982,3 +982,4 @@ return (
               </div>
             );
 */
+

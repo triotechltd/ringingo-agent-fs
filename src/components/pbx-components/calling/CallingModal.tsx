@@ -36,6 +36,7 @@ import {
   useNumberMasking,
   usePredictiveData,
   useSelectedCampaign,
+  useSelectedCampaignDetails,
   useShowCallModal,
 } from "@/redux/slice/commonSlice";
 import {
@@ -82,6 +83,7 @@ import {
 import { OutgoingInviteRequest } from "sip.js/lib/core";
 import Cookies from "js-cookie";
 import { Danger } from "@/redux/services/toasterService";
+import getDomain from "@/utils/GetDoamin";
 
 // ASSETS
 // const close = "/assets/icons/close.svg";
@@ -98,6 +100,9 @@ let outgoingMediaStream: any;
 let incomingSession: any;
 let outgoingSession: any;
 let secondCallSession: any;
+// Keep these global references (DO NOT re-declare inside functions)
+let registerer: Registerer | null = null;
+let registrationStateListenerAttached = false;
 
 // USER UNREGISTRATION
 export const userAgentUnRegistration = () => {
@@ -143,6 +148,52 @@ export const userAgentUnRegistration = () => {
     });
 };
 
+// export const userAgentUnRegistration = () => {
+//   console.log("ON LOG OUT CLICK....>");
+
+//   // Close any active call cleanly
+//   const endSession = (session: any) => {
+//     if (!session) return;
+//     if (
+//       session.state === SessionState.Established ||
+//       session.state === SessionState.Establishing
+//     ) {
+//       session.bye().catch(() => { });
+//     }
+//   };
+
+//   endSession(outgoingSession);
+//   endSession(incomingSession);
+//   endSession(secondCallSession);
+
+//   outgoingSession = null;
+//   incomingSession = null;
+//   secondCallSession = null;
+
+//   if (registerer) {
+//     registerer
+//       .unregister()
+//       .then(() => console.log("Unregister successful"))
+//       .catch((error) => console.error("Unregister error:", error));
+//   }
+
+//   if (userAgent) {
+//     userAgent
+//       .stop()
+//       .then(() => console.log("UA stopped"))
+//       .catch((err:any) => console.warn("UA stop failed", err));
+//   }
+
+//   // Reset everything properly
+//   registerer = null;
+//   userAgent = null;
+//   registrationStateListenerAttached = false;
+
+//   Cookies.set("authenticated", "false", { expires: 1 });
+//   Cookies.set("logout", "true", { expires: 1 });
+// };
+
+
 // TYPES
 interface CallingModelProps {
   showModal: boolean;
@@ -177,6 +228,12 @@ const CallingModal = (props: CallingModelProps) => {
   const [successMessage, setSuccessMessage] = useState<any>("");
   const [callType, setCallType] = useState<string>("");
   const [showConferenceBtn, setShowConferenceBtn] = useState<boolean>(true);
+  const selectedCampaignDetails = useSelectedCampaignDetails(); //new
+  // console.log("selectedCampaignDetailsselectedCampaignDetails ternary op",selectedCampaignDetails?.auto_answer == "1" ? false : true);
+  
+  const autoAnswer = selectedCampaignDetails?.auto_answer == "1" ? false : true;
+  // console.log("selectedCampaignDetailsselectedCampaignDetails autto anss", autoAnswer);
+
   const { user } = useAuth();
   const dispatch = useAppDispatch();
 
@@ -1359,6 +1416,7 @@ const CallingModal = (props: CallingModelProps) => {
     }
   }
 
+
   // INCOMING CALL INVITATION
   const onInvite = async (invitation: any) => {
     console.log("INCOMING INCOMING BE READY ========================");
@@ -1518,7 +1576,7 @@ const CallingModal = (props: CallingModelProps) => {
           : callNumber;
     dispatch(setCallerNumber(CallerNumber));
 
-    if (Cookies.get("isReceivedDirect") === "0") {
+    if (Cookies.get("isReceivedDirect") === "0" && autoAnswer) {
       console.log("isReceivedDirect");
       console.log("---------TEST------------lead_uuid", lead_uuid);
       if (Cookies.get("isCallResume") === "0" && auto) {
@@ -1573,7 +1631,8 @@ const CallingModal = (props: CallingModelProps) => {
         case SessionState.Initial:
           console.log("Incoming initiated ....");
           Cookies.set("is_call_start", "0");
-          if (Cookies.get("isReceivedDirect") === "0") {
+          // ::yaksh::
+          if (Cookies.get("isReceivedDirect") === "0" && autoAnswer) {
             // setTimeout(() => {
             receiveCall();
             // }, 2000);
@@ -1629,8 +1688,6 @@ const CallingModal = (props: CallingModelProps) => {
           console.log("invitation------------------->", secondCallSession);
           Cookies.set("is_call_start", "1");
           console.log("iscall call id valueeeee", Cookies.get("callId"))
-          callerBeepPlay.play()
-          callerBeepPlay.currentTime = 0;
           if (
             (secondCallSession && secondCallSession._state == "Established") ||
             (secondCallSession && secondCallSession._state == "Establishing")
@@ -1716,8 +1773,8 @@ const CallingModal = (props: CallingModelProps) => {
             callKeypadSiderProperties("callTermination", "Termination"); //	On termination manage keypadsider states
             // console.log("iscall before hangup set to false campaign typeee",campaignType)
             // if (campaignType === "inbound") {
-              // console.log("iscall the hang up is set to FALSE after termination")
-              // dispatch(setIsCallHangUp(false));
+            // console.log("iscall the hang up is set to FALSE after termination")
+            // dispatch(setIsCallHangUp(false));
             // }
             if (
               (campaignType === "outbound" || campaignType === "blended") &&
@@ -1881,6 +1938,88 @@ const CallingModal = (props: CallingModelProps) => {
     Cookies.get("isReceivedDirect") !== "0" && invitation.progress(options);
   };
 
+  // const userAgentRegistration = () => {
+  //   let username =
+  //     Cookies.get("username") ||
+  //     user?.agent_detail?.extension_details[0]?.username;
+  //   let password =
+  //     Cookies.get("password") ||
+  //     user?.agent_detail?.extension_details[0]?.password;
+  //   let domain =
+  //     Cookies.get("domain") || user?.agent_detail?.tenant[0]?.domain;
+
+  //   let UAURI = UserAgent.makeURI("sip:" + username + "@" + domain);
+  //   if (!UAURI) throw new Error("Failed to create UserAgent URI ....");
+
+  //   // If UA already exists, DO NOT recreate
+  //   if (!userAgent) {
+  //     const userOptions: any = {
+  //       uri: UAURI,
+  //       authorizationPassword: password,
+  //       authorizationUsername: username,
+  //       transportOptions: {
+  //         server: WSS_URL,
+  //         traceSip: false, // FALSE to stop lag from logs
+  //       },
+  //       delegate: { onInvite },
+  //       register: false,  // IMPORTANT — manual control
+  //       userAgentString: "ASTPP | WEBRTC",
+  //       dtmfType: "info",
+  //       displayName: username,
+  //       activeAfterTransfer: false,
+  //       logBuiltinEnabled: false,
+  //     };
+
+  //     userAgent = new UserAgent(userOptions);
+  //   }
+
+  //   userAgent
+  //     .start()
+  //     .then(() => {
+  //       console.log("Connected ....");
+
+  //       if (!registerer) {
+  //         registerer = new Registerer(userAgent);
+  //       }
+
+  //       if (!registrationStateListenerAttached) {
+  //         registerer.stateChange.addListener((registrationState) => {
+  //           console.log("registrationState => ", registrationState);
+
+  //           switch (registrationState) {
+  //             case RegistererState.Registered:
+  //               console.log("Registered ....");
+  //               Cookies.set("logout_count", "", { expires: 1 });
+  //               break;
+
+  //             case RegistererState.Unregistered:
+  //               console.log("Unregistered ....");
+  //               break;
+
+  //             case RegistererState.Terminated:
+  //               console.log("Terminated ....");
+  //               break;
+
+  //             default:
+  //               console.log("Unknown register state", registrationState);
+  //           }
+  //         });
+  //         registrationStateListenerAttached = true;
+  //       }
+
+  //       if (callScreen !== "LIVE") {
+  //         registerer
+  //           .register()
+  //           .then(() => console.log("Successfully sent REGISTER"))
+  //           .catch((err) => console.log("Failed REGISTER", err));
+  //       }
+  //     })
+  //     .catch((error: any) => {
+  //       console.log("Failed to connect user agent .... ", error);
+  //     });
+  // };
+
+
   // AGENT REGISTRATION
   const userAgentRegistration = () => {
     let username =
@@ -2018,7 +2157,7 @@ const CallingModal = (props: CallingModelProps) => {
     }
   };
 
-  // OUTBOUND CALL---outgoing call function
+  // OUTBOUND CALL
   const callStatusCardProperties = (
     number: string,
     functionName = "",
@@ -2159,8 +2298,6 @@ const CallingModal = (props: CallingModelProps) => {
             switch (callingState) {
               case SessionState.Establishing:
                 console.log("Ringing on destination ....");
-                callerBeepPlay.play()
-                callerBeepPlay.currentTime = 0;
                 Cookies.set("is_call_start", "0");
                 console.log(inviter);
                 setShowModal(true);
@@ -2218,7 +2355,7 @@ const CallingModal = (props: CallingModelProps) => {
                 console.log("Call terminated ....");
                 console.log(secondCallSession);
                 console.log(outgoingSession);
-                callerBeepPlay.play()
+                callerBeepPlay.play(); //	Caller tune play
                 callerBeepPlay.currentTime = 0;
                 if (
                   (secondCallSession &&
@@ -5686,3 +5823,4 @@ export default CallingModal;
 function delay(arg0: number) {
   throw new Error("Function not implemented.");
 }
+

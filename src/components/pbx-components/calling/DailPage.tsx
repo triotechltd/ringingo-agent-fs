@@ -26,7 +26,6 @@ interface DailPageProps {
 // const DailPage = ({ number, setNumber, dialNumber }: DailPageProps) => {
 //   const { user } = useAuth();
 const DailPage = (props: DailPageProps) => {
-  const [isCalling, setIsCalling] = useState(false);
   const { number, setNumber, dialNumber } = props;
   const { user } = useAuth();
   const campaignMode = useCampaignMode();
@@ -42,21 +41,26 @@ const DailPage = (props: DailPageProps) => {
   const onNumberChange = (val: string) => {
     if (number?.length < 13) setNumber(number + val);
   };
+
+  const [isCalling, setIsCalling] = useState(false);
+
   const checkDispostionCauses = async () => {
     if (isCalling) return;  // Prevent double click
     setIsCalling(true);
+
     try {
-      let payload = {
-        phoneNumber: number || "",
-      };
+      let payload = { phoneNumber: number || "" };
       let res: any = await dispatch(checkDispostionCause(payload)).unwrap();
+
       if (res && res.statusCode === 200) {
         setDispoFlag(res.data);
+
         if (res.data === 0) {
           await dialNumber();
         } else {
           setShowModal(true);
         }
+
         setSuccessMessage(res?.messages);
       } else if (res && res.statusCode === 409) {
         setSuccessMessage(res?.messages);
@@ -67,14 +71,37 @@ const DailPage = (props: DailPageProps) => {
       setIsCalling(false); // Enable button again
     }
   };
+
+
+  // const checkDispostionCauses = async () => {
+  //   try {
+  //     let payload = {
+  //       phoneNumber: number || "",
+  //     };
+  //     let res: any = await dispatch(checkDispostionCause(payload)).unwrap();
+  //     if (res && res.statusCode === 200) {
+  //       setDispoFlag(res.data);
+  //       if (res.data === 0) {
+  //         dialNumber();
+  //       } else {
+  //         setShowModal(true);
+  //       }
+  //       setSuccessMessage(res?.messages);
+  //     } else if (res && res.statusCode === 409) {
+  //       setSuccessMessage(res?.messages);
+  //     }
+  //   } catch (error: any) {
+  //     console.log("sticky agent err -->", error?.message);
+  //   }
+  // };
+
   return (
     <>
       <div
-        className={`${
-          !user?.isPbx && (campaignMode === "1" || campaignMode === "3")
-            ? "3xl:h-[83%] h-[85%]"
-            : "3xl:h-[90%] h-[92%]"
-        } px-8 select-none flex justify-between flex-col pb-6`}
+        className={`${!user?.isPbx && (campaignMode === "1" || campaignMode === "3")
+          ? "3xl:h-[83%] h-[85%]"
+          : "3xl:h-[90%] h-[92%]"
+          } px-8 select-none flex justify-between flex-col pb-6`}
       ></div>
       <div className="fixed bg-[#F9F9F9] rounded-b-2xl bottom-0 left-1/2 pl-9 w-full transform -translate-x-1/2 h-[75%] mt-2 p-4 shadow-lg text-center">
         {/* Close Button */}
@@ -143,13 +170,14 @@ const DailPage = (props: DailPageProps) => {
           >
             <Legacy src={callIcon} alt="call" height={32} width={32} />
           </button> */}
+
           {/* <div
-           className="bg-green-500 rounded-full w-11 h-11 flex items-center justify-center transition shadow-xl mr-[26px] "
-            // className="bg-primary-green 3xl:w-[80px] 3xl:h-10 w-[65px] h-9 drop-shadow-sm flex justify-center items-center rounded-md hover:bg-opacity-80 cursor-pointer"
+            className="bg-primary-green 3xl:w-[80px] 3xl:h-10 w-[65px] h-9 drop-shadow-sm flex justify-center items-center rounded-md hover:bg-opacity-80 cursor-pointer"
             onClick={() => checkDispostionCauses()}
           >
             <Legacy src={callIcon} alt="call" height={18} width={18} />
-          </div> */}
+          </div>  */}
+
           <div
             className={`bg-primary-green 3xl:w-[80px] 3xl:h-10 w-[65px] h-9 drop-shadow-sm 
              flex justify-center items-center rounded-md cursor-pointer 
@@ -158,6 +186,7 @@ const DailPage = (props: DailPageProps) => {
           >
             <Legacy src={callIcon} alt="call" height={18} width={18} />
           </div>
+
         </div>
       </div>
 
@@ -182,145 +211,4 @@ const DailPage = (props: DailPageProps) => {
 
 export default DailPage;
 
-// import Legacy from "next/legacy/image";
 
-// // PROJECT IMPORTS
-// import { useAuth } from "@/contexts/hooks/useAuth";
-// import { onShowCallModal, useCampaignMode, useCampaignType } from "@/redux/slice/commonSlice";
-// import Cookies from "js-cookie";
-// import { useAppDispatch } from "@/redux/hooks";
-// import { useState } from "react";
-// import { checkDispostionCause } from "@/redux/slice/callSlice";
-// import DispostionCallModal from "./DispostionCallModal";
-
-// // ASSETS
-// const call = "/assets/icons/white/call_white.svg";
-// const remove = "/assets/icons/gray/remove.svg";
-
-// // TYPES
-// interface DailPageProps {
-//   number: string;
-//   setNumber: any;
-//   dialNumber: any;
-// }
-
-// /* ============================== DAIL PAGE ============================== */
-
-// const DailPage = (props: DailPageProps) => {
-//   const { number, setNumber, dialNumber } = props;
-//   const { user } = useAuth();
-//   const campaignMode = useCampaignMode();
-//   const campaignType = useCampaignType();
-//   const dispatch = useAppDispatch();
-//   const [successMessage, setSuccessMessage] = useState<any>("");
-//   const [dispoFlag, setDispoFlag] = useState<any>(0);
-//   const [showModal, setShowModal] = useState<boolean>(false);
-
-//   const onNumberChange = (val: string) => {
-//     if (number?.length < 13) setNumber(number + val);
-//   };
-//   const checkDispostionCauses = async () => {
-//     try {
-//       let payload = {
-//         phoneNumber: number || "",
-//       };
-//       let res: any = await dispatch(checkDispostionCause(payload)).unwrap();
-//       if (res && res.statusCode === 200) {
-//         setDispoFlag(res.data);
-//         if (res.data === 0) {
-//           dialNumber();
-//         } else {
-//           setShowModal(true);
-//         }
-//         setSuccessMessage(res?.messages);
-//       } else if (res && res.statusCode === 409) {
-//         setSuccessMessage(res?.messages);
-//       }
-//     } catch (error: any) {
-//       console.log("sticky agent err -->", error?.message);
-//     }
-//   }
-//   return (
-//     <>
-//       <div
-//         className={`${!user?.isPbx &&
-//           (campaignMode === "1" ||
-//             campaignMode === "3")
-//           ? "3xl:h-[83%] h-[85%]"
-//           : "3xl:h-[90%] h-[92%]"
-//           } px-8 select-none flex justify-between flex-col pb-6`}
-//       >
-//         <div>
-//           <div className="3xl:pb-6 3xl:pt-8 pb-5 pt-7 relative">
-//             <input
-//               className="w-full border-t-none border-x-none pb-1 border-b-2 border-dark-800 focus:outline-none text-heading 3xl:text-xl text-sm font-normal text-center"
-//               value={number}
-//               type="text"
-//               pattern="[0-9]+"
-//               onChange={(e) => {
-//                 let value = e.target.value;
-//                 let val = value.replace(/[^0-9*#]+/g, "");
-//                 if (val?.length < 21) setNumber(val);
-//               }}
-//             />
-//             <div className="absolute right-0 top-7">
-//               <div className="cursor-pointer relative 3xl:w-[28px] 3xl:h-[28px] h-[22px] w-[22px]">
-//                 <Legacy
-//                   src={remove}
-//                   alt="remove"
-//                   layout="fill"
-//                   onClick={() => {
-//                     let string = number;
-//                     string = string.substring(0, string.length - 1);
-//                     setNumber(string);
-//                   }}
-//                 />
-//               </div>
-//             </div>
-//           </div>
-//           <div className="grid grid-cols-3 gap-2">
-//             {["1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "0", "#"].map(
-//               (val: any, idx: number) => {
-//                 return (
-//                   <div
-//                     key={idx}
-//                     className="bg-white select-none py-1.5 border-2 border-dark-800 rounded-md drop-shadow-sm flex justify-center items-center hover:border-primary hover:text-primary cursor-pointer"
-//                     onClick={() => onNumberChange(val)}
-//                   >
-//                     <span className="3xl:text-base text-sm font-medium">
-//                       {val}
-//                     </span>
-//                   </div>
-//                 );
-//               }
-//             )}
-//           </div>
-//         </div>
-//         <div className="flex justify-center items-center">
-//           <div
-//             className="bg-primary-green 3xl:w-[80px] 3xl:h-10 w-[65px] h-9 drop-shadow-sm flex justify-center items-center rounded-md hover:bg-opacity-80 cursor-pointer"
-//             onClick={() => checkDispostionCauses()}
-//           >
-//             <Legacy src={call} alt="call" height={20} width={20} />
-//           </div>
-//         </div>
-//       </div>
-//       {dispoFlag === 1 &&
-//         <DispostionCallModal
-//           showModal={showModal}
-//           phoneNumber={number}
-//           onCancleClick={() => {
-//             setShowModal(false);
-//           }}
-//           onDialNumberClick={(e: any) => {
-//             if (e) {
-//               dialNumber();
-//             }
-//           }}
-//         />
-//       }
-//     </>
-//   );
-// };
-
-// export default DailPage;

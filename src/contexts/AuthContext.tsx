@@ -22,6 +22,7 @@ import {
   UPDATE_AUTH_STATUS,
   UPDATE_PASSWORD,
   AGENT_CALL_QUEUE_LOGOUT,
+  AGENT_ADMIN_LOGOUT,
 } from "@/API/constAPI";
 import {
   CallCenterMenuList,
@@ -35,12 +36,14 @@ const baseUrl = `${process.env.BASE_URL}`;
 
 import Cookies from "js-cookie";
 import axios from "axios";
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 
 // TYPES
 import { AuthContextType } from "@/types/auth";
 import { getMissedCallDetails } from "@/redux/slice/phoneSlice";
 import { changeModle } from "@/redux/slice/chatSlice";
+import { disconnectSocket } from "@/config/socket";
+
 interface InitialStateProps {
   user?: any;
   isInitialized?: boolean;
@@ -128,18 +131,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const permission = user.data?.agent_detail?.agent_permission[0];
         const isRecording =
           user.data?.agent_detail?.recording === "1" &&
-          user.data?.agent_detail?.extension_details[0]?.recording === "1"
+            user.data?.agent_detail?.extension_details[0]?.recording === "1"
             ? false
             : true;
         const isPbx =
           permission?.pbx_mode === "0"
             ? true
             : permission?.call_center_mode === "0"
-            ? false
-            : permission?.call_center_mode === "0" &&
-              permission?.pbx_mode === "0"
-            ? true
-            : false;
+              ? false
+              : permission?.call_center_mode === "0" &&
+                permission?.pbx_mode === "0"
+                ? true
+                : false;
         const sticky_agent = permission?.sticky_agent === "1";
         const settings = permission?.settings === "1";
         const isNumberMasking = permission?.number_masking === "0";
@@ -218,21 +221,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = async (userId: string, autologout?: string) => {
     try {
       const res: any = await apiInstance.patch(
-        UPDATE_AUTH_STATUS + `/${userId}`,
-        { is_logged_in: "1" }
+        AGENT_ADMIN_LOGOUT + `/${userId}`,
+        { entity: "agent" }
       );
+      // const res: any = await apiInstance.patch(
+      //   UPDATE_AUTH_STATUS + `/${userId}`,
+      //   { is_logged_in: "1" }
+      // );
 
-      const newdata: any = await apiInstance.get(`user` + `/${userId}`);
+      // const newdata: any = await apiInstance.get(`user` + `/${userId}`);
 
-      if (newdata && newdata?.statusCode === 200 && autologout == undefined) {
-        const socket = io(baseUrl, {
-          query: {
-            token: newdata.data.browserToken,
-            uuid: userId,
-            new_token: "empty",
-          },
-        });
-      }
+      // if (newdata && newdata?.statusCode === 200 && autologout == undefined) {
+      //   const socket = io(baseUrl, {
+      //     query: {
+      //       token: newdata.data.browserToken,
+      //       uuid: userId,
+      //       new_token: "empty",
+      //     },
+      //   });
+      // }
       if (res && res?.statusCode === 200) {
         dispatch({
           type: LOGOUT,
@@ -241,6 +248,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         reduxDispatch(onSelectCampaignDetails(undefined));
         RemoveCookiesData();
         clearAllData(reduxDispatch);
+        disconnectSocket()
       }
     } catch (error: any) {
       Danger(error?.response?.data?.message);
@@ -310,7 +318,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         },
       });
       Cookies.set("user_agent", JSON.stringify(data), { expires: 1 });
-    } catch (error) {}
+    } catch (error) { }
   };
 
   if (!state.isInitialized) {

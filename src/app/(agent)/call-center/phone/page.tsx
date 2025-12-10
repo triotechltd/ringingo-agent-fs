@@ -24,7 +24,7 @@ export default function Phone() {
   const campaignFetched = useCampaignFetched();
   const campaignUpdated = useCampaignUpdated();
   const userEntry = useUserEntry();
-  console.log("userEntry", userEntry);
+  //console.log("userEntry", userEntry);
 
   const dispatch = useAppDispatch();
 
@@ -63,45 +63,45 @@ export default function Phone() {
     try {
       const response: any = await dispatch(getCampaignList()).unwrap();
       const res: any = await dispatch(getCampaign({ list: "all" })).unwrap();
-      console.log("selectedCampaignselectedCampaign response ", response);
-      console.log("selectedCampaignselectedCampaign resss", res);
+      //console.log("selectedCampaignselectedCampaign response ", response);
+      //console.log("selectedCampaignselectedCampaign resss", res);
       if (res && res?.statusCode === 200) {
         let newObj = {};
         let newData: any = [];
         let inboundData =
           res?.data?.inbound_campaign && res?.data?.inbound_campaign.length
             ? res?.data?.inbound_campaign.map((x: any) => {
-                return {
-                  ...x,
-                  dataType: "inbound",
-                };
-              })
+              return {
+                ...x,
+                dataType: "inbound",
+              };
+            })
             : [];
         let outboundData =
           res?.data?.outbound_campaign && res?.data?.outbound_campaign.length
             ? res?.data?.outbound_campaign.map((x: any) => {
-                return {
-                  ...x,
-                  dataType: "outbound",
-                };
-              })
+              return {
+                ...x,
+                dataType: "outbound",
+              };
+            })
             : [];
         let blendedData =
           res?.data?.blended_campaign && res?.data?.blended_campaign.length
             ? res?.data?.blended_campaign.map((x: any) => {
-                return {
-                  ...x,
-                  dataType: "blended",
-                };
-              })
+              return {
+                ...x,
+                dataType: "blended",
+              };
+            })
             : [];
         let prepareData = [...inboundData, ...outboundData, ...blendedData];
 
         prepareData.forEach((val: any) => {
-          console.log("selectedCampaignselectedCampaign preparedataaaa", prepareData)
+          //console.log("selectedCampaignselectedCampaign preparedataaaa", prepareData)
           if (response?.data?.length) {
             response.data?.forEach((value: any) => {
-              console.log("selectedCampaignselectedCampaign valuessss", value)
+              //console.log("selectedCampaignselectedCampaign valuessss", value)
               if (value._id.campaign_uuid === val.uuid) {
                 newObj = {
                   ...newObj,
@@ -121,7 +121,7 @@ export default function Phone() {
             });
           }
         });
-        console.log("selectedCampaignselectedCampaign newobjj", newObj)
+        //console.log("selectedCampaignselectedCampaign newobjj", newObj)
         let Ids: any = [];
         newData?.map((x: any) => {
           Ids.push(x.uuid);
@@ -146,9 +146,9 @@ export default function Phone() {
 
   const onGetCampaignOption = async () => {
     try {
-      console.log("selectedCampaignselectedCampaign before ");
+      //console.log("selectedCampaignselectedCampaign before ");
       const result = await dispatch(getCampaignOption({ list: "all" })).unwrap();
-      console.log("selectedCampaignselectedCampaign after ", result);
+      //console.log("selectedCampaignselectedCampaign after ", result);
 
       if (result?.data?.length > 0) {
         dispatch(onSelectCampaignMode(result?.data[0]?.dial_method));
@@ -167,7 +167,7 @@ export default function Phone() {
         campaigns_details: [],
         feature: userEntry ? userEntry : "login-entry",
       };
-      console.log("initialValues", initialValues)
+      //console.log("initialValues", initialValues)
       Object.entries(initialValues)?.map(([key, val]: any) => {
         let obj: any = {
           campaign_uuid: key,
@@ -175,7 +175,7 @@ export default function Phone() {
         };
         payload["campaigns_details"].push(obj);
       });
-      console.log("selectedCampaignselectedCampaign  payload", payload)
+      //console.log("selectedCampaignselectedCampaign  payload", payload)
       let res: any = await dispatch(updateAgentCampaign(payload)).unwrap();
       if (res && res.statusCode === 200) {
         // Success(res.data);
@@ -205,7 +205,7 @@ export default function Phone() {
     }
   }, [initialValues, campaignUpdated]);
 
-  console.log("selectedCampaignselectedCampaign", selectedCampaign);
+  //console.log("selectedCampaignselectedCampaign", selectedCampaign);
   // dispatch(onSelectCampaignMode("2"));
   // dispatch(onSetCampaignType("outbound"));
   // dispatch(onSelectCampaign("44fafdc6-5a87-47f3-8498-5656953cae6e"));
@@ -223,56 +223,48 @@ export default function Phone() {
     // chat socket ::yaksh::
     <SocketProvider>
       <div
-        className="w-full flex gap-4 min-h-[calc(100vh-120px)] "
-        // style={{ gridTemplateColumns: "30% 70%" }}
+        className="grid gap-4 min-h-[calc(100vh-120px)] bg-[#f8f9fc] p-4"
+        style={{ gridTemplateColumns: "30% 70%" }}
       >
         {/* LEFT PANEL (Now has history instead of ActiveList) */}
-        <div className="w-4/12 flex flex-col gap-4 ">
-          <div className="bg-white rounded-[10px] shadow-md p-4">
+        <div className="flex flex-col gap-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-md p-4">
             <WaitingCalls />
           </div>
 
-          <div className="bg-white rounded-[10px] shadow-md p-5 flex-1 min-h-[360px]">
-            <ListingTab
-              activeId={activeId}
-              setActiveId={setActiveId}
-              activeTab=""
-            />
+          <div className="bg-white rounded-2xl shadow-md p-5 flex-1 min-h-[360px]">
+            <ListingTab activeId={activeId} setActiveId={setActiveId} activeTab="" />
           </div>
 
           {isWhatsAppEnabled(user) && (
-            <div className="bg-white rounded-[10px] shadow-md p-4 min-h-[200px]">
-              <UnreadList
-                sectionClass="h-full"
-                sectionBodyClass=""
-                // sectionBodyClass="h-[calc(100%-1.5rem)]"
-              />
+            <div className="bg-white rounded-2xl shadow-md p-4 min-h-[200px]">
+              <UnreadList sectionClass="h-full" sectionBodyClass="h-[calc(100%-1.5rem)]" />
             </div>
           )}
         </div>
 
         {/* RIGHT PANEL */}
         {/* RIGHT PANEL */}
-        <div className="w-8/12 flex flex-col gap-4 overflow-y-auto ">
+        <div className="flex flex-col gap-4 overflow-y-auto">
           {/* Top Row: ActiveList + LeadInformationTab */}
           <div
-            className="flex gap-4"
-            // style={{ gridTemplateColumns: "50% 50%" }}
+            className="grid gap-4"
+            style={{ gridTemplateColumns: "50% 50%" }}
           >
-            <div className="bg-white rounded-[10px] shadow-md p-4 min-h-[400px] w-1/2">
+            <div className="bg-white rounded-2xl shadow-md p-4 min-h-[400px]">
               <ActiveList
                 setActiveId={setActiveId}
                 sectionClass="h-full"
                 sectionBodyClass="h-[calc(100%-2rem)]"
               />
             </div>
-            <div className="bg-white rounded-[10px] shadow-md p-4 min-h-[400px] w-1/2">
+            <div className="bg-white rounded-2xl shadow-md p-4 min-h-[400px]">
               <LeadInformationTab />
             </div>
           </div>
 
           {/* Full-width CrmInformation */}
-          <div className="w-full bg-white rounded-[10px] shadow-md p-4 min-h-[220px]">
+          <div className="bg-white rounded-2xl shadow-md p-4 min-h-[220px]">
             <CrmInformation />
           </div>
         </div>

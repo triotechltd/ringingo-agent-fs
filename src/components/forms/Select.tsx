@@ -288,7 +288,7 @@ const SelectInput = (props: SelectProps) => {
             } text-xs px-1 bg-white  z-[30] transition-all duration-200 pointer-events-none
             ${
               showFloatingLabel
-                ? "-top-2 text-[#4DA6FF]"
+                ? "-top-2 text-primary"
                 : "top-[12px] text-dark-400"
             }`}
           >

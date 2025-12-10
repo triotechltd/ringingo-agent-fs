@@ -426,7 +426,7 @@ const CreateLead = (props: CreateLeadProps) => {
         // overflow-y-auto scrollbar-hide
         >
           <div
-            className={`py-3 px-4 bg-white rounded-[10px] d-flex justify-between items-center sticky top-0 z-[9999]  ${sectionName === "dashboard" ? "" : "rounded-t-lg"
+            className={`py-3 px-4 bg-white rounded-t-lg d-flex justify-between items-center sticky top-0 z-[9999]  ${sectionName === "dashboard" ? "" : "rounded-t-lg"
               } `}
           >
             {fromCallCenter ? (
@@ -458,7 +458,7 @@ const CreateLead = (props: CreateLeadProps) => {
             )}
           </div>
           <div
-            className={` bg-white rounded-b-lg ${sectionName === "dashboard"
+            className={`pt-3 bg-white rounded-b-lg ${sectionName === "dashboard"
                 ? "h-[36.2vh] overflow-y-auto scrollbar-hide"
                 : ""
               }`}
@@ -469,12 +469,12 @@ const CreateLead = (props: CreateLeadProps) => {
                   : "min-h-[calc(100vh-230px)] 3xl:min-h-[calc(100vh-270px)]"
                 }`}
             >
-              <form onSubmit={handleSubmit} className="max-w-7xl mx-auto px-3 py-4 ">
+              <form onSubmit={handleSubmit} className="max-w-7xl mx-auto px-3">
                 <div
                   className={`${fromCallCenter
                       ? `grid-cols-1 ${sectionName === "dashboard"
                         ? ""
-                        : "h-[calc(100vh-220px)] 3xl:h-[calc(100vh-240px)] overflow-y-auto scrollbar-hide pt-2 "
+                        : "h-[calc(100vh-220px)] 3xl:h-[calc(100vh-240px)] overflow-y-auto scrollbar-hide"
                       }`
                       : "grid-cols-2"
                     } grid gap-3 pb-6`}
@@ -597,7 +597,7 @@ const CreateLead = (props: CreateLeadProps) => {
                       isInfo={false}
                     />
                   </div>
-       
+                 
                   <div className="w-full">
                     <Select
                       label="Gender"
@@ -903,7 +903,7 @@ const CreateLead = (props: CreateLeadProps) => {
                 ) : (
                   ""
                 )}
-                <div className="flex justify-center gap-4 px-6 border-gray-100 rounded-[10px] ">
+                <div className="flex justify-center gap-4 px-6 py-4 border-gray-100  rounded-b-lg">
                   {/* <Button
                     disabled={isLoading}
                     text="Cancel"
@@ -921,7 +921,7 @@ const CreateLead = (props: CreateLeadProps) => {
                     disabled={isLoading}
                     text={leadEdit ? "Save" : "Save"}
                     style={fromCallCenter ? "save" : "save"}
-                    className="py-2 px-4 bg-[#4da6ff] hover:bg-opacity-60 text-white transition-colors duration-200"
+                    className="py-2 px-4 bg-[#322996] hover:bg-opacity-60 text-white transition-colors duration-200"
                     type="submit"
                   />
                 </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import Icon from "../ui-components/Icon";
+import  Icon  from "../ui-components/Icon";
 import DatePickers from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -109,8 +109,10 @@ const DatePicker = ({
             onChange?.(date);
           }}
           popperPlacement="bottom-start"
+          // popperClassName="z-[100]"
           popperClassName="!z-[100]"
           portalId="modal-root"
+          // portalId="root"
           className={`peer w-full text-sm transition-all duration-200 bg-white border-2
             rounded-md py-2.5 h-10
             pl-10 pr-4

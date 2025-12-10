@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useLayoutEffect } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import Legacy from "next/legacy/image";
 import { Helmet } from "react-helmet";
 // PROJECT IMPORTS
@@ -45,6 +45,7 @@ import CrmInformation from "@/components/call-center-components/phone/CrmInforma
 import WhatsAppServiceStandalone from "@/components/popups/WhatsAppServiceStandalone";
 import { getActiveUnreadChat } from "@/redux/slice/chatSlice";
 import OmniChannelServiceStandalone from "@/components/popups/OmniChannelServiceStandalone";
+import { getSocket } from "@/config/socket";
 
 
 // ASSETS
@@ -79,13 +80,24 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const [activeTab, setActiveTab] = useState<string>("Call History");
   const [activeId, setActiveId] = useState<string>("1");
   const [personalizeData, setPersonalizeData] = useState<any>({});
+  const [breakStatus, setBreakStatus] = useState<boolean>(false);
 
   const [isOpenConfirmBreak, setIsOpenConfirmBreak] = useState<boolean>(false);
 
-  const socket = io(`${process.env.BASE_URL}`, {
-    query: { agent_uuid: user?.agent_detail?.uuid },
-    transports: ["websocket"], // optional, but helps avoid polling fallback
-  });
+  const socketRef = useRef<any>(null);
+  socketRef.current = getSocket(user);
+  // console.log("socket cnnecteddddd",socketRef.current);
+  
+  // useEffect(() => {
+  // socketRef.current = io(process.env.BASE_URL!, {
+  //   query: { agent_uuid: user?.agent_detail?.uuid },
+  //   transports: ["websocket"],
+  //   autoConnect: true, // important
+  // });
+  //   return () => {
+  //     socketRef.current?.disconnect();
+  //   };
+  // }, []);
 
   const getTenantPersonalizeData = async () => {
     setLoading(true);
@@ -103,35 +115,44 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     getTenantPersonalizeData();
-    return () => {
-      socket?.disconnect();
-    };
   }, []);
 
+
   const agentUpdateTime = (browserToken: string, agent_uuid: string) => {
-    console.log(socket, "socket");
-    socket.emit("agent_update_time", {
+    console.log(socketRef.current, "socket");
+    socketRef.current?.emit("agent_update_time", {
       browserToken,
       agent_uuid,
     });
   };
 
   useEffect(() => {
-    socket.on("agent-event", (event) => {
+    const s = socketRef.current;
+    // console.log("akjsdbhadssdahads ssssss", s);
+    if (!s) return;
+
+    const handleEvent = (event: any) => {
+      console.log("akjsdbhadssdahads", event);
+
       if (event.type === "BREAK") {
         const eve = { value: event?.payload?.uuid, option: event?.payload };
+        setBreakStatus(true)
         onBreakSelection(eve);
       } else if (event.type === "OFF_BREAK") {
         onBackToWork();
+        setBreakStatus(false)
       }
-    });
+    };
+
+    s.on("agent-event", handleEvent);
 
     return () => {
-      socket.disconnect();
+      s.off("agent-event", handleEvent); // remove listener correctly
     };
-  }, []);
+  }, [breakStatus]);
+
 
   const onAccept = () => {
     console.log("Accept clicked")
@@ -139,7 +160,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const onDecline = () => {
     console.log("Decline clicked")
   }
-  
+
   useEffect(() => {
     dispatch(getActiveUnreadChat({ campaign_uuid: selectedCampaign })).unwrap();
   }, [onAccept, onDecline]);
@@ -302,6 +323,9 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       });
 
     clearInterval(breakInterval);
+    // reconnect socket
+    socketRef.current?.connect();
+    console.log("Socket reconnected after break");
   };
 
   const onBreakSelection = async (e: any) => {
@@ -317,6 +341,9 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     dispatch(onStatusChange("1"));
     !user?.isPbx && onUpdateLiveAgentEntry("3");
     dispatch(onSetUserEntry("busy-entry"));
+    // Disconnect socket
+    socketRef.current?.disconnect();
+    console.log("Socket disconnected for break");
     // await dispatch(
     //   goInBreak({ breakcode_uuid: e.value, login_status: "1" })
     // ).unwrap();
@@ -351,7 +378,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   }, []);
   return (
     <>
-      <div className="h-[100vh] flex flex-col overflow-hidden ">
+      <div className="h-[98vh] flex flex-col overflow-hidden">
         {personalizeData?.title && personalizeData?.faviconfile ? (
           <Helmet>
             <title>{personalizeData.title}</title>
@@ -373,13 +400,13 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <Header breakValue={breakValue} onBreakSelection={onBreakSelection} />
         <SideBar />
         <main
-          className={`flex-1 transition-all mt-[12px] mb-[12px] rounded-[10px] mr-[10px] pl-[10px] pt-[70px] pb-[10px] tsm:pt-[110px] pr-[10px] tsm:pr-3 bg-[#F4F7FE] ${isdrawerOpen
+          className={`flex-1 transition-all mt-[12px] rounded-[30px] mr-[10px] bg-[#F4F7FE] pl-[10px] pt-[70px] pb-[10px] tsm:pt-[110px] pr-[10px] tsm:pr-3 ${isdrawerOpen
             ? "pl-[0px] ml-[255px] tmd:pl-[0px]"
             : "ml-[85px] pl-[0px]"
             } tsm:pl-3 relative overflow-hidden`}
         >
           <div className="h-full flex flex-col">
-            <div className="flex-1 rounded-[10px] overflow-auto scrollbar-hide">
+            <div className="flex-1 bg-white rounded-[25px] overflow-auto scrollbar-hide">
               {children}
             </div>
           </div>
@@ -436,7 +463,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         />
 
         {/* WhatsApp Service Popup - Controlled by Redux */}
-        <WhatsAppServiceStandalone onAccept={onAccept} onDecline={onDecline} />
+        {/* <WhatsAppServiceStandalone onAccept={onAccept} onDecline={onDecline} /> */}
         {/* Omnichannel Service Popup - Controlled by Redux */}
         <OmniChannelServiceStandalone onAccept={onAccept} onDecline={onDecline} />
       </div>
@@ -445,3 +472,4 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default MainLayout;
+

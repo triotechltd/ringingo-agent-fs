@@ -2,7 +2,7 @@
 
 "use client";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 // PROJECT IMPORTS
@@ -62,6 +62,8 @@ import BreakSelection from "@/components/pbx-components/break-selection/BreakSel
 import { changeModle } from "@/redux/slice/chatSlice";
 import { getWrapUpTimerString } from "@/redux/services/breakService";
 import Icon from "@/components/ui-components/Icon";
+import { io } from "socket.io-client";
+import { getSocket } from "@/config/socket";
 
 // ASSETS
 const menuArrow = "/assets/icons/menu-arrow.svg";
@@ -93,34 +95,60 @@ const Header = ({ breakValue, onBreakSelection }: HeaderProps) => {
 
   // const { logout, user, switchRole } = useAuth();
 
-useEffect(() => {
-  if (user) {
-    //  Force Call Center mode
-    user.isPbx = false;
+  useEffect(() => {
+    if (user) {
+      //  Force Call Center mode
+      user.isPbx = false;
 
-    // ✅ Set Redux mode
-    dispatch(changeModle("call"));
+      // ✅ Set Redux mode
+      dispatch(changeModle("call"));
 
-    // ✅ Set local states for UI
-    setIsPbx(false);
-    setData(CallCenterMenuList);
+      // ✅ Set local states for UI
+      setIsPbx(false);
+      setData(CallCenterMenuList);
 
-    // ✅ Allow component to render
-    setReady(true);
-  }
-}, [user]);
+      // ✅ Allow component to render
+      setReady(true);
+    }
+  }, [user]);
 
+  const socketRef = useRef<any>(null);
+  socketRef.current = getSocket(user);
+
+  // useEffect(() => {
+  //   socketRef.current = io(process.env.BASE_URL!, {
+  //     query: { agent_uuid: user?.agent_detail?.uuid },
+  //     transports: ["websocket"],
+  //     autoConnect: true, // important
+  //   });
+
+  //   return () => {
+  //     socketRef.current?.disconnect();
+  //   };
+  // }, []);
+
+  useEffect(() => {
+    const s = socketRef.current;
+    // console.log("akjsdbhadssdahads ssssss", s);
+    if (!s) return;
+
+    s.on("logout-admin", onLogoutClick);
+
+    return () => {
+      s.off("logout-admin", onLogoutClick); // remove listener correctly
+    };
+  }, []);
 
   const status = useStatus();
   const [selectedCampaign, setSelectedCampaign] = useState<any>();
   // Force PBX mode to false
-if (user && user.isPbx) {
-  user.isPbx = false;
-}
+  if (user && user.isPbx) {
+    user.isPbx = false;
+  }
 
   const [isPbx, setIsPbx] = useState<boolean>(false);
   const [ready, setReady] = useState<boolean>(false)
-  const [data, setData] = useState<any>( CallCenterMenuList);
+  const [data, setData] = useState<any>(CallCenterMenuList);
   const [campaignModalOpen, setCamoaignModalOpen] = useState<boolean>(
     Cookies.get("campaign_modal") === "0" ? true : false
   );
@@ -153,7 +181,7 @@ if (user && user.isPbx) {
     liveChatOption(0);
   }, [selectedCampaign]);
 
-  
+
 
   // DELETE ENTRY IN LIVE REPORT
   // const onDeleteLiveAgentEntry = async () => {
@@ -214,8 +242,8 @@ if (user && user.isPbx) {
           campaignType === "inbound"
             ? ""
             : campaignType === "outbound"
-            ? "0"
-            : "2",
+              ? "0"
+              : "2",
       };
       if (
         campaignType === "inbound" ||
@@ -343,10 +371,10 @@ if (user && user.isPbx) {
   }, []);
 
   useEffect(() => {
-  if (pathname?.startsWith("/pbx")) {
-    router.replace("/call-center/phone");
-  }
-}, [pathname]);
+    if (pathname?.startsWith("/pbx")) {
+      router.replace("/call-center/phone");
+    }
+  }, [pathname]);
 
   // GET LEAD LIST
   const onGetLeadList = async () => {
@@ -487,7 +515,7 @@ if (user && user.isPbx) {
       const endDate = new Date();
       endDate.setTime(
         endDate.getTime() +
-          parseInt(selectedCampaignDetails?.wrap_up_time) * 1000
+        parseInt(selectedCampaignDetails?.wrap_up_time) * 1000
       );
       clearInterval(wrapUpTimeInterval);
       wrapUpTimeInterval = setInterval(() => {
@@ -523,8 +551,8 @@ if (user && user.isPbx) {
       let payload = {
         status:
           data?.campaign === "inbound" ||
-          data?.dial_method === "1" ||
-          data?.dial_method === "3"
+            data?.dial_method === "1" ||
+            data?.dial_method === "3"
             ? "4"
             : "0",
         campaign_uuid: data?.value,
@@ -672,17 +700,16 @@ if (user && user.isPbx) {
   return (
     <>
       <div
-        className={`fixed flex h-[50px] mt-5 bg-white rounded-[10px]  z-40 border-b border-[#E5E7EB] transition-all
-           ${
-             isdrawerOpen
-               ? "pl-[15px] ml-[265px] w-[81.2%]"
-               : "pl-[15px] ml-[95px] w-[92.4%]"
-           }`}
+        className={`fixed flex h-[50px] mt-5 bg-white rounded-[60px]  z-40 border-b border-[#E5E7EB] transition-all
+
+           ${isdrawerOpen
+            ? "pl-[15px] ml-[265px] w-[81.2%]"
+            : "pl-[15px] ml-[95px] w-[92.4%]"
+          }`}
       >
         <div
-          className={`flex justify-between items-center px-6 w-full ${
-            !isdrawerOpen && "pl-4"
-          }`}
+          className={`flex justify-between items-center px-6 w-full ${!isdrawerOpen && "pl-4"
+            }`}
         >
           <div className="flex items-center">
             <p className="text-base font-semibold text-[#111827]">
@@ -745,9 +772,8 @@ if (user && user.isPbx) {
                 </span>
                 <div className="bg-white h-3 w-3 rounded-full absolute flex justify-center items-center right-0 bottom-0 border border-[#E5E7EB]">
                   <div
-                    className={`${
-                      status === "0" ? "bg-green-500" : "bg-red-500"
-                    } h-2 w-2 rounded-full`}
+                    className={`${status === "0" ? "bg-green-500" : "bg-red-500"
+                      } h-2 w-2 rounded-full`}
                   ></div>
                 </div>
               </div>

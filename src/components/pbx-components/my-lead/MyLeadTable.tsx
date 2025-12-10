@@ -304,7 +304,7 @@ const MyLeadTable = () => {
 
   return (
     <>
-      <div className="bg-white py-[7px] px-[3px] pb-[15px]  rounded-[10px]">
+      <div className="bg-white py-[7px] px-[3px] pb-[15px]  rounded-[25px]">
         <div className="pb-4">
           <Head
             totalCount={leadListDetails?.count || 0}
@@ -457,8 +457,8 @@ const MyLeadTable = () => {
                 });
               }}
             />
-          </div>  
-          <div className="col-span-1 ">
+          </div>
+          <div className="col-span-1 mr-3 ">
             {isCreateLead ? (
               <CreateLead
                 leadEdit={editLead}

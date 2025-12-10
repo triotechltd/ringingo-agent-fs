@@ -12,12 +12,13 @@ import {
   setActiveConversation,
   aceeptChat,
 } from "@/redux/slice/chatSlice";
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 import { useAuth } from "@/contexts/hooks/useAuth";
 import {
   clearSingleChatLeadDetails,
   clearSingleLeadDetails,
 } from "@/redux/slice/callCenter/callCenterPhoneSlice";
+import { getSocket } from "@/config/socket";
 
 // TYPES
 interface WhatsAppMessage {
@@ -45,12 +46,13 @@ const WhatsAppServiceStandalone = (props: WhatsAppServiceStandaloneProps) => {
     onAccept = () => {},
     onDecline = () => {},
   } = props;
-  const baseUrl: any = process.env.BASE_URL;
-  const socketConnection = io(baseUrl);
   const dispatch = useAppDispatch();
   const whatsAppMessage = useWhatsAppPopupMessage();
   const { user } = useAuth();
-  console.log(whatsAppMessage, user, "whatsAppMessage");
+  // const baseUrl: any = process.env.BASE_URL;
+  // const socketConnection = io(baseUrl);
+  const socketConnection = getSocket(user);
+  // console.log(whatsAppMessage, user, "whatsAppMessage");
   const showPopup = useShowWhatsAppPopup();
 
   // Mock message for testing when no message is provided

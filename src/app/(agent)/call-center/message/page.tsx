@@ -1,6 +1,10 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import CrmInformation from "@/components/call-center-components/phone/CrmInformation";
 import LeadInformationTab from "@/components/call-center-components/phone/LeadInformationTab";
+import ListingTab from "@/components/call-center-components/phone/ListingTab";
+import UnreadList from "@/components/call-center-components/phone/UnreadList";
+import WaitingCalls from "@/components/call-center-components/phone/WaitingCalls";
 import { useAppDispatch } from "@/redux/hooks";
 import {
   getActiveUnreadChat,
@@ -28,162 +32,7 @@ import {
 } from "@/redux/slice/campaignSlice";
 import ActiveList from "@/components/call-center-components/phone/ActiveList";
 import ListingTabWhatsapps from "@/components/call-center-components/phone/ListingTabWhatsapps";
-/* ============================== Omni PAGE ============================== */
-
-
-
-// const platformData = {
-//   whatsapp: {
-//     conversations: [
-//   {
-//     id: 1,
-//     initials: "SJ",
-//     name: "Sarah Johnson",
-//     message: "Hey! How are you doing?",
-//     time: "2m ago",
-//     unread: 2,
-//     status: "online",
-//   },
-//   {
-//     id: 2,
-//     initials: "MC",
-//     name: "Mike Chen",
-//     message: "Thanks for the update!",
-//     time: "15m ago",
-//     unread: 0,
-//     status: "online",
-//   },
-//   {
-//     id: 3,
-//     initials: "EW",
-//     name: "Emma Wilson",
-//     message: "Can we schedule a call?",
-//     time: "1h ago",
-//     unread: 1,
-//     status: "offline",
-//   },
-// ], // your existing list
-//     messages: [
-//   {
-//     id: "1",
-//     text: "Hey! How are you doing?",
-//     sender: "other",
-//     timestamp: "10:30 AM",
-//   },
-//   {
-//     id: "2",
-//     text: "I'm doing great! Thanks for asking. How about you?",
-//     sender: "user",
-//     timestamp: "10:32 AM",
-//   },
-//   {
-//     id: "3",
-//     text: "Pretty good! Just wanted to check in about the project.",
-//     sender: "other",
-//     timestamp: "10:33 AM",
-//   },
-//   {
-//     id: "4",
-//     text: "Sure! Everything is going according to plan. We should be ready by next week.",
-//     sender: "user",
-//     timestamp: "10:35 AM",
-//   },
-// ], // your existing messages
-//     lead: {
-//   initials: "AR",
-//   name: "Alex Rivera",
-//   email: "sarah.j@example.com",
-//   phone: "+1 (555) 123-4567",
-//   location: "San Francisco, CA",
-//   joined: "Joined Dec 2024",
-//   platform: "instagram",
-//   platformIcon: "📷",
-//   history: [{ title: "Project Discussion", date: "Today", time: "10:30 AM" }],
-// }, 
-//   },
-
-//   instagram: {
-//     conversations: [
-//       {
-//         id: 1,
-//         initials: "AR",
-//         name: "Anna Roberts",
-//         message: "Did you get my DM?",
-//         time: "5m ago",
-//         unread: 1,
-//         status: "online",
-//       },
-//       {
-//         id: 2,
-//         initials: "TH",
-//         name: "Tom Harris",
-//         message: "Thanks!",
-//         time: "20m ago",
-//         unread: 0,
-//         status: "offline",
-//       },
-//     ],
-//     messages: [
-//       {
-//         id: "1",
-//         text: "Hey, did you see my new post?",
-//         sender: "other",
-//         timestamp: "9:10 AM",
-//       },
-//       {
-//         id: "2",
-//         text: "Yes! It looks great 🔥",
-//         sender: "user",
-//         timestamp: "9:12 AM",
-//       },
-//     ],
-//     lead: {
-//   initials: "AR",
-//   name: "Alex Rivera",
-//   email: "sarah.j@example.com",
-//   phone: "+1 (555) 123-4567",
-//   location: "San Francisco, CA",
-//   joined: "Joined Dec 2024",
-//   platform: "instagram",
-//   platformIcon: "📷",
-//   history: [{ title: "Project Discussion", date: "Today", time: "10:30 AM" }],
-// },
-//   },
-
-//   facebook: {
-//     conversations: [
-//       {
-//         id: 1,
-//         initials: "JW",
-//         name: "John Walker",
-//         message: "Check messenger!",
-//         time: "1h ago",
-//         unread: 0,
-//         status: "online",
-//       },
-//     ],
-//     messages: [
-//       {
-//         id: "1",
-//         text: "Hello from Facebook!",
-//         sender: "other",
-//         timestamp: "8:30 AM",
-//       },
-//     ],
-//     lead: {
-//       initials: "JW",
-//       name: "John Walker",
-//       email: "john.w@example.com",
-//       phone: "+1 (888) 123-5555",
-//       location: "Austin, Texas",
-//       joined: "Joined Sep 2023",
-//       platform: "facebook",
-//       platformIcon: "📘",
-//       history: [{ title: "Messenger Chat", date: "Today", time: "8:30 AM" }],
-//     },
-//   },
-// };
-// type Platform = 'whatsapp' | 'instagram' | 'facebook';
+/* ============================== PHONE PAGE ============================== */
 
 export default function Phone() {
   const [activeId, setActiveId] = useState<string>("2");
@@ -191,8 +40,7 @@ export default function Phone() {
   const campaignFetched = useCampaignFetched();
   const campaignUpdated = useCampaignUpdated();
   const userEntry = useUserEntry();
-  const [active, setActive] = useState("whatsapp");
-  const { user } = useAuth();
+  console.log("userEntry", userEntry);
 
   const dispatch = useAppDispatch();
 
@@ -239,29 +87,29 @@ export default function Phone() {
         let inboundData =
           res?.data?.inbound_campaign && res?.data?.inbound_campaign.length
             ? res?.data?.inbound_campaign.map((x: any) => {
-                return {
-                  ...x,
-                  dataType: "inbound",
-                };
-              })
+              return {
+                ...x,
+                dataType: "inbound",
+              };
+            })
             : [];
         let outboundData =
           res?.data?.outbound_campaign && res?.data?.outbound_campaign.length
             ? res?.data?.outbound_campaign.map((x: any) => {
-                return {
-                  ...x,
-                  dataType: "outbound",
-                };
-              })
+              return {
+                ...x,
+                dataType: "outbound",
+              };
+            })
             : [];
         let blendedData =
           res?.data?.blended_campaign && res?.data?.blended_campaign.length
             ? res?.data?.blended_campaign.map((x: any) => {
-                return {
-                  ...x,
-                  dataType: "blended",
-                };
-              })
+              return {
+                ...x,
+                dataType: "blended",
+              };
+            })
             : [];
         let prepareData = [...inboundData, ...outboundData, ...blendedData];
 
@@ -328,8 +176,8 @@ export default function Phone() {
             result?.data[0]?.campaign_type === "0"
               ? "outbound"
               : result.data[0]?.campaign_type === "2"
-              ? "blended"
-              : "inbound"
+                ? "blended"
+                : "inbound"
           )
         );
         dispatch(onSelectCampaign(result.data[0].uuid));
@@ -386,7 +234,7 @@ export default function Phone() {
   // dispatch(onSelectCampaignMode("2"));
   // dispatch(onSetCampaignType("outbound"));
   // dispatch(onSelectCampaign("44fafdc6-5a87-47f3-8498-5656953cae6e"));
-  // const { user } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (selectedCampaign) {
@@ -398,83 +246,65 @@ export default function Phone() {
     }
   }, [selectedCampaign]);
 
+  const [active, setActive] = useState("whatsapp");
+
   const tabs = [
     { id: "whatsapp", label: "WhatsApp", subtitle: "Chats", badge: 3 },
     { id: "instagram", label: "Instagram", subtitle: "Messages", badge: 1 },
     { id: "facebook", label: "Facebook", subtitle: "Inbox", badge: 0 },
+    { id: "twitter", label: "Twitter", subtitle: "DMS", badge: 2 },
   ];
-// const current = platformData[active as Platform] || {};
-
-//   const platformConversations = current.conversations || [];
-//   const platformMessages = current.messages || [];
-//   const platformLead = current.lead || null;
 
   return (
     // chat socket ::yaksh::
     <SocketProvider>
-      <div className="bg-white rounded-[10px]">
-        {/* Tabs header */}
-        <div className="flex gap-4 items-center border-b-2 border-grey-500 p-2">
-          {tabs?.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setActive(t.id)}
-              className={`
-        flex items-center gap-2 cursor-pointer px-2 py-1 rounded-md 
-        transition-all  
-        ${
-          active === t.id
-            ? "font-bold text-gray-900"
-            : "text-gray-700 hover:bg-gray-100"
-        }
-      `}
-            >
-              {/* colored dot */}
-              <span
-                className={`w-3 h-3 rounded-full 
-          ${
-            t.id === "whatsapp"
-              ? "bg-green-500"
-              : t.id === "instagram"
-              ? "bg-pink-400"
-              : t.id === "facebook"
-              ? "bg-blue-600"
-              : "bg-sky-400"
-          }`}
-              ></span>
-
-              {/* Label */}
-              <span className="text-sm">{t.label}</span>
-
-              {/* Count badge */}
-              <span
-                className={`
-          text-xs px-2 py-0.5 rounded-full font-medium 
-          ${
-            t.badge > 0
-              ? `${
-                  t.id === "whatsapp"
-                    ? "bg-green-500"
-                    : t.id === "instagram"
-                    ? "bg-pink-400"
-                    : t.id === "facebook"
+      {/* Tabs header */}
+      <div className="flex gap-4 items-center border-b p-2">
+        {tabs.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setActive(t.id)}
+            className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-400 ${active === t.id ? "bg-indigo-50 shadow-sm" : "hover:bg-gray-100"}`}
+            aria-pressed={active === t.id}
+            role="tab"
+            aria-selected={active === t.id}
+            tabIndex={0}
+          >
+            {/* Simple circle as channel indicator */}
+            <span
+              className={`w-3 h-3 rounded-full ${t.id === "whatsapp"
+                ? "bg-green-500"
+                : t.id === "instagram"
+                  ? "bg-pink-500"
+                  : t.id === "facebook"
                     ? "bg-blue-600"
                     : "bg-sky-400"
-                } text-white`
-              : "bg-gray-200 text-gray-600"
-          }
-        `}
+                }`}>
+            </span>
+
+
+            <div className="text-left">
+              <div className="text-sm font-medium">{t.label}</div>
+              {/* <div className="text-xs text-gray-500">{t.subtitle}</div> */}
+            </div>
+
+
+            {typeof t.badge === "number" && (
+              <span
+                className={`ml-2 ml-auto inline-flex items-center justify-center px-2 py-0.5 text-xs rounded-full font-medium ${t.badge > 0 ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600"
+                  }`}
               >
                 {t.badge}
               </span>
-            </button>
-          ))}
-        </div>
-        {/* dd */}
-        <div
-        className="grid gap-4 min-h-[calc(100vh-120px)] bg-[#f8f9fc] pt-4"
+            )}
+          </button>
+        ))}
+      </div>
+      <div
+        className="grid gap-4 min-h-[calc(100vh-120px)] bg-[#f8f9fc] p-4"
         style={{ gridTemplateColumns: "25% 75%" }}
-        >
+      >
+        {/* llll */}
         {/* LEFT PANEL (Now has history instead of ActiveList) */}
         <div className="flex flex-col gap-4 overflow-y-auto ">
           {/* <div className="bg-white rounded-2xl shadow-md p-4">
@@ -497,9 +327,10 @@ export default function Phone() {
               <UnreadList sectionClass="h-full" sectionBodyClass="h-[calc(100%-1.5rem)]" />
             </div>
           )} */}
-          </div>
+        </div>
 
-          {/* RIGHT PANEL */}
+        {/* RIGHT PANEL */}
+        {/* RIGHT PANEL */}
         <div className="flex flex-col gap-4 overflow-y-auto ">
           {/* Top Row: ActiveList + LeadInformationTab */}
           <div
@@ -517,8 +348,8 @@ export default function Phone() {
               />
             </div> */}
             <div className="bg-white rounded-2xl shadow-md p-4 max-h-[400px]">
-            <LeadInformationTab />
-          </div>
+              <LeadInformationTab />
+            </div>
           </div>
 
           {/* Full-width CrmInformation */}
@@ -526,7 +357,6 @@ export default function Phone() {
             <CrmInformation />
           </div> */}
         </div>
-      </div>
       </div>
     </SocketProvider>
   );

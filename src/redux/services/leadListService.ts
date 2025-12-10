@@ -7,7 +7,8 @@ import {
   LEAD_MANAGEMENT_INFORMATION,
   LEAD_MANAGEMENT_SEARCH,
   LEAD_STATUS,
-  LEAD_MANAGEMENT_CUSTOM_FIELDS
+  LEAD_MANAGEMENT_CUSTOM_FIELDS,
+  UNALLOCATED_LEAD_MANAGEMENT
 } from "@/API/constAPI";
 import { apiInstance } from "../axiosApi";
 
@@ -34,6 +35,10 @@ export const leadGroupGetAll = (params: AllListParamsType) => {
 
 export const leadListGetAll = (params: AllListParamsType) => {
   return apiInstance.get(LEAD_MANAGEMENT, { params });
+};
+
+export const unAllocatedLeadGet = (params: FilterTypes) => {
+  return apiInstance.get(UNALLOCATED_LEAD_MANAGEMENT, { params });
 };
 
 export const newLeadCreate = (payload: any) => {

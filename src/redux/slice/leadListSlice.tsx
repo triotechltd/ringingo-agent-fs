@@ -15,12 +15,14 @@ import {
   singleLeadGet,
   singleLeadInfo,
   singleLeadCustomFields,
+  unAllocatedLeadGet,
 } from "../services/leadListService";
 
 // TYPES
 import { AllListParamsType, FilterTypes } from "@/types/filterTypes";
 interface InitialState {
   leadListDetails: any;
+  unAllocatedleadDetails: any;
   allLeadListDetails: any;
   singleLeadDetail: any;
   isLoading: boolean;
@@ -32,6 +34,7 @@ interface InitialState {
 
 const initialState: InitialState = {
   leadListDetails: [],
+  unAllocatedleadDetails: [],
   allLeadListDetails: [],
   isLoading: false,
   singleLeadDetail: {},
@@ -68,6 +71,13 @@ export const getAllLeadList = createAsyncThunk(
   }
 );
 
+export const getUnallocatedLeads = createAsyncThunk(
+  "unallocated-lead-list/list",
+  async (params: FilterTypes) => {
+    return await unAllocatedLeadGet(params);
+  }
+);
+
 export const createNewLead = createAsyncThunk(
   "lead-list/create",
   async (payload: any) => {
@@ -100,7 +110,7 @@ export const getSingleLeadInfo = createAsyncThunk(
 export const getSingleLeadCustomFields = createAsyncThunk(
   "/lead/custom-fields",
   async (params: any) => {
-      return await singleLeadCustomFields(params);
+    return await singleLeadCustomFields(params);
   }
 );
 
@@ -140,6 +150,31 @@ const leadListSlice = createSlice({
         state.isLoading = false;
       });
     builder
+      .addCase(getUnallocatedLeads.pending, (state, action: PayloadAction<any>) => {
+        state.isLoading = true;
+      })
+      .addCase(getUnallocatedLeads.fulfilled, (state, action: PayloadAction<any>) => {
+        const newData =
+          typeof action.payload === "string" ? [] : action.payload;
+        newData?.data?.map((val: any, index: number) => {
+          val.no = (index + 1).toString();
+          val.fullName = val.first_name
+            ? val.first_name + " " + (val?.last_name || "")
+            : "";
+          val.country_name =
+            val.country && val.country.length ? val.country[0]?.nicename : "";
+          //val.lead_status_name = val?.disposition?.[0]?.name || "";
+          //val.lead_status_name = val?.disposition?.length ? val?.disposition?.[0]?.name : val.lead_status; 
+          val.lead_status_name = val?.disposition?.[0]?.name || val?.pbx_lead_status?.[0]?.name;
+          val.lead_group_name = val?.lead_group?.[0]?.name || "";
+        });
+        state.unAllocatedleadDetails = newData;
+        state.isLoading = false;
+      })
+      .addCase(getUnallocatedLeads.rejected, (state, action: PayloadAction<any>) => {
+        state.isLoading = false;
+      });
+    builder
       .addCase(leadSearch.pending, (state, action: PayloadAction<any>) => {
         state.isLoading = true;
       })
@@ -153,10 +188,10 @@ const leadListSlice = createSlice({
             : "";
           val.country_name =
             val.country && val.country.length ? val.country[0]?.nicename : "";
-         // val.lead_status_name = val?.disposition?.[0]?.name || "";
-         val.lead_status_name = val?.disposition?.length
-          ? val?.disposition?.[0]?.name
-          : val.lead_status; 
+          // val.lead_status_name = val?.disposition?.[0]?.name || "";
+          val.lead_status_name = val?.disposition?.length
+            ? val?.disposition?.[0]?.name
+            : val.lead_status;
           val.lead_group_name = val?.lead_group?.[0]?.name || "";
         });
         state.leadListDetails = newData;
@@ -225,6 +260,13 @@ export const selectLeadListDetails = (state: RootState) =>
 export const useLeadListDetails = () => {
   const leadListDetails = useAppSelector(selectLeadListDetails);
   return useMemo(() => leadListDetails, [leadListDetails]);
+};
+
+export const selectUnAllocatedleadDetails = (state: RootState) =>
+  state.leadList.unAllocatedleadDetails;
+export const useUnAllocatedleadDetails = () => {
+  const unAllocatedleadDetails = useAppSelector(selectUnAllocatedleadDetails);
+  return useMemo(() => unAllocatedleadDetails, [unAllocatedleadDetails]);
 };
 
 export const selectAllLeadListDetails = (state: RootState) =>

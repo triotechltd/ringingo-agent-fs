@@ -27,7 +27,8 @@ import {
 } from "@/components/helperFunctions";
 
 import { format } from "date-fns";
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
+import { getSocket } from "@/config/socket";
 
 interface UnreadListProps {
   sectionClass: string;
@@ -49,6 +50,7 @@ const UnreadList = ({
   const chatModeType = useChatMode();
   const campaignType = useCampaignType();
 
+  
   const onAcceptChat = async (unReadItem: any) => {
     await dispatch(
       aceeptChat({
@@ -67,8 +69,10 @@ const UnreadList = ({
             : { campaign_uuid: selectedCampaign }
         )
       ).unwrap();
-      const baseUrl: any = process.env.BASE_URL;
-      const socketConnection = io(baseUrl);
+      // const baseUrl: any = process.env.BASE_URL;
+      // const socketConnection = io(baseUrl);
+      const socketConnection = getSocket(user);
+
       // socketConnection.emit("message_from_client", {
       //   accepted_browser: user?.agent_detail?.browserToken,
       //   all_browser: unReadItem.browser_token,

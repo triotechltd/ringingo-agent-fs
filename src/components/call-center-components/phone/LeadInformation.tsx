@@ -62,6 +62,7 @@ const LeadInformation = ({ setIsHangUp }: LeadInformationProps) => {
 
   const [data, setData] = useState<any>(null);
   const [editLead, setEditLead] = useState(false);
+  console.log("datadatadatadata", data);
 
   // ✅ Prevent duplicate API calls
   const hasFetchedLeads = useRef(false);
@@ -138,7 +139,7 @@ const LeadInformation = ({ setIsHangUp }: LeadInformationProps) => {
             </div>
           )}
         </div>
-        <div className="h-[36.2vh]">
+        <div className="h-[36.2vh] overflow-y-auto pr-2">
           {showLeadInformation() ? (
             <div className="3xl:pt-2 pt-1 3xl:pb-2 pb-1 rounded-b-lg">
               <div className="px-4">
@@ -162,7 +163,7 @@ const LeadInformation = ({ setIsHangUp }: LeadInformationProps) => {
                       {isCallHangUp && Cookies.get("is_call_start") === "1" ? (
                         <Button
                           text={"Finish Lead"}
-                          className="px-2 py-1 rounded-md bg-[#4DA6FF]"
+                          className="px-2 py-1 rounded-md"
                           onClick={() => {
                             setIsHangUp(true);
                             !!!addLeadNoteId &&
@@ -181,45 +182,73 @@ const LeadInformation = ({ setIsHangUp }: LeadInformationProps) => {
                 </div>
 
                 {/* Lead Info Fields */}
-                <div className="grid grid-cols-5">
-                  {[
-                    ["Email", data?.email],
-                    [
-                      "Phone No",
-                      data?.phone_number
-                        ? numberMasking
-                          ? Array.from(data?.phone_number).length > 4
-                            ? Array.from(data?.phone_number).fill("X", 2, -2).join("")
-                            : Array.from(data?.phone_number).fill("X", 1, -1).join("")
-                          : data?.phone_number
-                        : "",
-                    ],
-                    ["Alternate Phone No", data?.alternate_phone_number],
-                    [
-                      "Gender",
-                      data?.gender === "0"
-                        ? "Male"
-                        : data?.gender === "1"
-                          ? "Female"
-                          : data?.gender || "",
-                    ],
-                    ["Description", data?.description],
-                    ["Address", data?.address],
-                  ].map(([label, value], idx) => (
-                    <div key={idx} className="contents">
-                      <div className="col-span-2">
-                        <span className="3xl:text-xs text-[11px] text-heading">
-                          {label}:
-                        </span>
-                      </div>
-                      <div className="col-span-3">
-                        <span className="3xl:text-xs text-[11px] text-txt-primary">
-                          {value}
-                        </span>
+                {/* 👉 Main Fields */}
+                <div className="grid grid-cols-5 gap-y-1">
+                  {Object.entries(data)
+                    .filter(([key, value]) =>
+                      value !== "" &&
+                      value !== null &&
+                      value !== undefined &&
+                      key !== "_id" &&
+                      key !== "id" &&
+                      key !== "__v" &&
+                      key !== "custom_fields" &&
+                      key !== "tenant_uuid" &&
+                      key !== "user_uuid"
+                    )
+                    .map(([key, value], idx) => {
+                      const label = key
+                        .replace(/_/g, " ")
+                        .replace(/\b\w/g, (c) => c.toUpperCase());
+                      return (
+                        <div key={idx} className="contents">
+                          <div className="col-span-2">
+                            <span className="3xl:text-xs text-[11px] text-heading">
+                              {label}:
+                            </span>
+                          </div>
+                          <div className="col-span-3">
+                            <span className="3xl:text-xs text-[11px] text-txt-primary">
+                              {String(value)}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+
+                {/* 👉 Custom Fields */}
+                {data?.custom_fields && Object.keys(data?.custom_fields).length > 0 && (
+                  <div className="space-y-2">
+                    {/* heading */}
+                    <h3 className="font-bold text-sm mt-3 text-heading uppercase">
+                      Custom Fields
+                    </h3>
+                    <div className="max-h-32border rounded-md">
+                      <div className="grid grid-cols-5 gap-y-1">
+                        {Object.entries(data.custom_fields).map(([key, value], idx) => {
+                          const label = key
+                            .replace(/_/g, " ")
+                            .replace(/\b\w/g, (c) => c.toUpperCase());
+                          return (
+                            <div key={idx} className="contents">
+                              <div className="col-span-2">
+                                <span className="3xl:text-xs text-[11px] text-heading">
+                                  {label}:
+                                </span>
+                              </div>
+                              <div className="col-span-3">
+                                <span className="3xl:text-xs text-[11px] text-txt-primary">
+                                  {String(value)}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
           ) : (
@@ -238,7 +267,7 @@ const LeadInformation = ({ setIsHangUp }: LeadInformationProps) => {
       </div>
     );
   };
-  
+
   return (
     <>
       {showLeadInformation() || chatModeType !== "pbx" ? renderLeadInformation() : <Search />}
@@ -254,3 +283,4 @@ const LeadInformation = ({ setIsHangUp }: LeadInformationProps) => {
 };
 
 export default LeadInformation;
+

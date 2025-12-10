@@ -224,6 +224,7 @@ const campaignSlice = createSlice({
                             minimum_calls: val?.minimum_calls || "",
                             wrap_up_time: val?.wrap_up_time || "",
                             wrap_up_disposition: val?.wrap_up_disposition || "",
+                            auto_answer: val?.auto_answer || "1",
                             campaign:
                                 val?.campaign_type === "0"
                                     ? "outbound"

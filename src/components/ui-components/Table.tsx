@@ -95,7 +95,7 @@ const Table = (props: TableProps) => {
 
   return (
     // shadow-2x
-    <div className="relative z-[0] l bg-gradient-to-br border bg-white overflow-hidden mx-3 rounded-[10px] ">
+    <div className="relative z-[0] l bg-gradient-to-br border bg-white overflow-hidden mx-3 rounded-b-[20px] rounded-t-[20px] ">
       {/* "relative bg-white shadow-lg overflow-hidden mx-3" */}
       <div
         // className={`${!tableData?.leng && "scrollbar-hide"}
@@ -106,7 +106,7 @@ const Table = (props: TableProps) => {
         //         }
         //         relative overflow-x-auto rounded-lg ${className}`}
         className={`
-    relative overflow-x-auto rounded-[10px] ${className}
+    relative overflow-x-auto rounded-lg ${className}
     scrollbar-hide
     ${
       pagination
@@ -116,10 +116,10 @@ const Table = (props: TableProps) => {
   `}
       >
         <div className="">
-          <table className="w-full min-w-full divide-y divide-gray-200 rounded-[10px]">
+          <table className="w-full min-w-full divide-y divide-gray-200 rounded-t-[20px]">
             {/* table header color */}
             <thead
-              className={`bg-table-header sticky top-0 z-10 rounded-[10px]  ${headerStyle}`}
+              className={`bg-table-header sticky top-0 z-10 rounded-t-[20px]  ${headerStyle}`}
             >
               <tr>
                 {columnData?.map((val: any, index: number) => (
@@ -161,7 +161,7 @@ const Table = (props: TableProps) => {
                 ))}
               </tr>
             </thead>
-            <tbody className="bg-white divide-y  divide-gray-200 rounded-[10px] ">
+            <tbody className="bg-white divide-y  divide-gray-200 rounded-b-[20px] ">
               {!tableData?.length && isLoading ? (
                 <tr>
                   <td colSpan={columns.length}>

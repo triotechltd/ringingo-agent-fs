@@ -16,7 +16,7 @@ const Filter = (props: FilterProps) => {
   const { className, onClick } = props;
   return (
     <div
-      className={`flex h-full items-center border bg-[#4da6ff] rounded-[10px] px-3 smd:p-1.5 cursor-pointer ${className}`}
+      className={`flex h-full items-center border bg-button-background  rounded-[46px] px-3 smd:p-1.5 cursor-pointer ${className}`}
       onClick={onClick}
     >
       <ToolTipIcon src={FilterIcon} width={14} height={14} alt="Filter" />

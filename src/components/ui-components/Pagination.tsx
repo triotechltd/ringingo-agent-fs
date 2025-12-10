@@ -132,7 +132,7 @@ const Pagination = (props: PaginationProps) => {
         <ReactPaginate
           containerClassName={`flex gap-1 items-center ${className}`}
           pageClassName={`3xl:px-2.5 px-1.5 3xl:py-[2px] py-[1px] rounded-md text-txt-primary font-normal 3xl:text-sm text-xs smd:hidden`}
-          activeClassName="bg-[#4da6ff] text-white 3xl:text-sm text-xs smd:!block"
+          activeClassName="bg-button-background text-white 3xl:text-sm text-xs smd:!block"
           breakLabel=" . . "
           forcePage={page - 1}
           breakClassName="text-txt-primary font-normal 3xl:px-2.5 px-1.5 3xl:py-[2px] py-[1px] smd:hidden"

@@ -66,7 +66,7 @@ const Input = ({
           htmlFor={name}
           className={`absolute left-9 text-xs transition-all duration-200 z-10 bg-white px-1
             ${showLabelAsFloating
-              ? "-top-2 text-[#4DA6FF] font-medium"
+              ? "-top-2 text-[#322996] font-medium"
               : "top-3 text-gray-500"
             }
             pointer-events-none
@@ -114,7 +114,7 @@ const Input = ({
               },
             });
           }}
-          className={`focus:outline-none border-2 text-xs placeholder:text-txt-secondary rounded-md focus:border-[#4DA6FF] ${isLogin == true
+          className={`focus:outline-none border-2 text-xs placeholder:text-txt-secondary rounded-md focus:border-[#322996] ${isLogin == true
             ? "3xl:py-2 py-1 h-11 pl-9 pr-10 w-full"
             : "py-2.5 h-10 pl-10 pr-10 w-full"
             }    
@@ -122,7 +122,7 @@ const Input = ({
             placeholder-transparent
             ${hasError
               ? "border-error"
-              : "border-dark-300 hover:border-dark-500 focus:border-[#4DA6FF]"
+              : "border-dark-300 hover:border-dark-500 focus:border-[#322996]"
             }
             ${inputClassName}`}
         />

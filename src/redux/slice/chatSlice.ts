@@ -12,7 +12,6 @@ import {
   endChatPost,
   getCallWaitingCountGet,
   queueListGet,
-  sendInstaMessagePost,
   sendMessagePost,
   transferChatPut,
   updateMessagePut,
@@ -153,13 +152,9 @@ export const senMessage = createAsyncThunk("send", async (payload: any) => {
   return await sendMessagePost(payload);
 });
 
-export const senInstaMessage = createAsyncThunk("send", async (payload: any) => {
-  return await sendInstaMessagePost(payload);
-});
-
 export const queueList = createAsyncThunk("queue-list", async () => {
 
-  console.log("queueList", await queueListGet());
+  //console.log("queueList", await queueListGet());
   return await queueListGet();
 });
 
@@ -359,7 +354,7 @@ const chatSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(getActiveUnreadChat.fulfilled, (state, action: any) => {
       const chatList = action?.payload?.data;
-      console.log("chatListchatList",chatList);
+      //console.log("chatListchatList",chatList);
       getChatState(state).campaign_uuid =
         action?.meta?.arg?.[
         state.modeType === "pbx" ? "user_uuid" : "campaign_uuid"

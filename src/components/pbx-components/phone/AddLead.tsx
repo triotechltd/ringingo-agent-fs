@@ -171,8 +171,8 @@ const AddLead = (props: AddLeadProps) => {
     return (
         <>
             <div className="w-full">
-                <div className="rounded-[10px] drop-shadow-lg">
-                    <div className="bg-layout px-4 3xl:py-3 py-2 rounded-[10px]">
+                <div className="rounded-lg drop-shadow-lg">
+                    <div className="bg-layout px-4 3xl:py-3 py-2 rounded-t-lg">
                         <div className="flex items-center">
                             <div className="relative h-[14px] w-[14px] 3xl:w-[16px] 3xl:h-[16px] cursor-pointer mr-2">
                                 <Legacy
@@ -190,7 +190,7 @@ const AddLead = (props: AddLeadProps) => {
                             </span>
                         </div>
                     </div>
-                    <div className="pt-3 rounded-b-lg">
+                    <div className="pt-3 bg-white rounded-b-lg">
                         <div className="min-h-[calc(100vh-230px)] 3xl:min-h-[calc(100vh-270px)]">
                             <form onSubmit={handleSubmit}>
                                 <div className="grid-cols-2 grid 3xl:gap-4 gap-3 px-4 pb-5">
