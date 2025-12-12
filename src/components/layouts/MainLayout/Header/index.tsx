@@ -538,6 +538,7 @@ const Header = ({ breakValue, onBreakSelection }: HeaderProps) => {
       if (wrapUpTimeInterval) {
         clearInterval(wrapUpTimeInterval);
         wrapUpTimeInterval = undefined;
+        setWrapUpTime("");
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -604,7 +605,6 @@ const Header = ({ breakValue, onBreakSelection }: HeaderProps) => {
   };
 
   // SET CALL QUEUE
-
   const onCallQueueOutbound = async (e: any) => {
     try {
       let payload: any = {
