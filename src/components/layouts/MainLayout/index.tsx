@@ -349,33 +349,34 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     // ).unwrap();
   };
 
-  useEffect(() => {
-    const handleBeforeUnload = (event: any) => {
-      // const customMessage = 'You are attempting to leave the agent screen without logging out. This may result in lost information. Are you sure you want to exit this page?';
-      event.preventDefault();
-      event.returnValue = true;
-    };
+  // useEffect(() => {
+  //   const handleBeforeUnload = (event: any) => {
+  //     // const customMessage = 'You are attempting to leave the agent screen without logging out. This may result in lost information. Are you sure you want to exit this page?';
+  //     event.preventDefault();
+  //     event.returnValue = true;
+  //   };
 
-    const handleUnload = () => {
-      // Clear data on page close
-      reduxDispatch(onSelectCampaign(""));
-      reduxDispatch(onSelectCampaignDetails(undefined));
-      RemoveCookiesData();
-      clearAllData(reduxDispatch);
-    };
+  //   const handleUnload = () => {
+  //     // Clear data on page close
+  //     reduxDispatch(onSelectCampaign(""));
+  //     reduxDispatch(onSelectCampaignDetails(undefined));
+  //     RemoveCookiesData();
+  //     clearAllData(reduxDispatch);
+  //   };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    window.addEventListener("unload", handleUnload);
+  //   window.addEventListener("beforeunload", handleBeforeUnload);
+  //   window.addEventListener("unload", handleUnload);
 
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      window.removeEventListener("unload", handleUnload);
-      if (breakInterval) {
-        clearInterval(breakInterval);
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("beforeunload", handleBeforeUnload);
+  //     window.removeEventListener("unload", handleUnload);
+  //     if (breakInterval) {
+  //       clearInterval(breakInterval);
+  //     }
+  //   };
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+
   return (
     <>
       <div className="h-[98vh] flex flex-col overflow-hidden">
