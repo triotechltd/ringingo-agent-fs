@@ -293,6 +293,7 @@ const LoginForm = () => {
         Cookies.set("is_call_start", "1");
         setIsLoading(false);
       } else if (res && res?.data?.statusCode === 403) {
+        Danger(res?.data?.data);
         setErrorMsg(res?.data?.data);
         setIsLoading(false);
       } else {
