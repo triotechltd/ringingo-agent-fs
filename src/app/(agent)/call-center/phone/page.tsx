@@ -144,22 +144,29 @@ export default function Phone() {
     }
   };
 
+  // logged in -list all -------------------------
   const onGetCampaignOption = async () => {
     try {
       //console.log("selectedCampaignselectedCampaign before ");
       const result = await dispatch(getCampaignOption({ list: "all" })).unwrap();
       //console.log("selectedCampaignselectedCampaign after ", result);
-
+      
       if (result?.data?.length > 0) {
+        const loggedInCampaign = result.data[0];
         dispatch(onSelectCampaignMode(result?.data[0]?.dial_method));
         dispatch(onSetCampaignType(result?.data[0]?.campaign_type === "0" ? "outbound" : result.data[0]?.campaign_type === "2" ? "blended" : "inbound"));
         dispatch(onSelectCampaign(result.data[0].uuid));
+        setInitialValues({
+        campaign_uuid: loggedInCampaign?.uuid,
+        login_status: 0,
+        });
       }
     } catch (error: any) {
       console.log("Get campaign list Err ---->", error?.message);
     }
   };
-
+  
+  // login entry
   const campaignUpdate = async () => {
 
     try {
@@ -168,23 +175,27 @@ export default function Phone() {
         feature: userEntry ? userEntry : "login-entry",
       };
       //console.log("initialValues", initialValues)
-      Object.entries(initialValues)?.map(([key, val]: any) => {
-        let obj: any = {
-          campaign_uuid: key,
-          login_status: val,
-        };
-        payload["campaigns_details"].push(obj);
-      });
+      // Object.entries(initialValues)?.map(([key, val]: any) => {
+      //   let obj: any = {
+      //     campaign_uuid: key,
+      //     login_status: val,
+      //   };
+      //   payload["campaigns_details"].push(obj);
+      // });
+      if (initialValues && initialValues.campaign_uuid && typeof initialValues.login_status !== "undefined") {
+          payload?.campaigns_details.push(initialValues);
+      }      
       //console.log("selectedCampaignselectedCampaign  payload", payload)
       let res: any = await dispatch(updateAgentCampaign(payload)).unwrap();
-      if (res && res.statusCode === 200) {
+      
+      // if (res && res.statusCode === 200) {
         // Success(res.data);
-        onGetCampaignOption();
+        // onGetCampaignOption();
         // dispatch(onSelectCampaign("44fafdc6-5a87-47f3-8498-5656953cae6e"))
         // Cookies.set("campaign_modal", "1", { expires: 1 });
         // setIsUpdateLoading(false);
         // liveChatOption(1);
-      }
+      // }
     } catch (error: any) {
       console.log("error while updating campaign", error.message);
 
@@ -194,7 +205,8 @@ export default function Phone() {
   useEffect(() => {
     if (userEntry === "login-entry" && !campaignFetched) {
       dispatch(setCampaignFetched(true));
-      onGetCampaign();
+      // onGetCampaign();
+      onGetCampaignOption();
     }
   }, [userEntry, campaignFetched]);
 

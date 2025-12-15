@@ -314,6 +314,7 @@ const Header = ({ breakValue, onBreakSelection }: HeaderProps) => {
       setIsLogoutLoading(true);
       try {
         let payload = {
+          campaign_uuid: selectedCampaign.value,
           login_status: "2",
         };
         let response: any = await dispatch(agentEntryAdd(payload)).unwrap();
@@ -541,7 +542,6 @@ const Header = ({ breakValue, onBreakSelection }: HeaderProps) => {
         setWrapUpTime("");
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCallHangUp, selectedCampaignDetails]);
 
   // new campgin
