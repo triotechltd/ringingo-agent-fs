@@ -107,8 +107,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     campaign_uuid: string
   ) => {
     console.log("newwcaam", campaign_uuid);
-    RemoveCookiesData();
-    clearAllData(reduxDispatch);
+    // RemoveCookiesData();
+    // clearAllData(reduxDispatch);
     try {
       const user: any = await axios.post(baseUrl + AGENT_LOGIN, {
         username,
