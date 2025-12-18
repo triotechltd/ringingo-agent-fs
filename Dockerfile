@@ -38,7 +38,7 @@ COPY --from=builder /app/package-lock.json ./
 
 COPY --from=builder /app/server.js ./
 
-EXPOSE 3100
+EXPOSE 3000
 
 # Start Next.js on port 3100
-CMD ["npm", "start", "--", "-p", "3100"]
+CMD ["npm", "start", "--", "-p", "3000"]
