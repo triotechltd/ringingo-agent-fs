@@ -135,7 +135,7 @@ export default function Phone() {
             });
           }
         });
-        setInitialValues(newObj);
+        // setInitialValues(newObj);
       }
 
 
@@ -183,14 +183,14 @@ export default function Phone() {
       //   payload["campaigns_details"].push(obj);
       // });
       if (initialValues && initialValues.campaign_uuid && typeof initialValues.login_status !== "undefined") {
-          payload?.campaigns_details.push(initialValues);
+          payload['campaigns_details'].push(initialValues);
       }      
       //console.log("selectedCampaignselectedCampaign  payload", payload)
       let res: any = await dispatch(updateAgentCampaign(payload)).unwrap();
       
       // if (res && res.statusCode === 200) {
         // Success(res.data);
-        // onGetCampaignOption();
+        onGetCampaignOption();
         // dispatch(onSelectCampaign("44fafdc6-5a87-47f3-8498-5656953cae6e"))
         // Cookies.set("campaign_modal", "1", { expires: 1 });
         // setIsUpdateLoading(false);
@@ -205,8 +205,8 @@ export default function Phone() {
   useEffect(() => {
     if (userEntry === "login-entry" && !campaignFetched) {
       dispatch(setCampaignFetched(true));
-      // onGetCampaign();
-      onGetCampaignOption();
+      onGetCampaign();
+      // onGetCampaignOption();
     }
   }, [userEntry, campaignFetched]);
 

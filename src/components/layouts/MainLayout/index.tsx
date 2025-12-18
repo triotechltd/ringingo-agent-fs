@@ -120,13 +120,13 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
 
-  const agentUpdateTime = (browserToken: string, agent_uuid: string) => {
-    console.log(socketRef.current, "socket");
-    socketRef.current?.emit("agent_update_time", {
-      browserToken,
-      agent_uuid,
-    });
-  };
+  // const agentUpdateTime = (browserToken: string, agent_uuid: string) => {
+  //   console.log(socketRef.current, "socket");
+  //   socketRef.current?.emit("agent_update_time", {
+  //     browserToken,
+  //     agent_uuid,
+  //   });
+  // };
 
   useEffect(() => {
     const s = socketRef.current;
@@ -165,33 +165,33 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     dispatch(getActiveUnreadChat({ campaign_uuid: selectedCampaign })).unwrap();
   }, [onAccept, onDecline]);
 
-  useEffect(() => {
-    let browserToken = user?.agent_detail?.browserToken;
-    let agent_uuid = user?.agent_detail?.uuid;
-    if (
-      user &&
-      selectedCampaign &&
-      (campaignMode === "1" || campaignMode === "3") &&
-      (campaignType === "outbound" || campaignType === "blended")
-    ) {
-      if (timeInterval) {
-        clearInterval(timeInterval);
-        timeInterval = undefined;
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      timeInterval = setInterval(
-        () => agentUpdateTime(browserToken, agent_uuid),
-        1000 * 60 * 2
-      );
-    } else {
-      clearInterval(timeInterval);
-      timeInterval = undefined;
-    }
-    return () => {
-      clearInterval(timeInterval);
-      timeInterval = undefined;
-    };
-  }, [selectedCampaign, campaignMode, campaignType, user]);
+  // useEffect(() => {
+  //   let browserToken = user?.agent_detail?.browserToken;
+  //   let agent_uuid = user?.agent_detail?.uuid;
+  //   if (
+  //     user &&
+  //     selectedCampaign &&
+  //     (campaignMode === "1" || campaignMode === "3") &&
+  //     (campaignType === "outbound" || campaignType === "blended")
+  //   ) {
+  //     if (timeInterval) {
+  //       clearInterval(timeInterval);
+  //       timeInterval = undefined;
+  //     }
+  //     // eslint-disable-next-line react-hooks/exhaustive-deps
+  //     timeInterval = setInterval(
+  //       () => agentUpdateTime(browserToken, agent_uuid),
+  //       1000 * 60 * 2
+  //     );
+  //   } else {
+  //     clearInterval(timeInterval);
+  //     timeInterval = undefined;
+  //   }
+  //   return () => {
+  //     clearInterval(timeInterval);
+  //     timeInterval = undefined;
+  //   };
+  // }, [selectedCampaign, campaignMode, campaignType, user]);
 
   const onStartBreak = (breakOption: any) => {
     if (breakOption.duration) {
