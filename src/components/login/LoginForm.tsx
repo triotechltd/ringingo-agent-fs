@@ -56,8 +56,8 @@ const LoginForm = () => {
 
   const domain = getDomain();
 
-  const tenantPortal: any = process.env.TENANT_PORTAL_DOMAIN;
-  // const tenantPortal: any = domain;
+  // const tenantPortal: any = process.env.TENANT_PORTAL_DOMAIN;
+  const tenantPortal: any = domain;
   const initialValues: LoginFormValues = {
     username: "",
     password: "",

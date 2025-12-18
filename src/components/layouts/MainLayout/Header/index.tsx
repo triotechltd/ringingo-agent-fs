@@ -236,7 +236,7 @@ const Header = ({ breakValue, onBreakSelection }: HeaderProps) => {
     try {
       let payload: any = {
         extension: user?.agent_detail?.extension_details[0].username,
-        campaign_uuid: selectedCampaign.value,
+        campaign_uuid: selectedCampaign?.value,
         feature: "logout",
         campaign_type:
           campaignType === "inbound"
@@ -314,7 +314,7 @@ const Header = ({ breakValue, onBreakSelection }: HeaderProps) => {
       setIsLogoutLoading(true);
       try {
         let payload = {
-          campaign_uuid: selectedCampaign.value,
+          campaign_uuid: selectedCampaign?.value,
           login_status: "2",
         };
         let response: any = await dispatch(agentEntryAdd(payload)).unwrap();
@@ -325,7 +325,7 @@ const Header = ({ breakValue, onBreakSelection }: HeaderProps) => {
         if (!user?.isPbx && !!selectedCampaign) onCallQueueInbound();
         if (!isCallResume) {
           let payload: any = {
-            campaign_uuid: selectedCampaign.value,
+            campaign_uuid: selectedCampaign?.value,
             campaign_mode: campaignMode,
           };
           dispatch(setCallResume(true));
@@ -594,7 +594,7 @@ const Header = ({ breakValue, onBreakSelection }: HeaderProps) => {
   const onSetCallResumeMode = async () => {
     try {
       let payload: any = {
-        campaign_uuid: selectedCampaign.value,
+        campaign_uuid: selectedCampaign?.value,
         campaign_mode: campaignMode,
       };
       dispatch(setCallResume(true));
